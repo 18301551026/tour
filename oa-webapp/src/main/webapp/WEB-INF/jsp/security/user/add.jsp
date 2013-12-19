@@ -6,12 +6,22 @@
 <title>用户添加</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
+<%@ include file="/common/include-jquery-easyui.jsp"%>
 <script type="text/javascript" src="${ctx }/js/edit.js"></script>
 <%@ include file="/common/include-bootstap.jsp"%>
 <%@ include file="/common/include-jquery-validation.jsp"%>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
-
+<script type="text/javascript">
+	$(function() {
+		$("#deptId").combotree({
+			url : ctx + "/security/dept!getAllDept.action",
+			id : "id",
+			lines : true,
+			width : 550
+		});
+	})
+</script>
 <body class="editBody">
 	<button class="btn btn-info btn-sm pull-left" id="backButton">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
@@ -34,17 +44,46 @@
 						placeholder="请输入登陆名" cssClass="form-control validate[required]"
 						id="userName"></s:textfield></Td>
 				<Td class="control-label"><label for="pwd">密码：</label></Td>
-				<Td class="query_input"><s:textfield name="password"
+				<Td class="query_input"><s:password name="password"
 						placeholder="请输入密码" cssClass="form-control validate[required]"
-						id="pwd"></s:textfield></Td>
+						id="pwd"></s:password></Td>
 			</tr>
 			<tr>
 				<Td class="control-label"><label for="realName">真实姓名：</label></Td>
-				<Td class="query_input" colspan="3"><s:textfield
-						name="realName" placeholder="请输入真实姓名"
-						cssClass="form-control validate[required]" id="realName"></s:textfield></Td>
+				<Td class="query_input"><s:textfield name="realName"
+						placeholder="请输入真实姓名" cssClass="form-control validate[required]"
+						id="realName"></s:textfield></Td>
+				<Td class="control-label"><label for="deptId">所属部门：</label></Td>
+				<Td class="query_input"><select name="dept.id" id="deptId"
+					class="validate[required]">
+				</select></Td>
 			</tr>
 		</table>
 	</form>
 </body>
+<style>
+.combo {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	display: block;
+	font-size: 12px;
+	line-height: 1.42857;
+	padding: 0px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
+	width: 100%;
+}
+.panel .combo-p{
+	margin-left: 6px;
+}
+.combo-value {
+	border: 1px solid #CCCCCC;
+}
+
+
+</style>
 </html>

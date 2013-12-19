@@ -100,10 +100,7 @@ public class UserAction extends BaseAction<User> {
 
 		List<Dept> depts = baseService.find(DetachedCriteria
 				.forClass(Dept.class));
-		Set<Dept> userDepts = user.getDepts();
-		for (Dept dept : userDepts) {
-			depts.remove(dept);
-		}
+		depts.remove(user.getDept());
 		ActionContext.getContext().put("deptList", depts);
 
 		List<Job> jobs = baseService.find(DetachedCriteria.forClass(Job.class));
@@ -112,6 +109,11 @@ public class UserAction extends BaseAction<User> {
 			jobs.remove(job);
 		}
 		ActionContext.getContext().put("jobList", jobs);
+	}
+
+	@Override
+	public void beforeSave(User model) {
+		super.beforeSave(model);
 	}
 
 	public String addRole() {
@@ -130,9 +132,6 @@ public class UserAction extends BaseAction<User> {
 		List<User> users = baseService.find(detachedCriteria);
 		StringBuffer script = new StringBuffer();
 		for (User user : users) {
-//			if (user.getId() == currentUser.getId()) {
-//				continue;
-//			}
 			script.append("<option value=" + user.getId() + ">"
 					+ user.getRealName() + "</option>");
 		}
@@ -142,18 +141,6 @@ public class UserAction extends BaseAction<User> {
 	@ClearCache
 	public String deleteRole() {
 		userService.deleteRole(roleId, model.getId());
-
-		return UPDATE_ACTION;
-	}
-
-	public String addDept() {
-		userService.addDept(deptId, model.getId());
-
-		return UPDATE_ACTION;
-	}
-
-	public String deleteDept() {
-		userService.deleteDept(deptId, model.getId());
 
 		return UPDATE_ACTION;
 	}

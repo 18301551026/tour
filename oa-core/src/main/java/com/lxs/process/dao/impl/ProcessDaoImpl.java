@@ -40,14 +40,10 @@ public class ProcessDaoImpl implements IProcessDao {
 	public List<User> findDeptManager2User(Long userId) {
 		User user = (User) sessionFactory.getCurrentSession().get(User.class, userId);
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class);
-		criteria.createAlias("depts", "d");
+		criteria.createAlias("dept", "d");
 		criteria.createAlias("jobs", "j");
 		criteria.add(Restrictions.eq("j.jobName", JobEnum.deptManager.getValue()));
-		List<Long> userDepts = new ArrayList<Long>();
-		for (Dept d : user.getDepts()) {
-			userDepts.add(d.getId());
-		}
-		criteria.add(Restrictions.in("d.id", userDepts));
+		criteria.add(Restrictions.eq("d.id", user.getId()));
 		return criteria.list();
 	}
 	

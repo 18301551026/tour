@@ -35,18 +35,6 @@ public interface IUserService {
 	public abstract void deleteRole(Long roleId, Long userId);
 
 	/**
-	 * 为用户添加部门
-	 * @return
-	 */
-	public abstract void addDept(Long deptId, Long userId);
-
-	/**
-	 * 为用户删除部门
-	 * @return
-	 */
-	public abstract void deleteDept(Long deptId, Long userId);
-
-	/**
 	 * 为用户添加职位
 	 * @return
 	 */

@@ -6,12 +6,22 @@
 <title>用户修改</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
+<%@ include file="/common/include-jquery-easyui.jsp"%>
 <script type="text/javascript" src="${ctx }/js/edit.js"></script>
 <%@ include file="/common/include-bootstap.jsp"%>
 <%@ include file="/common/include-jquery-validation.jsp"%>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
-
+<script type="text/javascript">
+	$(function() {
+		$("#deptId").combotree({
+			url : ctx + "/security/dept!getAllDept.action",
+			id : "id",
+			lines : true,
+			width : 550
+		});
+	})
+</script>
 <body class="editBody">
 	<button class="btn btn-info btn-sm pull-left" id="backButton">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
@@ -37,19 +47,23 @@
 						placeholder="请输入登陆名" cssClass="form-control validate[required]"
 						id="userName"></s:textfield></Td>
 				<Td class="control-label"><label for="pwd">密码：</label></Td>
-				<Td class="query_input"><s:textfield name="password"
+				<Td class="query_input"><s:password name="password" value="%{password}"
 						placeholder="请输入密码" cssClass="form-control validate[required]"
-						id="pwd"></s:textfield></Td>
+						id="pwd"></s:password></Td>
 			</tr>
 			<tr>
 				<Td class="control-label"><label for="realName">真实姓名：</label></Td>
-				<Td class="query_input" colspan="3"><s:textfield
-						name="realName" placeholder="请输入真实姓名"
-						cssClass="form-control validate[required]" id="realName"></s:textfield></Td>
+				<Td class="query_input"><s:textfield name="realName"
+						placeholder="请输入真实姓名" cssClass="form-control validate[required]"
+						id="realName"></s:textfield></Td>
+				<Td class="control-label"><label for="deptId">所属部门：</label></Td>
+				<Td class="query_input"><s:textfield name="dept.id" id="deptId">
+
+					</s:textfield></Td>
 			</tr>
 		</table>
 	</form>
-	<table style="width: 33%; margin-left: 1px; float: left;"
+	<table style="width: 49.5%; margin-left: 1px; float: left;"
 		class="table table-bordered table-striped table-hover">
 		<thead>
 			<tr>
@@ -80,40 +94,7 @@
 			</s:if>
 		</tbody>
 	</table>
-
-	<table style="width: 33%; margin-left: 1px; float: left"
-		class="table table-bordered table-striped table-hover">
-		<thead>
-			<tr>
-				<th>部门名称</th>
-				<th width="1%">操作</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items="${depts}" var="o">
-				<tr>
-					<td>${o.deptName }</td>
-					<td><input type="button" class="btn btn-info btn-xs "
-						value="删除"
-						onclick="location.href='${ctx }/security/user!deleteDept.action?id=${id }&deptId=${o.id }'">
-					</td>
-				</tr>
-			</c:forEach>
-			<s:if test="#deptList.size>0">
-				<form action="${ctx }/security/user!addDept.action" method="post">
-					<s:hidden name="id"></s:hidden>
-					<tr>
-						<td><s:select name="deptId" list="#deptList" listKey="id"
-								listValue="deptName" cssClass="form-control-mini"></s:select></td>
-						<td><input type="submit" class="btn btn-info btn-xs "
-							value="保存"></td>
-					</tr>
-				</form>
-			</s:if>
-		</tbody>
-	</table>
-
-	<table style="width: 33%; margin-left: 1px; float: left"
+	<table style="width: 50%; margin-left: 1px; float: right;"
 		class="table table-bordered table-striped table-hover">
 		<thead>
 			<tr>
@@ -144,5 +125,30 @@
 			</s:if>
 		</tbody>
 	</table>
+	<style>
+.combo {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	display: block;
+	font-size: 12px;
+	line-height: 1.42857;
+	padding: 0px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.panel .combo-p {
+	margin-left: 6px;
+}
+
+.combo-value {
+	border: 1px solid #CCCCCC;
+}
+</style>
 </body>
 </html>

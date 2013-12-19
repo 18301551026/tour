@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>用户</title>
+<title>企业</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
 <%@ include file="/common/include-bootstap.jsp"%>
@@ -14,8 +14,8 @@
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="addButton"
-					actionUrl="${ctx }/security/user!toAdd.action" class="btn btn-info">
+				<button id="addButton" actionUrl="${ctx }/tour/factory!toAdd.action"
+					class="btn btn-info">
 					<span class="glyphicon glyphicon-plus"></span> 新建
 				</button>
 				<button id="deleteButton" class="btn btn-info">
@@ -33,28 +33,30 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/security/user!findPage.action" method="post">
+				action="${ctx}/security/dept!findPage.action" method="post">
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label"><label for="userName">用户名称：</label></Td>
-						<Td class="query_input"><s:textfield name="userName"
-								cssClass="form-control" id="userName"></s:textfield></Td>
+						<Td class="control-label"><label for="address">部门地址：</label></Td>
+						<Td class="query_input"><s:textfield name="address"
+								cssClass="form-control" id="address" placeholder="请输入部门地址"></s:textfield></Td>
+						<Td class="control-label"><label for="deptName">部门名称：</label></Td>
+						<Td class="query_input"><s:textfield name="deptName"
+								cssClass="form-control" id="deptName" placeholder="请输入部门名称"></s:textfield></Td>
 					</Tr>
 				</table>
 			</form>
 		</div>
 	</div>
-	<form method="post" action="${ctx }/security/user!delete.action"
+	<form method="post" action="${ctx }/tour/tour!delete.action"
 		id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
 					<th class="table_checkbox"><input type="checkbox"
 						id="checkAllCheckBox"></th>
-					<th>登陆名</th>
-					<th>真实姓名</th>
-					<th>部门</th>
-					<th>职位</th>
+					<th>类型</th>
+					<th>接待人次</th>
+					<th>总收入</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -63,14 +65,10 @@
 					<tr>
 						<td class="table_checkbox"><input type="checkbox" name="ids"
 							value="${id }" /></td>
-						<td>${userName }</td>
-						<td>${realName }</td>
-						<td>${dept.text }</td>
-						<td><c:forEach items="${jobs }" var="j">
-          	${j.jobName}&nbsp;
-          </c:forEach></td>
-						<td><a href="${ctx}/security/user!toUpdate.action?id=${id}">修改</a>
-						</td>
+						<td>${user.dept.text}</td>
+						<Td>${totalPersonNum }</Td>
+						<Td>${totalIncome }</Td>
+						<td><a href="${ctx}/security/dept!toUpdate.action?id=${id}">修改</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

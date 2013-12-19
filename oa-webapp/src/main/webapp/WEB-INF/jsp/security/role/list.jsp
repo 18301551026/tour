@@ -21,7 +21,7 @@
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
 				<button id="addButton"
-					actionUrl="${ctx }/security/user!toAdd.action"
+					actionUrl="${ctx }/security/role!toAdd.action"
 					class="btn btn-info">
 					<span class="glyphicon glyphicon-plus"></span> 新建
 				</button>
@@ -51,7 +51,7 @@
 			</form>
 		</div>
 	</div>
-	<form method="post" action="${ctx}/security/role!findPage.action"
+	<form method="post" action="${ctx}/security/role!delete.action"
 		id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>

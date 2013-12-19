@@ -446,9 +446,6 @@
 							<name>ROLE_USER_</name>
 						</table>
 						<table>
-							<name>USER_DEPT_</name>
-						</table>
-						<table>
 							<name>dictionary_</name>
 						</table>
 					</tables>

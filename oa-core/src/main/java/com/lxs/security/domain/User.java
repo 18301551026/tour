@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -32,10 +33,11 @@ public class User implements Serializable {
 	private String userName;
 	private String realName;
 	private String password;
+	private Dept dept;
 
 	private Set<Role> roles = new HashSet<Role>();
 	private Set<Job> jobs = new HashSet<Job>();
-	private Set<Dept> depts = new HashSet<Dept>();
+	
 
 	@Id
 	@GeneratedValue
@@ -99,37 +101,17 @@ public class User implements Serializable {
 	public void setJobs(Set<Job> jobs) {
 		this.jobs = jobs;
 	}
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_dept_", joinColumns = { @JoinColumn(name = "user_id_") }, inverseJoinColumns = { @JoinColumn(name = "dept_id_") })
-	public Set<Dept> getDepts() {
-		return depts;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="dept_id_")
+	public Dept getDept() {
+		return dept;
 	}
 
-	public void setDepts(Set<Dept> depts) {
-		this.depts = depts;
+	public void setDept(Dept dept) {
+		this.dept = dept;
 	}
 
-	// 邮件
-//	private Set<Mail> mails = new HashSet<Mail>();
-//	private Set<Mail_user_> mailUsers = new HashSet<Mail_user_>();
-//
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "sendUser")
-//	public Set<Mail> getMails() {
-//		return mails;
-//	}
-//
-//	public void setMails(Set<Mail> mails) {
-//		this.mails = mails;
-//	}
-//
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-//	public Set<Mail_user_> getMailUsers() {
-//		return mailUsers;
-//	}
-//
-//	public void setMailUsers(Set<Mail_user_> mailUsers) {
-//		this.mailUsers = mailUsers;
-//	}
+	
+
 
 }

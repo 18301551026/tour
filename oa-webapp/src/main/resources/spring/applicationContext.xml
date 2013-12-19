@@ -44,6 +44,7 @@
                 <value>com.lxs.oa.work.domain</value>
                 <value>com.lxs.oa.person.domain</value>
                 <value>com.lxs.oa.message.domain</value>
+                <value>com.lxs.oa.tour.domain</value>
             </list>
         </property>
         <property name="hibernateProperties">
@@ -85,7 +86,7 @@
 	</tx:advice>
 	
 	<aop:config proxy-target-class="true">
-		<aop:pointcut expression="execution(* com.lxs.security.service.impl.*.*(..)) || execution(* com.lxs.core.service.impl.*.*(..)) || execution(* com.lxs.process.service.impl.*.*(..))" id="serviceMethods"/>
+		<aop:pointcut expression="execution(* com.lxs.security.service.impl.*.*(..)) ||execution(* com.lxs.oa.tour.service.impl.*.*(..)) || execution(* com.lxs.core.service.impl.*.*(..)) || execution(* com.lxs.process.service.impl.*.*(..))" id="serviceMethods"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
 	</aop:config>
 	 

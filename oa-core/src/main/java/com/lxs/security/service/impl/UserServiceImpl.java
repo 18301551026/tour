@@ -51,21 +51,7 @@ public class UserServiceImpl implements IUserService {
 		baseDao.save(role);		
 	}
 
-	@Override
-	public void addDept(Long deptId, Long userId) {
-		User user = baseDao.get(User.class, userId);
-		Dept dept = baseDao.get(Dept.class, deptId);
-		user.getDepts().add(dept);
-		baseDao.save(user);		
-	}
-
-	@Override
-	public void deleteDept(Long deptId, Long userId) {
-		User user = baseDao.get(User.class, userId);
-		Dept dept = baseDao.get(Dept.class, deptId);
-		user.getDepts().remove(dept);
-		baseDao.save(user);		
-	}
+	
 
 	@Override
 	public void addJob(Long jobId, Long userId) {

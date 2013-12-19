@@ -1,44 +1,50 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>部门添加</title>
 <%@ include file="/common/meta.jsp"%>
+<title>添加子节点</title>
 <%@ include file="/common/include-jquery.jsp"%>
-<script type="text/javascript" src="${ctx }/js/edit.js"></script>
-<%@ include file="/common/include-bootstap.jsp"%>
-<%@ include file="/common/include-jquery-validation.jsp"%>
-<%@ include file="/common/include-styles.jsp"%>
+<%@ include file="/common/include-jquery-easyui.jsp"%>
+
 </head>
-
-<body class="editBody">
-	<button class="btn btn-info btn-sm pull-left" id="backButton">
-		<span class="glyphicon glyphicon-backward"></span> 返回列表
-	</button>
-	<div class="btn-group pull-right btn-group-sm">
-		<button type="button" class="btn btn-info" id="saveButton">
-			<span class="glyphicon glyphicon-ok"></span> 保存
-		</button>
-		<button type="button" class="btn btn-info" id="resetButton">
-			<span class="glyphicon glyphicon-repeat"></span> 重置
-		</button>
-	</div>
-	<div class="clearfix" style="margin-bottom: 20px;"></div>
-	<form action="${ctx}/security/dept!save.action" method="post"
-		id="editForm">
-		<table class="formTable table">
-			<tr>
-				<Td class="control-label"><label for="deptName">部门名称：</label></Td>
-				<Td class="query_input"><s:textfield name="deptName"
-						placeholder="请输入部门名称" cssClass="form-control validate[required]"
-						id="deptName"></s:textfield></Td>
-				<Td class="control-label"><label for="location">部门地址：</label></Td>
-				<Td class="query_input"><s:textfield name="location"
-						placeholder="请输入部门地址" cssClass="form-control" id="location"></s:textfield></Td>
-			</tr>
-
-		</table>
+<body>
+	<script type="text/javascript" src="${ctx }/js/dept-add.js"></script>
+	<form id="addDeptForm" method="post" style="margin: 10px;" role="form">
+		<s:hidden name="pid" value="%{id}"></s:hidden>
+		<label>名称：</label><input name="text" type="text"
+			class="easyui-validatebox form-control" data-options="required:true"
+			placeholder="请输入名称" /><br />
+		<label>描述：</label>
+		<s:textarea name="deptDesc" cssClass="form-control" cssStyle="height:80px"></s:textarea>
 	</form>
+	<style>
+		.form-control {
+			background-color: #FFFFFF;
+			border: 1px solid #CCCCCC;
+			border-radius: 4px;
+			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+			color: #555555;
+			display: block;
+			font-size: 14px;
+			height: 30px;
+			line-height: 1.42857;
+			padding: 0px 3px;
+			transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+				ease-in-out 0s;
+			vertical-align: middle;
+			width: 250px;
+		}
+		
+		label {
+			height: 30px;
+			line-height: 30px;
+			vertical-align: middle;
+			float: left;
+			text-align: right;
+			width: 80px;
+		}
+	</style>
 </body>
 </html>
