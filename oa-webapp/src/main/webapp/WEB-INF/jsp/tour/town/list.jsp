@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>镇政府统计</title>
+<title>镇政府</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
 <script type="text/javascript"
@@ -28,13 +28,19 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/townStatistic!townStatisticList.action" method="post">
+				action="${ctx}/tour/townList!findPage.action" method="post">
 				<s:hidden name="status"></s:hidden>
 				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
-						<Td class="query_input" colspan="3"><input id="d4311"
+						<Td class="control-label" style="width: 3%"><label
+							for="address">类型：</label></Td>
+						<Td class="query_input"><s:select list="allJobs"
+								id="factoryType" cssClass="form-control validate[required]"
+								headerKey="" headerValue="全部" listKey="id" listValue="jobName"
+								name="job.id"></s:select></Td>
+						<Td class="control-label"><label>选择日期：</label></Td>
+						<Td class="query_input"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
 							type="text" name="startDate"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
@@ -43,6 +49,15 @@
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 3%"><label
+							for="totalPersonNum">企业：</label>
+						<Td class="query_input" colspan="3"><s:select
+								list="townFactorys" id="factoryType"
+								cssClass="form-control validate[required]" headerKey=""
+								headerValue="全部" listKey="id" listValue="text"
+								name="factoryId"></s:select></Td>
+					</tr>
 				</table>
 			</form>
 		</div>
@@ -54,7 +69,6 @@
 				<tr>
 
 					<th>类型</th>
-					<th>个数</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
 					<th>操作</th>
@@ -63,11 +77,10 @@
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${factoryType}</td>
-						<td>${totalFactoryCount }</td>
-						<Td>${totalPersonCount }</Td>
+						<td>${job.jobName}</td>
+						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="">详情</a></td>
+						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

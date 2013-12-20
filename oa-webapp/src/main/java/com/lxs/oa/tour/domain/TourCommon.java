@@ -157,5 +157,5 @@ public class TourCommon implements Serializable {
 		this.statisticType = statisticType;
 	}
 
-
+	
 }
