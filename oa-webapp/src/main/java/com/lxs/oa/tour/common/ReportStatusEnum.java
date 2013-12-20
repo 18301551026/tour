@@ -1,6 +1,6 @@
 package com.lxs.oa.tour.common;
 
-public enum ReportStatus {
+public enum ReportStatusEnum {
 	reported(1), // 已申报
 	notReport(2);// 未申报
 	private Integer value;
@@ -13,7 +13,7 @@ public enum ReportStatus {
 		this.value = value;
 	}
 
-	private ReportStatus(Integer value) {
+	private ReportStatusEnum(Integer value) {
 		this.value = value;
 	}
 

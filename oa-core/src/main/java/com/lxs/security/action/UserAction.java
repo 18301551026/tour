@@ -111,11 +111,7 @@ public class UserAction extends BaseAction<User> {
 		ActionContext.getContext().put("jobList", jobs);
 	}
 
-	@Override
-	public void beforeSave(User model) {
-		super.beforeSave(model);
-	}
-
+	
 	public String addRole() {
 		userService.addRole(roleId, model.getId());
 

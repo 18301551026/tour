@@ -3,9 +3,11 @@
 <html lang="zh-CN">
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>企业</title>
+<title>未申报</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
+<script type="text/javascript"
+	src="${ctx }/js/My97DatePicker/WdatePicker.js"></script>
 <%@ include file="/common/include-bootstap.jsp"%>
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
@@ -14,7 +16,8 @@
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="addButton" actionUrl="${ctx }/tour/factory!toAdd.action"
+				<button id="addButton"
+					actionUrl="${ctx }/tour/noReported!toAdd.action"
 					class="btn btn-info">
 					<span class="glyphicon glyphicon-plus"></span> 新建
 				</button>
@@ -33,21 +36,31 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/security/dept!findPage.action" method="post">
+				action="${ctx}/tour/noReported!findPage.action" method="post">
+				<s:hidden name="status"></s:hidden>
+				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label"><label for="address">部门地址：</label></Td>
-						<Td class="query_input"><s:textfield name="address"
-								cssClass="form-control" id="address" placeholder="请输入部门地址"></s:textfield></Td>
-						<Td class="control-label"><label for="deptName">部门名称：</label></Td>
-						<Td class="query_input"><s:textfield name="deptName"
-								cssClass="form-control" id="deptName" placeholder="请输入部门名称"></s:textfield></Td>
+						<Td class="control-label" style="width: 3%"><label
+							for="address">类型：</label></Td>
+						<Td class="query_input"><s:select list="userJobs"
+								id="factoryType" cssClass="form-control validate[required]"
+								headerKey="" headerValue="全部" listKey="id" listValue="jobName"
+								name="job.id"></s:select></Td>
+						<Td class="control-label" ><label>选择日期：</label></Td>
+						<Td class="query_input"><input id="d4311" class="form-control"   style="width: 45%;display: inline;"
+							type="text" name="startDate"
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
+							<input id="d4312" type="text"  class="form-control"  style="width: 45%;display: inline;" name="endDate"
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
+						</Td>
 					</Tr>
+
 				</table>
 			</form>
 		</div>
 	</div>
-	<form method="post" action="${ctx }/tour/tour!delete.action"
+	<form method="post" action="${ctx }/tour/noReported!delete.action"
 		id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
@@ -55,8 +68,8 @@
 					<th class="table_checkbox"><input type="checkbox"
 						id="checkAllCheckBox"></th>
 					<th>类型</th>
-					<th>接待人次</th>
-					<th>总收入</th>
+					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
+					<th>总收入&nbsp;<font color="green">(万元)</font></th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -65,10 +78,13 @@
 					<tr>
 						<td class="table_checkbox"><input type="checkbox" name="ids"
 							value="${id }" /></td>
-						<td>${user.dept.text}</td>
+						<td>${job.jobName}</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="${ctx}/security/dept!toUpdate.action?id=${id}">修改</a></td>
+						<td><a href="${ctx}/tour/noReported!toUpdate.action?id=${id}">修改</a>
+							&nbsp; <a href="${ctx}/tour/noReported!toReport.action?id=${id}">申报</a>
+
+						</td>
 					</tr>
 				</s:iterator>
 			</tbody>

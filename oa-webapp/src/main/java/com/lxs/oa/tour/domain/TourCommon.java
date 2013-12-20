@@ -1,8 +1,10 @@
 package com.lxs.oa.tour.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.lxs.security.domain.Job;
 import com.lxs.security.domain.User;
 
 @Entity
@@ -34,7 +37,9 @@ public class TourCommon implements Serializable {
 	private Integer reportYear; // 申报年份
 	private String desc; // 描述
 	private User user;
-	private Set<TourDetail> details = new HashSet<TourDetail>();// 详情
+	private List<TourDetail> details = new ArrayList<TourDetail>();// 详情
+	private Job job;// 企业类型
+	 
 
 	@Id
 	@GeneratedValue
@@ -84,6 +89,16 @@ public class TourCommon implements Serializable {
 		this.status = status;
 	}
 
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="job_id_")
+	public Job getJob() {
+		return job;
+	}
+
+	public void setJob(Job job) {
+		this.job = job;
+	}
+
 	@Column(name = "report_month_")
 	public Integer getReportMonth() {
 		return reportMonth;
@@ -123,11 +138,11 @@ public class TourCommon implements Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "common")
-	public Set<TourDetail> getDetails() {
+	public List<TourDetail> getDetails() {
 		return details;
 	}
 
-	public void setDetails(Set<TourDetail> details) {
+	public void setDetails(List<TourDetail> details) {
 		this.details = details;
 	}
 
@@ -141,4 +156,6 @@ public class TourCommon implements Serializable {
 	public void setStatisticType(Integer statisticType) {
 		this.statisticType = statisticType;
 	}
+
+
 }
