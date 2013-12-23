@@ -28,7 +28,8 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/townStatistic!townStatisticList.action" method="post">
+				action="${ctx}/tour/townStatistic!townStatisticList.action"
+				method="post">
 				<s:hidden name="status"></s:hidden>
 				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
@@ -36,10 +37,11 @@
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
 						<Td class="query_input" colspan="3"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
-							type="text" name="startDate"
+							type="text" name="startDate" value="${startDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
 							<input id="d4312" type="text" class="form-control"
 							style="width: 45%; display: inline;" name="endDate"
+							value="${endDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
@@ -67,13 +69,13 @@
 						<td>${totalFactoryCount }</td>
 						<Td>${totalPersonCount }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="">详情</a></td>
+						<td><a
+							href="${ctx }/tour/townStatistic!townStatisticListToDetail.action?tourIds=${tourIds}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>
 		</table>
 	</form>
-	<tags:pagination page="${page }"></tags:pagination>
 
 </body>
 </html>

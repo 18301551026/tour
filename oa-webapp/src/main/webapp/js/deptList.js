@@ -13,11 +13,19 @@ $(function() {
 		columns : [ [ {
 			field : 'text',
 			title : '部门名称',
-			width : 480
+			width : 280
+		}, {
+			field : 'deptType',
+			title : '部门类型',
+			width : 280
+		}, {
+			field : 'deptLevel',
+			title : '部门级别',
+			width : 280
 		}, {
 			field : 'deptDesc',
 			title : '描述',
-			width : 550
+			width : 350
 		} ] ],
 		toolbar : "#treeGridToolBar",
 		onContextMenu : onContextMenu
@@ -59,7 +67,7 @@ function editFun(id) {
 		parent.$.modalDialog({
 			title : '编辑节点',
 			width : 400,
-			height : 280,
+			height : 330,
 			href : ctx + '/security/dept!toUpdate.action?id=' + node.id,
 			buttons : [
 					{
@@ -93,7 +101,7 @@ function addFun(flag) {
 	parent.$.modalDialog({
 		title : '添加节点',
 		width : 400,
-		height : 280,
+		height : 330,
 		href : url,
 		buttons : [ {
 			text : '添加',

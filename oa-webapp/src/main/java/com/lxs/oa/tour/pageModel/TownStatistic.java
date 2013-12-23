@@ -5,6 +5,7 @@ public class TownStatistic {
 	private Long totalFactoryCount;// 个数
 	private Long totalPersonCount; // 接待总人数
 	private Long totalIncome; // 总收入
+	private String tourIds;
 
 	public Long getTotalFactoryCount() {
 		return totalFactoryCount;
@@ -38,5 +39,12 @@ public class TownStatistic {
 		this.factoryType = factoryType;
 	}
 
-	
+	public String getTourIds() {
+		return tourIds;
+	}
+
+	public void setTourIds(String tourIds) {
+		this.tourIds = tourIds;
+	}
+
 }

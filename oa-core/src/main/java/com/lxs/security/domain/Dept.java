@@ -38,6 +38,24 @@ public class Dept implements Serializable {
 	private Set<User> users = new HashSet<User>();
 	private Dept parent;
 	private List<Dept> children = new ArrayList<Dept>();
+	private String deptType;
+	private String deptLevel;
+	@Column(name="dept_type_")
+	public String getDeptType() {
+		return deptType;
+	}
+
+	public void setDeptType(String deptType) {
+		this.deptType = deptType;
+	}
+	@Column(name="dept_level_")
+	public String getDeptLevel() {
+		return deptLevel;
+	}
+
+	public void setDeptLevel(String deptLevel) {
+		this.deptLevel = deptLevel;
+	}
 
 	@Id
 	@GeneratedValue

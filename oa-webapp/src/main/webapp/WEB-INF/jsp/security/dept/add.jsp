@@ -10,41 +10,52 @@
 
 </head>
 <body>
+	<style type="text/css">
+.hidd {
+	display: none;
+}
+</style>
 	<script type="text/javascript" src="${ctx }/js/dept-add.js"></script>
 	<form id="addDeptForm" method="post" style="margin: 10px;" role="form">
 		<s:hidden name="pid" value="%{id}"></s:hidden>
 		<label>名称：</label><input name="text" type="text"
 			class="easyui-validatebox form-control" data-options="required:true"
-			placeholder="请输入名称" /><br />
-		<label>描述：</label>
-		<s:textarea name="deptDesc" cssClass="form-control" cssStyle="height:80px"></s:textarea>
+			placeholder="请输入名称" /><br /> <label>级别：</label> <select
+			id="deptLevel" name="deptLevel" id="deptLevel" class="form-control">
+			<option value="区级"selected="selected">区级</option>
+			<option value="镇级">镇级</option>
+			<option value="企业" >企业</option>
+		</select><br /> <label>描述：</label>
+		<s:textarea name="deptDesc" cssClass="form-control"
+			cssStyle="height:80px"></s:textarea>
 	</form>
 	<style>
-		.form-control {
-			background-color: #FFFFFF;
-			border: 1px solid #CCCCCC;
-			border-radius: 4px;
-			box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
-			color: #555555;
-			display: block;
-			font-size: 14px;
-			height: 30px;
-			line-height: 1.42857;
-			padding: 0px 3px;
-			transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
-				ease-in-out 0s;
-			vertical-align: middle;
-			width: 250px;
-		}
-		
-		label {
-			height: 30px;
-			line-height: 30px;
-			vertical-align: middle;
-			float: left;
-			text-align: right;
-			width: 80px;
-		}
-	</style>
+.form-control {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	display: block;
+	font-size: 12px;
+	height: 25px; line-height : 1.42857; padding : 2px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
+	line-height: 1.42857;
+	padding: 2px; transition : border-color 0.15s ease-in-out 0s,
+	box-shadow 0.15s ease-in-out 0s; vertical-align : middle;
+	width: 67%;
+}
+
+label {
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+	float: left;
+	text-align: right;
+	width: 80px;
+}
+</style>
 </body>
 </html>

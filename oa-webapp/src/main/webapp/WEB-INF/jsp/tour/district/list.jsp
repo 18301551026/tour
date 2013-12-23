@@ -35,17 +35,17 @@
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label
 							for="address">类型：</label></Td>
-						<Td class="query_input"><s:select list="allJobs"
-								id="factoryType" cssClass="form-control validate[required]"
-								headerKey="" headerValue="全部" listKey="id" listValue="jobName"
-								name="job.id"></s:select></Td>
+						<Td class="query_input"><s:select cssClass="form-control"
+								list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
+								name="deptType" headerKey="" headerValue="全部"></s:select></Td>
 						<Td class="control-label"><label>选择日期：</label></Td>
 						<Td class="query_input"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
-							type="text" name="startDate"
+							type="text" name="startDate" value="${startDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
 							<input id="d4312" type="text" class="form-control"
 							style="width: 45%; display: inline;" name="endDate"
+							value="${endDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
@@ -53,9 +53,8 @@
 						<Td class="control-label" style="width: 3%"><label
 							for="totalPersonNum">企业：</label>
 						<Td class="query_input" colspan="3"><s:select
-								list="townFactorys" id="factoryType"
-								cssClass="form-control validate[required]" headerKey=""
-								headerValue="全部" listKey="id" listValue="text"
+								list="townFactorys" id="factoryType" cssClass="form-control"
+								headerKey="" headerValue="全部" listKey="id" listValue="text"
 								name="factoryId"></s:select></Td>
 					</tr>
 				</table>

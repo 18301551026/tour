@@ -613,21 +613,21 @@
       <value>1</value>
       <value>系统管理员</value>
       <value>admin</value>
-      <null/>
+      <value>2</value>
     </row>
     <row>
       <value>2</value>
       <value>1</value>
       <value>刘雪松</value>
       <value>lxs</value>
-      <value>4</value>
+      <value>3</value>
     </row>
     <row>
       <value>3</value>
       <value>1</value>
       <value>冯威</value>
       <value>fw</value>
-      <value>3</value>
+      <null/>
     </row>
     <row>
       <value>4</value>
@@ -648,7 +648,7 @@
       <value>1</value>
       <value>王冰</value>
       <value>wb</value>
-      <null/>
+      <value>7</value>
     </row>
     <row>
       <value>7</value>
@@ -692,43 +692,29 @@
       <value>zlw</value>
       <null/>
     </row>
-    <row>
-      <value>13</value>
-      <value>1</value>
-      <value>庞各庄工业旅游</value>
-      <value>pgzgy</value>
-      <value>10</value>
-    </row>
-    <row>
-      <value>14</value>
-      <value>1</value>
-      <value>庞各庄镇政府</value>
-      <value>pgz</value>
-      <value>4</value>
-    </row>
   </table>
   <table name="job_">
     <column>id_</column>
     <column>job_name_</column>
     <row>
       <value>1</value>
-      <value>观光园</value>
+      <value>董事长</value>
     </row>
     <row>
       <value>2</value>
-      <value>民俗旅游</value>
+      <value>总经理</value>
     </row>
     <row>
       <value>3</value>
-      <value>旅游景区</value>
+      <value>部门主管</value>
     </row>
     <row>
       <value>4</value>
-      <value>旅游住宿</value>
+      <value>财务主管</value>
     </row>
     <row>
       <value>5</value>
-      <value>工业旅游</value>
+      <value>普通员工</value>
     </row>
   </table>
   <table name="ROLE_">
@@ -754,44 +740,55 @@
   <table name="DEPT_">
     <column>id_</column>
     <column>dept_desc_</column>
+    <column>dept_level_</column>
+    <column>dept_type_</column>
     <column>icon_</column>
     <column>text_</column>
     <column>pid_</column>
     <row>
-      <value>3</value>
+      <value>1</value>
       <value>这是大兴区</value>
+      <value>区级</value>
+      <null/>
       <null/>
       <value>大兴区</value>
       <null/>
     </row>
     <row>
-      <value>4</value>
-      <value>这是庞各庄镇</value>
+      <value>2</value>
+      <value>这是西红门镇</value>
+      <value>镇级</value>
       <null/>
-      <value>庞各庄镇</value>
+      <null/>
+      <value>西红门镇</value>
+      <value>1</value>
+    </row>
+    <row>
       <value>3</value>
+      <value>这是工业旅游</value>
+      <value>企业</value>
+      <value>工业旅游</value>
+      <null/>
+      <value>西红门镇工业旅游</value>
+      <value>2</value>
     </row>
     <row>
-      <value>10</value>
-      <value>这是庞各庄工业旅游企业</value>
+      <value>7</value>
+      <value>旅游住宿</value>
+      <value>企业</value>
+      <value>旅游住宿</value>
       <null/>
-      <value>工业旅游企业</value>
-      <value>4</value>
+      <value>西红门镇旅游住宿</value>
+      <value>2</value>
     </row>
     <row>
-      <value>11</value>
-      <value><![CDATA[这是庞各庄民俗旅游企业
-]]></value>
+      <value>8</value>
+      <value>这是观光园</value>
+      <value>企业</value>
+      <value>观光园</value>
       <null/>
-      <value>民俗旅游企业</value>
-      <value>4</value>
-    </row>
-    <row>
-      <value>12</value>
-      <value>这是庞各庄住宿旅游企业</value>
-      <null/>
-      <value>旅游住宿企业</value>
-      <value>4</value>
+      <value>西红门镇观光园</value>
+      <value>2</value>
     </row>
   </table>
   <table name="user_job_">
@@ -818,6 +815,10 @@
       <value>3</value>
     </row>
     <row>
+      <value>3</value>
+      <value>3</value>
+    </row>
+    <row>
       <value>5</value>
       <value>3</value>
     </row>
@@ -827,6 +828,10 @@
     </row>
     <row>
       <value>1</value>
+      <value>5</value>
+    </row>
+    <row>
+      <value>2</value>
       <value>5</value>
     </row>
     <row>
@@ -851,10 +856,6 @@
     </row>
     <row>
       <value>12</value>
-      <value>5</value>
-    </row>
-    <row>
-      <value>13</value>
       <value>5</value>
     </row>
   </table>
@@ -1728,10 +1729,6 @@
     <row>
       <value>3</value>
       <value>12</value>
-    </row>
-    <row>
-      <value>3</value>
-      <value>13</value>
     </row>
   </table>
   <table name="dictionary_">

@@ -35,16 +35,15 @@
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label
 							for="address">类型：</label></Td>
-						<Td class="query_input"><s:select list="userJobs"
-								id="factoryType" cssClass="form-control validate[required]"
-								headerKey="" headerValue="全部" listKey="id" listValue="jobName"
-								name="job.id"></s:select></Td>
+						<Td class="query_input"><s:select cssClass="form-control"
+								list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
+								name="deptType" headerKey="" headerValue="全部"></s:select></Td>
 						<Td class="control-label"><label>选择日期：</label></Td>
 						<Td class="query_input"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
-							type="text" name="startDate"
+							type="text" name="startDate" value="${startDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
-							<input id="d4312" type="text" class="form-control"
+							<input id="d4312" type="text" class="form-control" value="${endDate }"
 							style="width: 45%; display: inline;" name="endDate"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
@@ -62,15 +61,17 @@
 					<th>类型</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
+					<th>时间</th>
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${job.jobName}</td>
+						<td>${type}</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
+						<td>${reportYear }年${reportMonth }月</td>
 						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
 					</tr>
 				</s:iterator>

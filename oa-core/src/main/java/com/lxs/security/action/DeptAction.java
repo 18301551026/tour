@@ -38,9 +38,9 @@ public class DeptAction extends BaseAction<Dept> {
 	public void getAllDept() {
 		List<Dept> list = deptService.findAllDept();
 		for (Dept dept : list) {
-			if (null!=dept.getChildren()&&dept.getChildren().size()!=0) {
+			if (null != dept.getChildren() && dept.getChildren().size() != 0) {
 				dept.setState("closed");
-			}else{
+			} else {
 				dept.setState("open");
 			}
 		}
@@ -56,11 +56,12 @@ public class DeptAction extends BaseAction<Dept> {
 	}
 
 	public void updateDept() {
-		BeanUtil.copy(model, model);
-		baseService.save(model);
+		Dept d = baseService.get(Dept.class, model.getId());
+		BeanUtil.copy(model, d);
+		baseService.save(d);
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Menu.class);
 		filter.getExcludes().add("children");
-		getOut().print(JSON.toJSONString(model, filter));
+		getOut().print(JSON.toJSONString(d, filter));
 	}
 
 	@Override

@@ -37,8 +37,17 @@ public class TourCommon implements Serializable {
 	private Integer reportYear; // 申报年份
 	private String desc; // 描述
 	private User user;
+	private String type;
+	@Column(name="type_")
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	private List<TourDetail> details = new ArrayList<TourDetail>();// 详情
-	private Job job;// 企业类型
 	 
 
 	@Id
@@ -89,16 +98,7 @@ public class TourCommon implements Serializable {
 		this.status = status;
 	}
 
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="job_id_")
-	public Job getJob() {
-		return job;
-	}
-
-	public void setJob(Job job) {
-		this.job = job;
-	}
-
+	
 	@Column(name = "report_month_")
 	public Integer getReportMonth() {
 		return reportMonth;

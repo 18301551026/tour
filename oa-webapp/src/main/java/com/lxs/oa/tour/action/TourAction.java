@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import com.lxs.core.action.BaseAction;
 import com.lxs.core.common.SystemConstant;
 import com.lxs.core.common.page.PageResult;
+import com.lxs.oa.tour.common.FactoryTypeEnum;
 import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.common.StatisticTypeEnum;
 import com.lxs.oa.tour.domain.TourCommon;
@@ -38,18 +39,20 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "add", location = "/WEB-INF/jsp/tour/factory/add.jsp"),
 				@Result(name = "update", location = "/WEB-INF/jsp/tour/factory/update.jsp"),
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/noReportedList.jsp"),
-				@Result(name = "listAction", type = "redirect", location = "/tour/noReported!findPage.action?statisticType=${@com.lxs.oa.tour.common.StatisticTypeEnum@factory.value}&status=${@com.lxs.oa.tour.common.ReportStatusEnum@notReport.value}") }),
+				@Result(name = "listAction", type = "redirect", location = "/tour/noReported!findPage.action?statisticType=${@com.lxs.oa.tour.common.StatisticTypeEnum@factory.value}&status=${@com.lxs.oa.tour.common.StatusEnum@notReport.value}") }),
 		@Action(value = "districtList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/list.jsp") }),
 		@Action(value = "districtStatistic", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/statisticList.jsp") }),
 		@Action(value = "reported", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
-		@Action(value = "townStatistic", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp") }) })
+		@Action(value = "townStatistic", className = "tourAction", results = {
+				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
+				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/town/statisticDetail.jsp") }) })
 public class TourAction extends BaseAction<TourCommon> {
 	@Resource
 	private ITourService tourService;
-
+	private String deptType;
 	private String[] labelTexts;
 	private Long[] inputMoneys;
 	private String reprotYearAndMonth;
@@ -57,15 +60,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	private Long money;
 	private String startDate;
 	private String endDate;
-	private Long factoryId;
-
-	public Long getFactoryId() {
-		return factoryId;
-	}
-
-	public void setFactoryId(Long factoryId) {
-		this.factoryId = factoryId;
-	}
+	private String tourIds;
 
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
@@ -76,25 +71,22 @@ public class TourAction extends BaseAction<TourCommon> {
 			criteria.createAlias("user", "u");
 			criteria.add(Restrictions.eq("u.id", u.getId()));
 			criteria.add(Restrictions.eq("status", model.getStatus()));
+			if (null != deptType && deptType.trim().length() != 0) {
+				criteria.add(Restrictions.eq("type", deptType));
+			}
 
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.town.getValue())) { // 镇政府
 			if (model.getStatus().equals(StatusEnum.townList.getValue())) { // 列表
 				List<Long> userIds = new ArrayList<Long>();
-				if (null != factoryId) {// 通过页面选择企业查询
-					Dept d = baseService.get(Dept.class, factoryId);
-					for (User tempU : d.getUsers()) {// 企业中所有用户
+				u = baseService.get(User.class, u.getId());
+				List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+				for (Dept dept : list) {
+					for (User tempU : dept.getUsers()) {// 企业中所有用户
 						userIds.add(tempU.getId());
 					}
-				} else {// 没有选择特定企业是查询本镇下所有的企业下的所有用户
-					u = baseService.get(User.class, u.getId());
-					List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
-					for (Dept dept : list) {
-						for (User tempU : dept.getUsers()) {// 企业中所有用户
-							userIds.add(tempU.getId());
-						}
-					}
 				}
+
 				if (userIds.size() != 0) {
 					criteria.createAlias("user", "u");
 					criteria.add(Restrictions.in("u.id", userIds));
@@ -132,10 +124,10 @@ public class TourAction extends BaseAction<TourCommon> {
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
 		}
-		if (null != model.getJob() && null != model.getJob().getId()) {
-			criteria.createAlias("job", "j");
-			criteria.add(Restrictions.eq("j.id", model.getJob().getId()));
-		}
+		// if (null != deptType) {
+		// criteria.createAlias("user", "u");
+		// criteria.add(Restrictions.eq("u.dept.deptType", deptType));
+		// }
 		addDataCondition(criteria);
 	}
 
@@ -185,6 +177,11 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 	}
 
+	@Override
+	public void afterToUpdate(TourCommon e) {
+		reprotYearAndMonth = e.getReportYear() + "年" + e.getReportMonth() + "月";
+	}
+
 	/**
 	 * 镇府查询时添加条件
 	 * 
@@ -211,10 +208,12 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 
 	public String townStatisticList() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		townAddCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, start, pageSize);
+		PageResult page = tourService.findStatistic(criteria, u.getId());
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
@@ -249,10 +248,12 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 
 	public String districtStatisticList() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		districtAddCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, start, pageSize);
+		PageResult page = tourService.findStatistic(criteria, u.getId());
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
@@ -268,6 +269,17 @@ public class TourAction extends BaseAction<TourCommon> {
 		return LIST_ACTION;
 	}
 
+	@Override
+	public void beforToAdd() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		if (null != u.getDept() && null != u.getDept().getDeptType()) {
+			ActionContext.getContext().put("deptType",
+					u.getDept().getDeptType());
+		}
+	}
+
 	public List<Dept> getTownFactorys() {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
@@ -280,6 +292,19 @@ public class TourAction extends BaseAction<TourCommon> {
 		d.setMoney(money);
 		baseService.save(d);
 
+	}
+
+	public String townStatisticListToDetail() {
+		if (null != tourIds && tourIds.trim().length() != 0) {
+			String[] strs = tourIds.split(",");
+			List<TourCommon> list = new ArrayList<TourCommon>();
+			for (String s : strs) {
+				list.add(baseService.get(TourCommon.class,
+						Long.parseLong(s.trim())));
+			}
+			ActionContext.getContext().put("statisticList", list);
+		}
+		return "townStatisticListToDetail";
 	}
 
 	@Override
@@ -301,29 +326,19 @@ public class TourAction extends BaseAction<TourCommon> {
 		return "toDetail";
 	}
 
-	public List<Job> getUserJobs() {
-		User u = (User) ActionContext.getContext().getSession()
-				.get(SystemConstant.CURRENT_USER);
-		u = baseService.get(User.class, u.getId());
-		List<Job> jobs = new ArrayList<Job>();
-		for (Job j : u.getJobs()) {
-			jobs.add(j);
-		}
-		return jobs;
-	}
-
 	@Override
 	public void afterSave(TourCommon m) {
 		for (int i = 0; i < inputMoneys.length; i++) {
-			if (null != inputMoneys[i]) {
-				Long temp = inputMoneys[i];
-				String lbl = labelTexts[i];
-				TourDetail detail = new TourDetail();
-				detail.setCommon(m);
-				detail.setMoney(temp);
-				detail.setName(lbl);
-				baseService.add(detail);
+			Long temp = inputMoneys[i];
+			String lbl = labelTexts[i];
+			if (null == temp) {
+				temp = 0l;
 			}
+			TourDetail detail = new TourDetail();
+			detail.setCommon(m);
+			detail.setMoney(temp);
+			detail.setName(lbl);
+			baseService.add(detail);
 		}
 
 	}
@@ -389,6 +404,22 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getDeptType() {
+		return deptType;
+	}
+
+	public void setDeptType(String deptType) {
+		this.deptType = deptType;
+	}
+
+	public String getTourIds() {
+		return tourIds;
+	}
+
+	public void setTourIds(String tourIds) {
+		this.tourIds = tourIds;
 	}
 
 }

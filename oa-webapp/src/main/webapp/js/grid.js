@@ -13,7 +13,9 @@ $(function() {
 					alert('请选择删除的记录');
 				}
 			});
-
+	$("#backButton").click(function() {
+		history.go(-1);
+	});
 	$("#checkAllCheckBox").click(function() {
 		if ($(this).attr("checked")) {
 			$(":checkbox[name='ids']").attr("checked", true);

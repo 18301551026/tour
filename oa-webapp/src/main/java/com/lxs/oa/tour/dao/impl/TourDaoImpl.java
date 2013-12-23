@@ -13,6 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
 import com.lxs.core.common.page.PageResult;
+import com.lxs.oa.tour.common.FactoryTypeEnum;
 import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
@@ -25,8 +26,7 @@ public class TourDaoImpl implements ITourDao {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public PageResult findStatistic(DetachedCriteria criteria, int start,
-			int pageSize) {
+	public PageResult findStatistic(DetachedCriteria criteria, Long userId) {
 		PageResult page = new PageResult();
 		Criteria c = criteria.getExecutableCriteria(sessionFactory
 				.getCurrentSession());
@@ -36,41 +36,46 @@ public class TourDaoImpl implements ITourDao {
 				.uniqueResult();
 		page.setRowCount(rowCount);
 
-		// 一页数据
 		c.setProjection(null);
 		c.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-		List<TourCommon> list = c.setFirstResult(start).setMaxResults(pageSize)
-				.list();
+		List<TourCommon> list = c.list();// 所有数据
 		List<TownStatistic> tempList = new ArrayList<TownStatistic>();
-
-		List<Job> jobs = sessionFactory.getCurrentSession()
-				.createQuery("from Job").list();
-		for (Job job : jobs) {
-			TownStatistic ts = new TownStatistic();
-			ts.setFactoryType(job.getJobName());
-			Long tempTotalFactoryCount = 0l;
-			Long tempTotalPersonCount = 0l;
+		for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
+			String str = typeEnum.getValue();
 			Long tempTotalIncome = 0l;
-			for (TourCommon tourCommon : list) {
-				if (tourCommon.getJob().getId().equals(job.getId())) {
-					List<TourDetail> details = tourCommon.getDetails();
-					for (TourDetail tourDetail : details) {
-						tempTotalIncome += tourDetail.getMoney();
-					}
-					tempTotalFactoryCount += 1;
-					tempTotalPersonCount += tourCommon.getTotalPersonNum();
+			Long tempTotalPersonNum = 0l;
+			Long tempNum = 0l;
+			String tourIds = "";
+			for (TourCommon common : list) {
+				if (str.equals(common.getType())) {
+					tempTotalIncome += common.getTotalIncome();
+					tempTotalPersonNum += common.getTotalPersonNum();
+					tempNum += 1;
+					tourIds += common.getId() + ",";
 				}
 			}
-			ts.setTotalFactoryCount(tempTotalFactoryCount);
-			ts.setTotalPersonCount(tempTotalPersonCount);
-			ts.setTotalIncome(tempTotalIncome);
-
-			tempList.add(ts);
+			TownStatistic town = new TownStatistic();
+			town.setFactoryType(str);
+			if (tourIds.trim().length() != 0) {
+				town.setTourIds(tourIds.substring(0, tourIds.length() - 1));
+			}
+			town.setTotalPersonCount(tempTotalPersonNum);
+			town.setTotalIncome(tempTotalIncome);
+			town.setTotalFactoryCount(tempNum);
+			tempList.add(town);
 		}
 
 		page.setResult(tempList);
 
 		return page;
 	}
-	
+
+	public static void main(String[] args) {
+		// for (FactoryTypeEnum tempType : FactoryTypeEnum.values()) {
+		// tempType.getValue();
+		// }
+		String ids = "2,3,";
+		System.out.println(ids.substring(0, ids.length() - 1));
+	}
+
 }

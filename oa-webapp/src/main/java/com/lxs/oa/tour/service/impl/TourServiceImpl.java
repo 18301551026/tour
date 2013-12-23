@@ -15,9 +15,8 @@ public class TourServiceImpl implements ITourService {
 	private ITourDao tourDao;
 
 	@Override
-	public PageResult findStatistic(DetachedCriteria criteria, int start,
-			int pageSize) {
-		return tourDao.findStatistic(criteria, start, pageSize);
+	public PageResult findStatistic(DetachedCriteria criteria,Long userId) {
+		return tourDao.findStatistic(criteria,userId);
 	}
 
 }
