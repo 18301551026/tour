@@ -46,6 +46,12 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		@Action(value = "townSameCompare", className = "tourAction", results = {
+				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/sameCompareDetail.jsp") }),
+		@Action(value = "districtSameCompare", className = "tourAction", results = {
+				@Result(name = "list", location = "/WEB-INF/jsp/tour/district/sameCompareList.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/district/sameCompareDetail.jsp") }),
 		@Action(value = "townStatistic", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
 				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/town/statisticDetail.jsp") }) })
@@ -61,6 +67,14 @@ public class TourAction extends BaseAction<TourCommon> {
 	private String startDate;
 	private String endDate;
 	private String tourIds;
+
+	// 同比查看详情是用
+	private String nowIds;
+	private String lastIds;
+
+	// 分页使用
+	private Integer currentMonth = 0;
+	private Integer pageMonthNum = 1;
 
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
@@ -123,6 +137,9 @@ public class TourAction extends BaseAction<TourCommon> {
 
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
+		}
+		if (null != deptType && deptType.trim().length() != 0) {
+			criteria.add(Restrictions.eq("type", deptType));
 		}
 		// if (null != deptType) {
 		// criteria.createAlias("user", "u");
@@ -294,6 +311,80 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	}
 
+	/**
+	 * 镇同比
+	 * 
+	 * @return
+	 */
+	public String townSameCompare() {
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		PageResult page = tourService.findSameCompare(nowCriteria,
+				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
+		ActionContext.getContext().put(PAGE, page);
+		return LIST;
+	}
+
+	/**
+	 * 区同比
+	 * 
+	 * @return
+	 */
+	public String districtSameCompare() {
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		PageResult page = tourService.findSameCompare(nowCriteria,
+				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
+		ActionContext.getContext().put(PAGE, page);
+		return LIST;
+	}
+
+	public String sameCompareToDetail() {
+		List<TourCommon> list = new ArrayList<TourCommon>();
+		if (null != nowIds && nowIds.trim().length() != 0) {
+			String nowTempIds[] = nowIds.split(",");
+			for (String str : nowTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					list.add(common);
+				}
+			}
+		}
+		if (null != lastIds && lastIds.trim().length() != 0) {
+			String lastTempIds[] = lastIds.split(",");
+			for (String str : lastTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					list.add(common);
+				}
+			}
+		}
+		ActionContext.getContext().put("sameCompareDetaiList", list);
+		return "toDetail";
+	}
+
 	public String townStatisticListToDetail() {
 		if (null != tourIds && tourIds.trim().length() != 0) {
 			String[] strs = tourIds.split(",");
@@ -420,6 +511,38 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setTourIds(String tourIds) {
 		this.tourIds = tourIds;
+	}
+
+	public Integer getCurrentMonth() {
+		return currentMonth;
+	}
+
+	public void setCurrentMonth(Integer currentMonth) {
+		this.currentMonth = currentMonth;
+	}
+
+	public Integer getPageMonthNum() {
+		return pageMonthNum;
+	}
+
+	public void setPageMonthNum(Integer pageMonthNum) {
+		this.pageMonthNum = pageMonthNum;
+	}
+
+	public String getNowIds() {
+		return nowIds;
+	}
+
+	public void setNowIds(String nowIds) {
+		this.nowIds = nowIds;
+	}
+
+	public String getLastIds() {
+		return lastIds;
+	}
+
+	public void setLastIds(String lastIds) {
+		this.lastIds = lastIds;
 	}
 
 }

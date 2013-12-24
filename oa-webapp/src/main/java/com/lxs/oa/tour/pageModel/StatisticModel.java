@@ -1,6 +1,12 @@
 package com.lxs.oa.tour.pageModel;
 
-public class TownStatistic {
+/**
+ * 统计是页面用到的model
+ * 
+ * @author liuman
+ * 
+ */
+public class StatisticModel {
 	private String factoryType;// 企业类型
 	private Long totalFactoryCount;// 个数
 	private Long totalPersonCount; // 接待总人数

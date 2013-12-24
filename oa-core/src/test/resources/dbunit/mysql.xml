@@ -564,21 +564,21 @@
     <row>
       <value>64</value>
       <value/>
-      <value>报表</value>
+      <value>同比</value>
       <value>false</value>
       <value>2</value>
       <null/>
-      <value/>
+      <value>/oa/tour/townSameCompare!townSameCompare.action</value>
       <value>56</value>
     </row>
     <row>
       <value>65</value>
       <value/>
-      <value>报表</value>
+      <value>同比</value>
       <value>false</value>
       <value>2</value>
       <null/>
-      <value/>
+      <value>/oa/tour/districtSameCompare!districtSameCompare.action</value>
       <value>57</value>
     </row>
     <row>
@@ -613,7 +613,7 @@
       <value>1</value>
       <value>系统管理员</value>
       <value>admin</value>
-      <value>2</value>
+      <value>1</value>
     </row>
     <row>
       <value>2</value>
@@ -627,14 +627,14 @@
       <value>1</value>
       <value>冯威</value>
       <value>fw</value>
-      <null/>
+      <value>2</value>
     </row>
     <row>
       <value>4</value>
       <value>1</value>
       <value>马雷</value>
       <value>ml</value>
-      <null/>
+      <value>8</value>
     </row>
     <row>
       <value>5</value>
@@ -655,14 +655,14 @@
       <value>1</value>
       <value>张发涛</value>
       <value>zft</value>
-      <null/>
+      <value>10</value>
     </row>
     <row>
       <value>8</value>
-      <value>1</value>
+      <value>2</value>
       <value>李雅格</value>
       <value>lyg</value>
-      <null/>
+      <value>7</value>
     </row>
     <row>
       <value>9</value>
@@ -774,11 +774,11 @@
     </row>
     <row>
       <value>7</value>
-      <value>旅游住宿</value>
+      <value>这是民俗旅游</value>
       <value>企业</value>
-      <value>旅游住宿</value>
+      <value>民俗旅游</value>
       <null/>
-      <value>西红门镇旅游住宿</value>
+      <value>西红门镇民俗旅游</value>
       <value>2</value>
     </row>
     <row>
@@ -788,6 +788,24 @@
       <value>观光园</value>
       <null/>
       <value>西红门镇观光园</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>9</value>
+      <value>这是旅游住宿</value>
+      <value>企业</value>
+      <value>旅游住宿</value>
+      <null/>
+      <value>西红门镇旅游住宿</value>
+      <value>2</value>
+    </row>
+    <row>
+      <value>10</value>
+      <value>这是旅游风景</value>
+      <value>企业</value>
+      <value>旅游风景</value>
+      <null/>
+      <value>西红门镇旅游风景</value>
       <value>2</value>
     </row>
   </table>
@@ -1591,16 +1609,8 @@
       <value>54</value>
     </row>
     <row>
-      <value>1</value>
-      <value>55</value>
-    </row>
-    <row>
       <value>3</value>
       <value>55</value>
-    </row>
-    <row>
-      <value>1</value>
-      <value>56</value>
     </row>
     <row>
       <value>4</value>
@@ -1615,24 +1625,12 @@
       <value>57</value>
     </row>
     <row>
-      <value>1</value>
-      <value>58</value>
-    </row>
-    <row>
       <value>3</value>
       <value>58</value>
     </row>
     <row>
-      <value>1</value>
-      <value>59</value>
-    </row>
-    <row>
       <value>3</value>
       <value>59</value>
-    </row>
-    <row>
-      <value>1</value>
-      <value>60</value>
     </row>
     <row>
       <value>4</value>
@@ -1647,10 +1645,6 @@
       <value>62</value>
     </row>
     <row>
-      <value>1</value>
-      <value>64</value>
-    </row>
-    <row>
       <value>4</value>
       <value>64</value>
     </row>
@@ -1661,10 +1655,6 @@
     <row>
       <value>2</value>
       <value>65</value>
-    </row>
-    <row>
-      <value>1</value>
-      <value>66</value>
     </row>
     <row>
       <value>4</value>
@@ -1687,11 +1677,11 @@
       <value>1</value>
     </row>
     <row>
-      <value>4</value>
+      <value>3</value>
       <value>2</value>
     </row>
     <row>
-      <value>2</value>
+      <value>4</value>
       <value>3</value>
     </row>
     <row>

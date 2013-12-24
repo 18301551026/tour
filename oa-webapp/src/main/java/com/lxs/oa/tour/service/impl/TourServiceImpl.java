@@ -15,8 +15,14 @@ public class TourServiceImpl implements ITourService {
 	private ITourDao tourDao;
 
 	@Override
-	public PageResult findStatistic(DetachedCriteria criteria,Long userId) {
-		return tourDao.findStatistic(criteria,userId);
+	public PageResult findStatistic(DetachedCriteria criteria, Long userId) {
+		return tourDao.findStatistic(criteria, userId);
 	}
 
+	public PageResult findSameCompare(DetachedCriteria nowCriteria,
+			DetachedCriteria lastCriteria, String startDate, String endDate,
+			Integer currentMonth, Integer pageMonthNum) {
+		return tourDao.findSameCompare(nowCriteria, lastCriteria, startDate,
+				endDate, currentMonth, pageMonthNum);
+	}
 }

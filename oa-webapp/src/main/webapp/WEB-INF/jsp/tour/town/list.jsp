@@ -49,14 +49,14 @@
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
-					<tr>
+					<%-- <tr>
 						<Td class="control-label" style="width: 3%"><label
 							for="totalPersonNum">企业：</label>
 						<Td class="query_input" colspan="3"><s:select
 								list="townFactorys" id="factoryType"
 								cssClass="form-control validate[required]" headerKey=""
 								headerValue="全部" listKey="id" listValue="text" name="factoryId"></s:select></Td>
-					</tr>
+					</tr> --%>
 				</table>
 			</form>
 		</div>
@@ -66,19 +66,22 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-
 					<th>类型</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
+					<th>时间</th>
+					<th>部门</th>
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${job.jobName}</td>
+						<td>${type}</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
+						<td>${reportYear }年${reportMonth }月</td>
+						<td>${user.dept.text }</td>
 						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
 					</tr>
 				</s:iterator>
