@@ -16,6 +16,9 @@
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
+				<button id="reportButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 报表
+				</button>
 				<button id="queryButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
@@ -53,19 +56,17 @@
 			<thead>
 				<tr>
 					<th>时间</th>
-					<th colspan="2">个数</th>
+					<th>类型</th>
 					<th colspan="2">接待人次</th>
 					<th colspan="2">总收入&nbsp;<font color="green;">(万元)</font>
 					</th>
-					<th>类型</th>
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr align="center">
 					<Td></Td>
-					<td>本年</td>
-					<td>上一年</td>
+					<Td></Td>
 					<td>本年</td>
 					<td>上一年</td>
 					<td>本年</td>
@@ -75,15 +76,13 @@
 				<s:iterator value="#page.result">
 					<tr>
 						<td>${year }年${month}月</td>
-						<td>${nowTotalCount }</td>
-						<Td>${lastTotalCount }</Td>
+						<Td>${type }</Td>
 						<Td>${nowTotalPersonNum }</Td>
 						<Td>${lastTotalPersonNum }</Td>
 						<Td>${nowTotalIncome }</Td>
 						<Td>${lastTotalIncome }</Td>
-						<Td>${type }</Td>
 						<td><a
-							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
+							href="${ctx }/tour/districtSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

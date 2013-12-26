@@ -28,7 +28,7 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/townStatistic!townStatisticList.action"
+				action="${ctx}/tour/districtStatistic!districtStatisticList.action"
 				method="post">
 				<s:hidden name="status"></s:hidden>
 				<s:hidden name="statisticType"></s:hidden>
@@ -69,7 +69,8 @@
 						<td>${totalFactoryCount }</td>
 						<Td>${totalPersonCount }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="">详情</a></td>
+						<td><a
+							href="${ctx }/tour/townStatistic!townStatisticListToDetail.action?tourIds=${tourIds}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

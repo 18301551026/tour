@@ -9,32 +9,14 @@ package com.lxs.oa.tour.pageModel;
 public class SameCompareModel {
 	private Integer year;
 	private Integer month;
-	private Long nowTotalCount;// 本年相应月份总个数
-	private Long lastTotalCount;// 去年相应月份总个数
 	private Long nowTotalPersonNum;// 本年相应月份接待总人数
 	private Long lastTotalPersonNum;// 去年相应月份接待总人数
 	private Long nowTotalIncome;// 本年相应月份总收入
 	private Long lastTotalIncome;// 去年相应月份总收入
 	private String type;// 类型
-	
+
 	private String nowIds;
 	private String lastIds;
-
-	public Long getNowTotalCount() {
-		return nowTotalCount;
-	}
-
-	public void setNowTotalCount(Long nowTotalCount) {
-		this.nowTotalCount = nowTotalCount;
-	}
-
-	public Long getLastTotalCount() {
-		return lastTotalCount;
-	}
-
-	public void setLastTotalCount(Long lastTotalCount) {
-		this.lastTotalCount = lastTotalCount;
-	}
 
 	public Long getNowTotalPersonNum() {
 		return nowTotalPersonNum;

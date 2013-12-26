@@ -15,6 +15,17 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+	    <!-- jasperreports -->
+	     <dependency>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports</artifactId>
+		</dependency>
+	    <dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-jasperreports-plugin</artifactId>
+		</dependency>
+	     
+	     
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

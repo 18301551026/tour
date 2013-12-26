@@ -19,24 +19,25 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th>类型</th>
 					<th>子项名称</th>
-					<th>子项收入&nbsp;<font color="green">(万元)</font></th>
+					<th colspan="2">子项收入&nbsp;<font color="green">(万元)</font></th>
 					<th>时间</th>
-					<th>部门</th>
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach items="${sameCompareDetaiList }" var="com">
-					<c:forEach items="${com.details }" var="d">
-						<tr>
-							<td>${com.type }</td>
-							<td>${d.name }</td>
-							<Td>${d.money }</Td>
-							<td>${com.reportYear }年${com.reportMonth }月</td>
-							<td>${com.user.dept.text }</td>
-						</tr>
-					</c:forEach>
+				<tr align="center">
+					<Td></Td>
+					<td>本年</td>
+					<td>上一年</td>
+					<Td></Td>
+				</tr>
+				<c:forEach items="${sameCompareDetaiList }" var="d">
+					<tr>
+						<td>${d.name }</td>
+						<Td>${d.nowMoney }</Td>
+						<Td>${d.lastMoney }</Td>
+						<td>${d.time}</td>
+					</tr>
 				</c:forEach>
 			</tbody>
 		</table>

@@ -48,18 +48,18 @@ font {
 }
 </style>
 <script type="text/javascript">
-	$(function(){
-		$(".updateDetail").click(function(){
-			var detailId=$(this).attr("actionId");
-			var mon=$(this).prev().prev().val();
-			 $.ajax({
-				   type: "POST",
-				   url: ctx+"/tour/noReported!updateDetail.action",
-				   data: "detailId="+detailId+"&money="+mon,
-				   success: function(msg){
-				     alert("修改成功");
-				   }
-			}); 
+	$(function() {
+		$(".updateDetail").click(function() {
+			var detailId = $(this).attr("actionId");
+			var mon = $(this).prev().prev().val();
+			$.ajax({
+				type : "POST",
+				url : ctx + "/tour/noReported!updateDetail.action",
+				data : "detailId=" + detailId + "&money=" + mon,
+				success : function(msg) {
+					alert("修改成功");
+				}
+			});
 		});
 	})
 </script>
@@ -99,7 +99,7 @@ font {
 						placeholder="请输入总收入" cssClass="form-control validate[required]"
 						id="totalIncome"></s:textfield> <font>(万元)</font></Td>
 			</tr>
-			<c:forEach items="${details }" var="d">
+			<%-- <c:forEach items="${beans }" var="d" >
 				<Tr>
 					<Td class="control-label"><label for="voteOptions">${d.name }：</label></Td>
 					<Td class="query_input" colspan="3"><input
@@ -109,6 +109,30 @@ font {
 						<input class="btn btn-info btn-xs pull-right updateDetail" actionId="${d.id }"
 						value="修改" style="margin-top: 2px;" type="button" /></Td>
 				</Tr>
+			</c:forEach> --%>
+			<c:forEach begin="0" end="${detailNum-1 }" step="1" var="i">
+				<c:if test="${i%2==0 }">
+					<tr>
+				</c:if>
+				<c:if test="${i%2==0 }">
+					<Td class="control-label"><label for="voteOptions">${beans[i].name }：</label></Td>
+					<Td class="query_input"><input type="hidden"
+						name="beans[${i }].id" value="${beans[i].id }"> <input
+						name="beans[${i }].money" placeholder="请输入${beans[i].name }"
+						type="text" class="form-control validate[required] pull-left"
+						value="${beans[i].money }" style="margin-bottom: 2px;"> <font>(万元)</font></Td>
+				</c:if>
+				<c:if test="${i%2!=0 }">
+					<Td class="control-label"><label for="voteOptions">${beans[i].name }：</label></Td>
+					<Td class="query_input"><input type="hidden"
+						name="beans[${i }].id" value="${beans[i].id }"> <input
+						name="beans[${i }].money" placeholder="请输入${beans[i].name }"
+						type="text" class="form-control validate[required] pull-left"
+						value="${beans[i].money }" style="margin-bottom: 2px;"> <font>(万元)</font></Td>
+				</c:if>
+				<c:if test="${i%2!=0 }">
+					</tr>
+				</c:if>
 			</c:forEach>
 			<tr>
 				<Td class="control-label"><label for="desc">备注：</label>

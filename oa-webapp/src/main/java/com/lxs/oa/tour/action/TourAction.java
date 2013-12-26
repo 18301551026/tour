@@ -2,6 +2,7 @@ package com.lxs.oa.tour.action;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -11,13 +12,16 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.mapping.Array;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.lxs.core.action.BaseAction;
+import com.lxs.core.common.BeanUtil;
 import com.lxs.core.common.SystemConstant;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.oa.tour.common.FactoryTypeEnum;
@@ -25,6 +29,7 @@ import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.common.StatisticTypeEnum;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
+import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.Job;
@@ -75,6 +80,9 @@ public class TourAction extends BaseAction<TourCommon> {
 	// 分页使用
 	private Integer currentMonth = 0;
 	private Integer pageMonthNum = 1;
+
+	// 修改的时候使用
+	private Collection<TourDetail> beans;
 
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
@@ -170,7 +178,7 @@ public class TourAction extends BaseAction<TourCommon> {
 
 			criteria.add(Restrictions.and(c3, c4));
 		} else if (null != startDate && startDate.length() != 0
-				&& endDate == null) {// 有开始时间没结束时间
+				&& (endDate == null || endDate.trim().length() == 0)) {// 有开始时间没结束时间
 			Criterion c1 = Restrictions.ge("reportYear",
 					Integer.parseInt(startDate.substring(0, 4).trim()));
 			Criterion c2 = Restrictions.ge("reportMonth",
@@ -184,19 +192,31 @@ public class TourAction extends BaseAction<TourCommon> {
 
 			criteria.add(Restrictions.and(c3, c4));
 
-		} else if (null == startDate && endDate != null
-				&& endDate.length() != 0) {// 有开始时间没结束时间
+		} else if ((null == startDate || startDate.trim().length() == 0)
+				&& endDate != null && endDate.length() != 0) {// 有开始时间没结束时间
 			Criterion c5 = Restrictions.le("reportYear",
 					Integer.parseInt(endDate.substring(0, 4).trim()));
 			Criterion c6 = Restrictions.le("reportMonth",
 					Integer.parseInt(endDate.substring(5, 7).trim()));
 			criteria.add(Restrictions.and(c5, c6));
+		} else if ((null == startDate || startDate.trim().length() == 0)
+				&& null == endDate || endDate.trim().length() == 0) {
+			Calendar calendar = Calendar.getInstance();// 默认为上个月
+			Criterion c1 = Restrictions.eq("reportYear",
+					calendar.get(calendar.YEAR));
+			Criterion c2 = Restrictions.eq("reportMonth",
+					calendar.get(calendar.MONTH));
+			criteria.add(Restrictions.and(c1, c2));
+			startDate = calendar.get(calendar.YEAR) + "年"
+					+ (calendar.get(calendar.MONTH)) + "月";
 		}
 	}
 
 	@Override
 	public void afterToUpdate(TourCommon e) {
 		reprotYearAndMonth = e.getReportYear() + "年" + e.getReportMonth() + "月";
+		beans = e.getDetails();
+		ActionContext.getContext().put("detailNum", e.getDetails().size());
 	}
 
 	/**
@@ -221,16 +241,19 @@ public class TourAction extends BaseAction<TourCommon> {
 		} else {
 			criteria.add(Restrictions.isNull("user"));
 		}
-		addDataCondition(criteria);
+
 	}
 
 	public String townStatisticList() {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		townAddCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, u.getId());
+		addDataCondition(criteria);
+		PageResult page = tourService.findStatistic(criteria, u.getId(), u
+				.getDept().getChildren());
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
@@ -261,16 +284,23 @@ public class TourAction extends BaseAction<TourCommon> {
 		} else {
 			criteria.add(Restrictions.isNull("user"));
 		}
-		addDataCondition(criteria);
+
 	}
 
 	public String districtStatisticList() {
-		User u = (User) ActionContext.getContext().getSession()
+		User user = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
+		user = baseService.get(User.class, user.getId());
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		districtAddCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, u.getId());
+		addDataCondition(criteria);
+		List<Dept> deptList = new ArrayList<Dept>();
+		for (Dept d1 : user.getDept().getChildren()) {
+			deptList.addAll(d1.getChildren());
+		}
+		PageResult page = tourService.findStatistic(criteria, user.getId(),
+				deptList);
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
@@ -332,6 +362,13 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findSameCompare(nowCriteria,
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
+		
+		if ((null == startDate || startDate.trim().length() == 0)
+				&& (null == endDate || endDate.trim().length() == 0)) {
+			Calendar calendar = Calendar.getInstance();// 默认为上个月
+			startDate = calendar.get(calendar.YEAR) + "年"
+					+ (calendar.get(calendar.MONTH)) + "月";
+		}
 		return LIST;
 	}
 
@@ -356,18 +393,25 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findSameCompare(nowCriteria,
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
+		if ((null == startDate || startDate.trim().length() == 0)
+				&&( null == endDate || endDate.trim().length() == 0)) {
+			Calendar calendar = Calendar.getInstance();// 默认为上个月
+			startDate = calendar.get(calendar.YEAR) + "年"
+					+ (calendar.get(calendar.MONTH)) + "月";
+		}
 		return LIST;
 	}
 
 	public String sameCompareToDetail() {
-		List<TourCommon> list = new ArrayList<TourCommon>();
+		List<TourCommon> nowList = new ArrayList<TourCommon>();
+		List<TourCommon> lastList = new ArrayList<TourCommon>();
 		if (null != nowIds && nowIds.trim().length() != 0) {
 			String nowTempIds[] = nowIds.split(",");
 			for (String str : nowTempIds) {
 				if (null != str) {
 					TourCommon common = baseService.get(TourCommon.class,
 							Long.parseLong(str));
-					list.add(common);
+					nowList.add(common);
 				}
 			}
 		}
@@ -377,11 +421,57 @@ public class TourAction extends BaseAction<TourCommon> {
 				if (null != str) {
 					TourCommon common = baseService.get(TourCommon.class,
 							Long.parseLong(str));
-					list.add(common);
+					lastList.add(common);
 				}
 			}
 		}
-		ActionContext.getContext().put("sameCompareDetaiList", list);
+		List<String> detailNames = new ArrayList<String>();
+		if (null != nowList && nowList.size() != 0) {
+			for (TourDetail d : nowList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		if (detailNames.size() == 0 && null != lastList && lastList.size() != 0) {
+			for (TourDetail d : lastList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		List<SameCompareDetailModel> modelDetails = new ArrayList<SameCompareDetailModel>();
+		for (String str : detailNames) {
+			SameCompareDetailModel tempDetail = new SameCompareDetailModel();
+			Long nowMoney = 0l;
+			Long lastMoney = 0l;
+			String time = null;
+			for (TourCommon comm : nowList) {
+				for (TourDetail d : comm.getDetails()) {
+					if (str.equals(d.getName())) {
+						if (null == time) {
+							time = comm.getReportYear() + "年"
+									+ comm.getReportMonth() + "月";
+						}
+						nowMoney += d.getMoney();
+					}
+				}
+			}
+			for (TourCommon comm : lastList) {
+				for (TourDetail d : comm.getDetails()) {
+					if (str.equals(d.getName())) {
+						if (null == time) {
+							time = (comm.getReportYear() + 1) + "年"
+									+ comm.getReportMonth() + "月";
+						}
+						lastMoney += d.getMoney();
+					}
+				}
+			}
+			tempDetail.setNowMoney(nowMoney);
+			tempDetail.setLastMoney(lastMoney);
+			tempDetail.setName(str);
+			tempDetail.setTime(time);
+			modelDetails.add(tempDetail);
+		}
+
+		ActionContext.getContext().put("sameCompareDetaiList", modelDetails);
 		return "toDetail";
 	}
 
@@ -393,22 +483,57 @@ public class TourAction extends BaseAction<TourCommon> {
 				list.add(baseService.get(TourCommon.class,
 						Long.parseLong(s.trim())));
 			}
-			ActionContext.getContext().put("statisticList", list);
+			List<TourDetail> details = new ArrayList<TourDetail>();
+			List<String> detailNames = new ArrayList<String>();
+			if (null != list && list.size() != 0) {
+				for (TourDetail d : list.get(0).getDetails()) {
+					detailNames.add(d.getName());
+				}
+
+				for (String name : detailNames) {
+					TourDetail tempD = new TourDetail();
+					Long money = 0l;
+					for (TourCommon com : list) {
+						for (TourDetail d : com.getDetails()) {
+							if (name.equals(d.getName())) {
+								money += d.getMoney();
+								break;
+							}
+						}
+					}
+					tempD.setMoney(money);
+					tempD.setName(name);
+					details.add(tempD);
+				}
+			}
+			ActionContext.getContext().put("statisticDetails", details);
 		}
 		return "townStatisticListToDetail";
 	}
 
 	@Override
 	public void beforeSave(TourCommon model) {
-		User u = (User) ActionContext.getContext().getSession()
-				.get(SystemConstant.CURRENT_USER);
-		model.setReportDate(new Date());
-		model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(0, 4)
-				.trim()));
-		model.setReportMonth(Integer.parseInt(reprotYearAndMonth
-				.substring(5, 7).trim()));
-		model.setUser(u);
-		model.setStatus(StatusEnum.notReport.getValue());
+		if (null == beans || beans.size() == 0) {
+			User u = (User) ActionContext.getContext().getSession()
+					.get(SystemConstant.CURRENT_USER);
+			model.setReportDate(new Date());
+			model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(
+					0, 4).trim()));
+			model.setReportMonth(Integer.parseInt(reprotYearAndMonth.substring(
+					5, 7).trim()));
+			model.setUser(u);
+			model.setStatus(StatusEnum.notReport.getValue());
+		} else {
+			for (TourDetail d : beans) {
+				if (null != d && null != d.getId()) {
+					TourDetail tempDetail = baseService.get(TourDetail.class,
+							d.getId());
+					tempDetail.setMoney(d.getMoney());
+					baseService.update(tempDetail);
+
+				}
+			}
+		}
 	}
 
 	public String toDetail() {
@@ -419,17 +544,19 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	@Override
 	public void afterSave(TourCommon m) {
-		for (int i = 0; i < inputMoneys.length; i++) {
-			Long temp = inputMoneys[i];
-			String lbl = labelTexts[i];
-			if (null == temp) {
-				temp = 0l;
+		if (null == beans || beans.size() == 0) {
+			for (int i = 0; i < inputMoneys.length; i++) {
+				Long temp = inputMoneys[i];
+				String lbl = labelTexts[i];
+				if (null == temp) {
+					temp = 0l;
+				}
+				TourDetail detail = new TourDetail();
+				detail.setCommon(m);
+				detail.setMoney(temp);
+				detail.setName(lbl);
+				baseService.add(detail);
 			}
-			TourDetail detail = new TourDetail();
-			detail.setCommon(m);
-			detail.setMoney(temp);
-			detail.setName(lbl);
-			baseService.add(detail);
 		}
 
 	}
@@ -543,6 +670,14 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setLastIds(String lastIds) {
 		this.lastIds = lastIds;
+	}
+
+	public Collection<TourDetail> getBeans() {
+		return beans;
+	}
+
+	public void setBeans(Collection<TourDetail> beans) {
+		this.beans = beans;
 	}
 
 }

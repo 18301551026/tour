@@ -21,22 +21,16 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th>名称</th>
-					<th>接待人数</th>
+					<th>子项名称</th>
 					<th>收入&nbsp;<font color="green">(万元)</font></th>
-					<Th>申报时间</Th>
-					<th>操作</th>
+					
 				</tr>
 			</thead>
 			<tbody>
-				<s:iterator value="statisticList">
+				<s:iterator value="statisticDetails">
 					<tr>
-						<td>${user.dept.text }</td>
-						<td>${totalPersonNum }</td>
-						<td>${totalIncome }</td>
-						<td>${reportYear }年${reportMonth}月</td>
-						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a>
-						</td>
+						<td>${name }</td>
+						<td>${money }</td>
 					</tr>
 				</s:iterator>
 			</tbody>
