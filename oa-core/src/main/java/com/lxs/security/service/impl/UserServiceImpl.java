@@ -4,6 +4,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.lxs.core.cache.ClearCache;
 import com.lxs.core.dao.IBaseDao;
 import com.lxs.security.dao.IUserDao;
@@ -12,9 +14,10 @@ import com.lxs.security.domain.Job;
 import com.lxs.security.domain.Role;
 import com.lxs.security.domain.User;
 import com.lxs.security.service.IUserService;
+import com.lxs.security.service.IUserServiceWs;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements IUserService, IUserServiceWs {
 	
 	@Resource
 	private IUserDao userDao;
@@ -25,7 +28,7 @@ public class UserServiceImpl implements IUserService {
 	public User login(String userName, String password) {
 		return userDao.login(userName, password);
 	}
-
+	
 	@Override
 	public boolean validateAuth(Long userId, String path) {
 		return userDao.validateAuth(userId, path);
@@ -51,8 +54,6 @@ public class UserServiceImpl implements IUserService {
 		baseDao.save(role);		
 	}
 
-	
-
 	@Override
 	public void addJob(Long jobId, Long userId) {
 		User user = baseDao.get(User.class, userId);
@@ -68,5 +69,13 @@ public class UserServiceImpl implements IUserService {
 		user.getJobs().remove(job);
 		baseDao.save(user);		
 	}
+
+	@Override
+	public String loginWs(String userName, String password) {
+		User user = userDao.login(userName, password);
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter("id", "dept", "deptType", "realName");
+		return JSON.toJSONString(user, filter);
+	}
+
 
 }

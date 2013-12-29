@@ -16,13 +16,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
 
 
 @Entity
 @Table(name = "user_")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@JSONType(ignores = "hibernateLazyInitializer")
 public class User implements Serializable {
 	/**
 	 * 
@@ -84,20 +89,24 @@ public class User implements Serializable {
 	 */
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	@JSONField(serialize = false)
 	public Set<Role> getRoles() {
 		return roles;
 	}
-
+	
+	@JSONField(deserialize = false)
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_job_", joinColumns = { @JoinColumn(name = "user_id_") }, inverseJoinColumns = { @JoinColumn(name = "job_id_") })
+	@JSONField(serialize = false)
 	public Set<Job> getJobs() {
 		return jobs;
 	}
 
+	@JSONField(deserialize = false)
 	public void setJobs(Set<Job> jobs) {
 		this.jobs = jobs;
 	}

@@ -22,6 +22,7 @@
 		<oracle.version>11g</oracle.version>
 		<c3p0.version>0.9.5-pre1</c3p0.version>
 		<jasperreports.version>5.5.0</jasperreports.version>
+		<cxf.version>3.0.0-milestone1</cxf.version>
 	</properties>
 
 	<scm>
@@ -30,7 +31,7 @@
 		<url>https://dadi--20130610n/svn/project/oa-parent/trunk</url>
 	</scm>
 
-	<repositories>
+	<repositories>	
 		<repository>
 			<id>activiti</id>
 			<url>https://maven.alfresco.com/nexus/content/groups/public</url>
@@ -56,6 +57,17 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- cxf -->
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-frontend-jaxws</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-transports-http</artifactId>
+				<version>${cxf.version}</version>
+			</dependency>		
 		    <!--jasperreports  -->
 		    <dependency>
 			    <groupId>net.sf.jasperreports</groupId>
