@@ -11,12 +11,24 @@ public class SameCompareModel {
 	private Integer month;
 	private Long nowTotalPersonNum;// 本年相应月份接待总人数
 	private Long lastTotalPersonNum;// 去年相应月份接待总人数
-	private Long nowTotalIncome;// 本年相应月份总收入
-	private Long lastTotalIncome;// 去年相应月份总收入
+	private Double nowTotalIncome;// 本年相应月份总收入
+	private Double lastTotalIncome;// 去年相应月份总收入
 	private String type;// 类型
 
 	private String nowIds;
 	private String lastIds;
+	public SameCompareModel() {
+	}
+	
+	public SameCompareModel(Long nowTotalPersonNum, Long lastTotalPersonNum,
+			Double nowTotalIncome, Double lastTotalIncome, String type) {
+		super();
+		this.nowTotalPersonNum = nowTotalPersonNum;
+		this.lastTotalPersonNum = lastTotalPersonNum;
+		this.nowTotalIncome = nowTotalIncome;
+		this.lastTotalIncome = lastTotalIncome;
+		this.type = type;
+	}
 
 	public Long getNowTotalPersonNum() {
 		return nowTotalPersonNum;
@@ -32,22 +44,6 @@ public class SameCompareModel {
 
 	public void setLastTotalPersonNum(Long lastTotalPersonNum) {
 		this.lastTotalPersonNum = lastTotalPersonNum;
-	}
-
-	public Long getNowTotalIncome() {
-		return nowTotalIncome;
-	}
-
-	public void setNowTotalIncome(Long nowTotalIncome) {
-		this.nowTotalIncome = nowTotalIncome;
-	}
-
-	public Long getLastTotalIncome() {
-		return lastTotalIncome;
-	}
-
-	public void setLastTotalIncome(Long lastTotalIncome) {
-		this.lastTotalIncome = lastTotalIncome;
 	}
 
 	public String getType() {
@@ -90,4 +86,21 @@ public class SameCompareModel {
 		this.lastIds = lastIds;
 	}
 
+	public Double getNowTotalIncome() {
+		return nowTotalIncome;
+	}
+
+	public void setNowTotalIncome(Double nowTotalIncome) {
+		this.nowTotalIncome = nowTotalIncome;
+	}
+
+	public Double getLastTotalIncome() {
+		return lastTotalIncome;
+	}
+
+	public void setLastTotalIncome(Double lastTotalIncome) {
+		this.lastTotalIncome = lastTotalIncome;
+	}
+
+	
 }

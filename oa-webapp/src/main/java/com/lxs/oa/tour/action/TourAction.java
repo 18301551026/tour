@@ -1,5 +1,8 @@
 package com.lxs.oa.tour.action;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,17 +13,29 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRHtmlExporter;
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.util.FileBufferedOutputStream;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -40,11 +55,12 @@ import com.lxs.oa.tour.common.StatisticTypeEnum;
 import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
+import com.lxs.oa.tour.pageModel.SameCompareChartModel;
 import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
+import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
-import com.lxs.security.domain.Job;
 import com.lxs.security.domain.User;
 import com.opensymphony.xwork2.ActionContext;
 
@@ -63,6 +79,8 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		@Action(value = "townChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
 		@Action(value = "townSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/sameCompareDetail.jsp") }),
@@ -102,6 +120,64 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	// 保存报表类型
 	private String reprotType;
+
+	/**
+	 * 图表
+	 */
+	/**
+	 * 镇同比图表
+	 */
+	public String townChart() {
+		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
+		list.add(new SameCompareModel(23l, 34l, 456d, 678d, "观光园"));
+		list.add(new SameCompareModel(24l, 35l, 455d, 677d, "民俗旅游"));
+		list.add(new SameCompareModel(25l, 36l, 454d, 676d, "旅游风景"));
+		list.add(new SameCompareModel(26l, 37l, 453d, 675d, "旅游住宿"));
+		list.add(new SameCompareModel(27l, 38l, 452d, 674d, "工业旅游"));
+
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		List<SameCompareChartModel> modelList = tourService.getCharts(
+				nowCriteria, lastCriteria, startDate, endDate, currentMonth,
+				pageMonthNum);
+		ActionContext.getContext().put("myList", modelList);
+
+		return "html";
+	}
+
+	/**
+	 * 区同比图表
+	 */
+	public String districtChart() {
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		List<SameCompareChartModel> modelList = tourService.getCharts(
+				nowCriteria, lastCriteria, startDate, endDate, currentMonth,
+				pageMonthNum);
+		ActionContext.getContext().put("myList", modelList);
+
+		return "html";
+	}
 
 	/**
 	 * 导出数据
@@ -162,10 +238,10 @@ public class TourAction extends BaseAction<TourCommon> {
 		u = baseService.get(User.class, u.getId());
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, u.getDept().getChildren());
-		// 报表参数
+
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
-
+		// 报表参数
 		addParameters();
 
 		FileBufferedOutputStream fbos = new FileBufferedOutputStream();

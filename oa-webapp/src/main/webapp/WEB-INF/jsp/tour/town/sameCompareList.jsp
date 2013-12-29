@@ -12,12 +12,26 @@
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
+<script type="text/javascript">
+	$(
+			function() {
+				$("#pillarButton").click(
+						function() {
+							$("#queryForm").attr("action",
+									ctx + "/tour/chart!townChart.action")
+							$("#queryForm").submit();
+						})
+			})
+</script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				
-				<button id="queryButton" class="btn btn-info">
+				<button id="pillarButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 柱形图展示
+				</button>
+				<button id="queryButton" class="btn btn-info"
+					actionUrl="${ctx}/tour/townSameCompare!townSameCompare.action">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
 			</div>
@@ -58,7 +72,7 @@
 					<th colspan="2">接待人次</th>
 					<th colspan="2">总收入&nbsp;<font color="green;">(万元)</font>
 					</th>
-					
+
 					<th>操作</th>
 				</tr>
 			</thead>
