@@ -30,7 +30,7 @@
 		<s:hidden name="id"></s:hidden>
 		<table class="formTable table">
 			<tr>
-				<Td class="control-label"><label for="url">访问地址：</label></Td>
+				<Td class="control-label" style="width: 3%;"><label for="url">访问地址：</label></Td>
 				<Td class="query_input" colspan="3"><s:textfield name="url"
 						placeholder="请输入访问地址" cssClass="form-control validate[required]"
 						id="url"></s:textfield></Td>

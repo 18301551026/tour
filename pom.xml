@@ -22,6 +22,7 @@
 		<oracle.version>11g</oracle.version>
 		<c3p0.version>0.9.5-pre1</c3p0.version>
 		<jasperreports.version>5.5.0</jasperreports.version>
+		<poi.version>3.7</poi.version>
 	</properties>
 
 	<scm>
@@ -62,6 +63,12 @@
 			    <artifactId>jasperreports</artifactId>
 			    <version>${jasperreports.version}</version>
 			    <type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>${poi.version}</version>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 			    <groupId>org.apache.struts</groupId>

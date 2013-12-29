@@ -7,9 +7,10 @@
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
 <%@ include file="/common/include-jquery-easyui.jsp"%>
-<script type="text/javascript" src="${ctx }/js/edit.js"></script>
 <%@ include file="/common/include-bootstap.jsp"%>
 <%@ include file="/common/include-jquery-validation.jsp"%>
+<%@ include file="/common/include-jquery-kindeditor.jsp"%>
+<script type="text/javascript" src="${ctx }/js/edit2Editor.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <script type="text/javascript">
@@ -18,8 +19,9 @@
 			url : ctx + "/security/dept!getAllDept.action",
 			id : "id",
 			lines : true,
-			width : 550
+			width : 350
 		});
+		$(".panel .combo-p").css("width",'362px');
 	})
 </script>
 <body class="editBody">
@@ -58,6 +60,11 @@
 					class="validate[required]">
 				</select></Td>
 			</tr>
+			<tr>
+				<Td class="control-label"><label for="desc">描述：</label></Td>
+				<Td class="query_input" colspan="3"><s:textarea name="desc"></s:textarea>
+				</Td>
+			</tr>
 		</table>
 	</form>
 </body>
@@ -77,13 +84,14 @@
 	vertical-align: middle;
 	width: 100%;
 }
-.panel .combo-p{
-	margin-left: 6px;
+
+.panel .combo-p {
+	width: 362px;
 }
+
 .combo-value {
 	border: 1px solid #CCCCCC;
 }
-
-
 </style>
+
 </html>

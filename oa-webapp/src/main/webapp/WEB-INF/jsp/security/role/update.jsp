@@ -30,12 +30,11 @@
 		<s:hidden name="id"></s:hidden>
 		<table class="formTable table">
 			<tr>
-				<Td class="control-label"><label for="roleName">角色名称：</label></Td>
-				<Td class="query_input" colspan="2"><s:textfield
+				<Td class="control-label" style="width: 3%"><label for="roleName">角色名称：</label></Td>
+				<Td class="query_input" colspan="3"><s:textfield
 						name="roleName" placeholder="请输入角色名称"
 						cssClass="form-control validate[required]" id="roleName"></s:textfield></Td>
 			</tr>
-
 		</table>
 	</form>
 	<div style="width: 50%; float: left;">

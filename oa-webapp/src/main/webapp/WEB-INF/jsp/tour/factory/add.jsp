@@ -22,7 +22,7 @@
 	line-height: 34px;
 	padding: 0;
 	text-align: right;
-	width: 10%;
+	width: 16%;
 }
 
 .form-control {
@@ -39,7 +39,7 @@
 	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
 		ease-in-out 0s;
 	vertical-align: middle;
-	width: 90%;
+	width: 85%;
 }
 
 font {
@@ -91,34 +91,37 @@ font {
 					<Td class="query_input"><s:textfield name="inputMoneys"
 							placeholder="请输入门票收入" cssClass="form-control validate[required]"
 							id="visitTicket"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitPlant">纯种植收入：</label>
-						<input type="hidden" name="labelTexts" value="纯种植收入" /></Td>
+					<Td class="control-label"><label for="visitPlant">纯种植、养殖园收入：</label>
+						<input type="hidden" name="labelTexts" value="纯种植、养殖园收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入纯种植收入" cssClass="form-control validate[required]"
-							id="visitPlant"></s:textfield> <font>(万元)</font></Td>
+							placeholder="请输入纯种植、养殖园收入"
+							cssClass="form-control validate[required]" id="visitPlant"></s:textfield>
+						<font>(万元)</font></Td>
 				</tr>
 				<tr>
-					<Td class="control-label"><label for="visitCultivation">养殖园收入：</label>
-						<input type="hidden" name="labelTexts" value="养殖收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入养殖园收入" cssClass="form-control validate[required]"
-							id="visitCultivation"></s:textfield> <font>(万元)</font></Td>
 					<Td class="control-label"><label for="visitPick">采摘收入：</label>
 						<input type="hidden" name="labelTexts" value="采摘收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
 							placeholder="请输入采摘收入" cssClass="form-control validate[required]"
 							id="visitPick"></s:textfield> <font>(万元)</font></Td>
+					<Td class="control-label"><label for="visitPick">设施地采摘收入：</label>
+						<input type="hidden" name="labelTexts" value="设施地采摘收入" /></Td>
+					<Td class="query_input"><s:textfield name="inputMoneys"
+							placeholder="请输入设施地采摘收入"
+							cssClass="form-control validate[required]" id="visitPick"></s:textfield>
+						<font>(万元)</font></Td>
 				</tr>
 				<tr>
-					<Td class="control-label"><label for="visitSellProduce">农产品收入：</label>
-						<input type="hidden" name="labelTexts" value="农产品收入" /></Td>
+					<Td class="control-label"><label for="visitSellProduce">出售农产品收入：</label>
+						<input type="hidden" name="labelTexts" value="出售农产品收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入农产品收入" cssClass="form-control validate[required]"
-							id="visitSellProduce"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitSellOther">其他商品收入：</label>
-						<input type="hidden" name="labelTexts" value="其他商品收入" /></Td>
+							placeholder="请输入出售农产品收入"
+							cssClass="form-control validate[required]" id="visitSellProduce"></s:textfield>
+						<font>(万元)</font></Td>
+					<Td class="control-label"><label for="visitSellOther">出售其他商品收入：</label>
+						<input type="hidden" name="labelTexts" value="出售其他商品收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入其他商品收入"
+							placeholder="请输入出售其他商品收入"
 							cssClass="form-control validate[required]" id="visitSellOther"></s:textfield>
 						<font>(万元)</font></Td>
 				</tr>
@@ -153,32 +156,30 @@ font {
 					<Td class="query_input" colspan="3"><s:textfield
 							name="inputMoneys" placeholder="请输入其它收入"
 							cssClass="form-control validate[required]" id="visitOther"
-							cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
+							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
 				</tr>
-
 			</c:if>
 			<!-- 民俗 -->
 			<c:if test="${deptType=='民俗旅游' }">
 				<tr>
-					<Td class="control-label"><label for="customSellAndProcess">出售和加工收入：</label>
-						<input type="hidden" name="labelTexts" value="出售和加工收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售和加工收入"
+					<Td class="control-label"><label for="customSellAndProcess">出售和加工自农产品收入：</label>
+						<input type="hidden" name="labelTexts" value="出售和加工自农产品收入" /></Td>
+					<Td class="query_input" colspan="3"><s:textfield
+							name="inputMoneys" placeholder="请输入出售和加工自农产品收入"
 							cssClass="form-control validate[required]"
-							id="customSellAndProcess"></s:textfield> <font>(万元)</font></Td>
+							id="customSellAndProcess" cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
+				</tr>
+				<tr>
 					<Td class="control-label"><label for="customRepast">餐饮收入：</label>
 						<input type="hidden" name="labelTexts" value="餐饮收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
 							placeholder="请输入餐饮收入" cssClass="form-control validate[required]"
 							id="customRepast"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label" width="3%"><label for="customLive">住宿收入：</label>
+					<Td class="control-label"><label for="customLive">住宿收入：</label>
 						<input type="hidden" name="labelTexts" value="住宿收入" /></Td>
-					<Td class="query_input" colspan="3"><s:textfield
-							name="inputMoneys" placeholder="请输入住宿收入"
-							cssClass="form-control validate[required]" id="customLive"
-							cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
+					<Td class="query_input"><s:textfield name="inputMoneys"
+							placeholder="请输入住宿收入" cssClass="form-control validate[required]"
+							id="customLive" cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
 				</tr>
 			</c:if>
 			<!-- 旅游景区 -->
@@ -203,7 +204,7 @@ font {
 					<Td class="query_input" colspan="3"><s:textfield
 							name="inputMoneys" placeholder="请输入餐饮收入"
 							cssClass="form-control validate[required]" id="jingQuRepast"
-							cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
+							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
 				</tr>
 			</c:if>
 			<!-- 旅游住宿 -->
@@ -227,7 +228,7 @@ font {
 					<Td class="query_input" colspan="3"><s:textfield
 							name="inputMoneys" placeholder="请输入餐饮收入"
 							cssClass="form-control validate[required]" id="liveRepast"
-							cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
+							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
 				</tr>
 			</c:if>
 			<!-- 工业旅游 -->

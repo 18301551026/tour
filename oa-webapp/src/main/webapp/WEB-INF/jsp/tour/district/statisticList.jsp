@@ -12,11 +12,39 @@
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
+<script type="text/javascript">
+		$(function() {
+			$("#reportHtmlButton").click(function() {
+				$("#reprotType").val('html');
+				$("#queryForm").attr("action",ctx+"/tour/export!districtExportXlsOaHtml.action")
+				$("#queryForm").submit();
+			});
+			$("#exportExcelButton").click(function() {
+				$("#reprotType").val('xls');
+				$("#queryForm").attr("action",ctx+"/tour/export!districtExportXlsOaHtml.action")
+				$("#queryForm").submit();
+			});
+			$("#exportWordButton").click(function() {
+				$("#queryForm").attr("action",ctx+"/tour/export!districtExportWord.action")
+				$("#queryForm").submit();
+			});
+		});
+</script>
+</script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="queryButton" class="btn btn-info">
+				<button id="reportHtmlButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 报表html
+				</button>
+				<button id="exportExcelButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 导出excel
+				</button>
+				<button id="exportWordButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 导出word
+				</button>
+				<button id="queryButton" class="btn btn-info" actionUrl="${ctx}/tour/districtStatistic!districtStatisticList.action">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
 			</div>
@@ -30,8 +58,9 @@
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/districtStatistic!districtStatisticList.action"
 				method="post">
-				<s:hidden name="status"></s:hidden>
-				<s:hidden name="statisticType"></s:hidden>
+				<s:hidden name="reprotType" id="reprotType"></s:hidden>
+				<%-- <s:hidden name="status"></s:hidden>
+				<s:hidden name="statisticType"></s:hidden> --%>
 				<table class="formTable">
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>

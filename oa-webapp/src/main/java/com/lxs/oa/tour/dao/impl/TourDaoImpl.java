@@ -6,10 +6,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
@@ -23,6 +25,7 @@ import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticModel;
+import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.User;
 
@@ -314,15 +317,15 @@ public class TourDaoImpl implements ITourDao {
 		// }
 		// String ids = "2,3,";
 		// System.out.println(ids.substring(0, ids.length() - 1));
-		Calendar c = Calendar.getInstance();
-		c.set(c.YEAR, 2013);
-		c.set(c.MONTH, 12);
-		// System.out.println(c.get(c.MONTH) + "\t" + c.get(c.YEAR));
-		Calendar c1 = Calendar.getInstance();
-		c1.set(c1.YEAR, 2013);
-		c1.set(c1.MONTH, 11);
-		System.out.println(c.after(c1));
-		;
+//		Calendar c = Calendar.getInstance();
+//		c.set(c.YEAR, 2013);
+//		c.set(c.MONTH, 12);
+//		// System.out.println(c.get(c.MONTH) + "\t" + c.get(c.YEAR));
+//		Calendar c1 = Calendar.getInstance();
+//		c1.set(c1.YEAR, 2013);
+//		c1.set(c1.MONTH, 11);
+//		System.out.println(c.after(c1));
+//		;
 
 	}
 
@@ -344,6 +347,95 @@ public class TourDaoImpl implements ITourDao {
 		conn.commit();
 		st.close();
 		conn.close();
-
+		
+		
+	}
+	/* 获得报表数据
+	 * @see com.lxs.oa.tour.dao.ITourDao#getReportList()
+	 */
+	public List<StatisticReportModel> getReportList(String startDate,String endDate,List<Dept> deptList){
+		List<StatisticReportModel> list=new ArrayList<StatisticReportModel>();
+			String userIds="";
+			for(Dept tempD:deptList){
+				Set<User> users=tempD.getUsers();
+				for(User u:users){
+					userIds+=(u.getId()+",");
+				}
+			}
+			Calendar calendar=Calendar.getInstance();
+			
+			Integer startYear=calendar.get(calendar.YEAR);
+			Integer startMonth=calendar.get(calendar.MONTH);
+			Integer endYear=calendar.get(calendar.YEAR);
+			Integer endMonth=calendar.get(calendar.MONTH);//默认查询上个月的
+			
+			if (null!=startDate&&startDate.trim().length()!=0) {
+				startYear=Integer.parseInt(startDate.substring(0, 4));
+				startMonth=Integer.parseInt(startDate.substring(5, 7));
+			}
+			if (null!=endDate&&endDate.trim().length()!=0) {
+				endYear=Integer.parseInt(endDate.substring(0, 4));
+				endMonth=Integer.parseInt(endDate.substring(5, 7));
+			}
+			
+			StringBuffer sql=new StringBuffer("SELECT c.type_,d.name_,SUM(d.money_) FROM tour_detail_ d INNER JOIN tour_common_ c ON c.id_ = d.common_id_");
+			sql.append(" where c.user_id_ in (  "+userIds.substring(0,userIds.length()-1));
+			sql.append(" ) and  ");
+			sql.append(" report_year_ >= "+startYear);
+			sql.append(" and ");
+			sql.append(" report_month_ >= "+startMonth);
+			sql.append(" and ");
+			sql.append(" report_year_<= "+endYear);
+			sql.append(" and ");
+			sql.append(" report_month_ <= "+endMonth);
+			sql.append(" GROUP BY type_, name_  ");
+			System.out.println(sql.toString());
+			SQLQuery query=sessionFactory.getCurrentSession().createSQLQuery(sql.toString());
+			List<Object[]> objList=query.list();
+			for (Object[] object : objList) {
+				StatisticReportModel m=new StatisticReportModel();
+				m.setType_(object[0].toString());
+				m.setName_(object[1].toString());
+				m.setMoney_(Double.parseDouble(object[2].toString().trim()));
+				if (m.getType_().equals("观光园")||m.getType_().equals("旅游风景")) {
+					m.setUnit_("(个)");
+				}else if(m.getType_().equals("民俗旅游")){
+					m.setUnit_("(户)");
+				}else if(m.getType_().equals("旅游住宿")||m.getType_().equals("工业旅游")){
+					m.setUnit_("(家)");
+				}
+				
+				list.add(m);
+			}
+			StringBuffer incomeSql=new StringBuffer("SELECT type_,SUM(total_income_), SUM(total_person_num_) FROM tour_common_ as c ");
+			incomeSql.append(" where c.user_id_ in (  "+userIds.substring(0,userIds.length()-1));
+			incomeSql.append(" ) and  ");
+			incomeSql.append(" report_year_ >= "+startYear);
+			incomeSql.append(" and ");
+			incomeSql.append(" report_month_ >= "+startMonth);
+			incomeSql.append(" and ");
+			incomeSql.append(" report_year_<= "+endYear);
+			incomeSql.append(" and ");
+			incomeSql.append(" report_month_ <= "+endMonth);
+			incomeSql.append("	GROUP BY type_ ");
+			
+			SQLQuery query1=sessionFactory.getCurrentSession().createSQLQuery(incomeSql.toString());
+			List<Object[]> totalList=query1.list();
+			for(StatisticReportModel m:list){//添加单位个数
+				Long factoryNum=0l;
+				for(Dept d:deptList){
+					if (m.getType_().equals(d.getDeptType())) {
+						factoryNum+=1;
+					}
+				}
+				m.setDept_num_(factoryNum);
+				for(Object[] obj:totalList){
+					if(m.getType_().equals(obj[0].toString())){
+						m.setSum_money_(Double.parseDouble(obj[1].toString()));
+						m.setPerson_num_(Long.parseLong(obj[2].toString()));
+					}
+				}
+			}
+		return list;
 	}
 }

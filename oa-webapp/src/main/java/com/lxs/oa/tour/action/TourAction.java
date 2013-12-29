@@ -1,35 +1,47 @@
 package com.lxs.oa.tour.action;
 
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.engine.util.FileBufferedOutputStream;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.mapping.Array;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.lxs.core.action.BaseAction;
-import com.lxs.core.common.BeanUtil;
 import com.lxs.core.common.SystemConstant;
 import com.lxs.core.common.page.PageResult;
-import com.lxs.oa.tour.common.FactoryTypeEnum;
-import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.common.StatisticTypeEnum;
+import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
 import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
+import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.Job;
@@ -61,6 +73,7 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
 				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/town/statisticDetail.jsp") }) })
 public class TourAction extends BaseAction<TourCommon> {
+
 	@Resource
 	private ITourService tourService;
 	private String deptType;
@@ -72,6 +85,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	private String startDate;
 	private String endDate;
 	private String tourIds;
+	private String tempTourIds[];
 
 	// 同比查看详情是用
 	private String nowIds;
@@ -83,6 +97,317 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	// 修改的时候使用
 	private Collection<TourDetail> beans;
+	private Connection conn;
+	private Map<String, Object> parameters = new HashMap<String, Object>();
+
+	// 保存报表类型
+	private String reprotType;
+
+	/**
+	 * 导出数据
+	 */
+
+	/**
+	 * 镇统计导出xls或html
+	 * 
+	 * @return
+	 */
+	public String townExportXlsOaHtml() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		List<StatisticReportModel> modelList = tourService.getReportList(
+				startDate, endDate, u.getDept().getChildren());
+		ActionContext.getContext().put("myList", modelList);
+
+		addParameters();
+
+		return reprotType;
+	}
+
+	/**
+	 * 导出时设定参数
+	 */
+	public void addParameters() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		String reportDate = "";
+		Calendar calendar = Calendar.getInstance();
+		reportDate = calendar.get(calendar.YEAR) + "年"
+				+ calendar.get(calendar.MONTH) + "月";
+		if (null != startDate && startDate.trim().length() != 0
+				&& endDate != null && endDate.trim().length() != 0) {
+			reportDate += startDate + "--" + endDate;
+		} else if (((null != startDate && startDate.trim().length() != 0) && (null == endDate || endDate
+				.trim().length() == 0))) {
+			reportDate = startDate;
+		} else if ((null == startDate || startDate.trim().length() == 0)
+				&& (null != endDate && endDate.trim().length() != 0)) {
+			reportDate = endDate;
+		}
+
+		parameters.put("reportDate", reportDate);
+		parameters.put("deptName", u.getDept().getText());
+	}
+
+	/**
+	 * 镇导出word
+	 * 
+	 * @throws Exception
+	 */
+	public void townExportWord() throws Exception {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		List<StatisticReportModel> modelList = tourService.getReportList(
+				startDate, endDate, u.getDept().getChildren());
+		// 报表参数
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+
+		addParameters();
+
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_statistic_report.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("镇域旅游发展.docx".getBytes("GBK"), "ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+
+	}
+
+	/**
+	 * 区导出word
+	 * 
+	 * @throws Exception
+	 */
+	public void districtExportWord() throws Exception {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		List<Dept> deptList = new ArrayList<Dept>();
+		for (Dept tempDept : u.getDept().getChildren()) {
+			deptList.addAll(tempDept.getChildren());
+		}
+		List<StatisticReportModel> modelList = tourService.getReportList(
+				startDate, endDate, deptList);
+		// 报表参数
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+
+		addParameters();
+		String fileName = new String("镇域旅游发展.docx".getBytes("GBK"), "ISO8859_1");
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_statistic_report.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+
+	}
+
+	/**
+	 * 区统计导出xls或html
+	 * 
+	 * @return
+	 */
+	public String districtExportXlsOaHtml() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		List<Dept> deptList = new ArrayList<Dept>();
+		for (Dept tempDept : u.getDept().getChildren()) {
+			deptList.addAll(tempDept.getChildren());
+		}
+		List<StatisticReportModel> modelList = tourService.getReportList(
+				startDate, endDate, deptList);
+		ActionContext.getContext().put("myList", modelList);
+
+		addParameters();
+
+		return reprotType;
+	}
+
+	public String test1() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
+		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
+		townAddCondition(criteria);
+		addDataCondition(criteria);
+		PageResult page = tourService.findStatistic(criteria, u.getId(), u
+				.getDept().getChildren());
+		ActionContext.getContext().put("myList", page.getResult());
+		return "pdf";
+	}
+
+	public String test5() {
+		List<Dept> deptList = new ArrayList<Dept>();
+		List<StatisticReportModel> list = tourService.getReportList(startDate,
+				endDate, deptList);
+		ActionContext.getContext().put("myList", list);
+		return "statisticXls";
+	}
+
+	public void test6() throws Exception {
+		List<Dept> deptList = new ArrayList<Dept>();
+		List<StatisticReportModel> list = tourService.getReportList(startDate,
+				endDate, deptList);
+		// 报表参数
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("reportDate", startDate + "--" + endDate);
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(list);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_statistic_report.jasper", map, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"document.docx\"");
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+	}
+
+	public String test2() throws Exception {
+		// 连接
+		Class.forName("com.mysql.jdbc.Driver");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/oa",
+				"root", "root");
+		return "pdf1";
+	}
+
+	public void test3() throws Exception {
+		// 连接
+		Class.forName("com.mysql.jdbc.Driver");
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/oa",
+				"root", "root");
+
+		// 报表参数
+		Map<String, Object> map = new HashMap<String, Object>();
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		map.put("SUBREPORT_DIR", path);
+
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "userInfo.jasper", map, conn);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+
+		exporter.exportReport();
+		fbos.close();
+
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"file.docx\"");
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+
+	}
+
+	public String test4() throws Exception {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
+		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
+		townAddCondition(criteria);
+		addDataCondition(criteria);
+		PageResult page = tourService.findStatistic(criteria, u.getId(), u
+				.getDept().getChildren());
+		ActionContext.getContext().put("myList", page.getResult());
+		return "xls";
+	}
+
+	/**
+	 * 获取下载文件显示名称（客户端名称）
+	 * 
+	 * @return 下载文件显示名称
+	 * @throws Exception
+	 */
+	public String getExportFileName() throws Exception {
+		String downFileName = "";
+		if (reprotType.equals("xls")) {
+			downFileName = "镇域旅游发展.xls";
+		}
+		try {
+			downFileName = new String(downFileName.getBytes(), "ISO8859-1");
+		} catch (UnsupportedEncodingException e) {
+
+		}
+
+		return downFileName;
+	}
 
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
@@ -207,8 +532,10 @@ public class TourAction extends BaseAction<TourCommon> {
 			Criterion c2 = Restrictions.eq("reportMonth",
 					calendar.get(calendar.MONTH));
 			criteria.add(Restrictions.and(c1, c2));
-			startDate = calendar.get(calendar.YEAR) + "年"
-					+ (calendar.get(calendar.MONTH)) + "月";
+			/*
+			 * startDate = calendar.get(calendar.YEAR) + "年" +
+			 * (calendar.get(calendar.MONTH)) + "月";
+			 */
 		}
 	}
 
@@ -244,6 +571,11 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	}
 
+	/**
+	 * 镇统计列表
+	 * 
+	 * @return
+	 */
 	public String townStatisticList() {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
@@ -255,6 +587,14 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findStatistic(criteria, u.getId(), u
 				.getDept().getChildren());
 		ActionContext.getContext().put(PAGE, page);
+
+		if ((null == startDate || startDate.trim().length() == 0)
+				&& null == endDate || endDate.trim().length() == 0) {
+			Calendar calendar = Calendar.getInstance();// 默认为上个月
+			startDate = calendar.get(calendar.YEAR) + "年"
+					+ (calendar.get(calendar.MONTH)) + "月";
+
+		}
 		return LIST;
 	}
 
@@ -287,6 +627,11 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	}
 
+	/**
+	 * 区统计列表
+	 * 
+	 * @return
+	 */
 	public String districtStatisticList() {
 		User user = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
@@ -302,13 +647,23 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findStatistic(criteria, user.getId(),
 				deptList);
 		ActionContext.getContext().put(PAGE, page);
+
+		if ((null == startDate || startDate.trim().length() == 0)
+				&& null == endDate || endDate.trim().length() == 0) {
+			Calendar calendar = Calendar.getInstance();// 默认为上个月
+			startDate = calendar.get(calendar.YEAR) + "年"
+					+ (calendar.get(calendar.MONTH)) + "月";
+
+		}
+
 		return LIST;
 	}
 
-	public List<Job> getAllJobs() {
-		return baseService.find(DetachedCriteria.forClass(Job.class));
-	}
-
+	/**
+	 * 申报
+	 * 
+	 * @return
+	 */
 	public String toReport() {
 		TourCommon t = baseService.get(TourCommon.class, model.getId());
 		t.setStatus(StatusEnum.reported.getValue());
@@ -325,20 +680,6 @@ public class TourAction extends BaseAction<TourCommon> {
 			ActionContext.getContext().put("deptType",
 					u.getDept().getDeptType());
 		}
-	}
-
-	public List<Dept> getTownFactorys() {
-		User u = (User) ActionContext.getContext().getSession()
-				.get(SystemConstant.CURRENT_USER);
-		u = baseService.get(User.class, u.getId());
-		return u.getDept().getChildren();
-	}
-
-	public void updateDetail() {
-		TourDetail d = baseService.get(TourDetail.class, detailId);
-		d.setMoney(money);
-		baseService.save(d);
-
 	}
 
 	/**
@@ -362,7 +703,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findSameCompare(nowCriteria,
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
-		
+
 		if ((null == startDate || startDate.trim().length() == 0)
 				&& (null == endDate || endDate.trim().length() == 0)) {
 			Calendar calendar = Calendar.getInstance();// 默认为上个月
@@ -394,7 +735,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
 		if ((null == startDate || startDate.trim().length() == 0)
-				&&( null == endDate || endDate.trim().length() == 0)) {
+				&& (null == endDate || endDate.trim().length() == 0)) {
 			Calendar calendar = Calendar.getInstance();// 默认为上个月
 			startDate = calendar.get(calendar.YEAR) + "年"
 					+ (calendar.get(calendar.MONTH)) + "月";
@@ -402,6 +743,11 @@ public class TourAction extends BaseAction<TourCommon> {
 		return LIST;
 	}
 
+	/**
+	 * 同比详情
+	 * 
+	 * @return
+	 */
 	public String sameCompareToDetail() {
 		List<TourCommon> nowList = new ArrayList<TourCommon>();
 		List<TourCommon> lastList = new ArrayList<TourCommon>();
@@ -475,6 +821,11 @@ public class TourAction extends BaseAction<TourCommon> {
 		return "toDetail";
 	}
 
+	/**
+	 * 镇统计详情
+	 * 
+	 * @return
+	 */
 	public String townStatisticListToDetail() {
 		if (null != tourIds && tourIds.trim().length() != 0) {
 			String[] strs = tourIds.split(",");
@@ -536,6 +887,11 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 	}
 
+	/**
+	 * 列表详情
+	 * 
+	 * @return
+	 */
 	public String toDetail() {
 		ActionContext.getContext().getValueStack()
 				.push(baseService.get(TourCommon.class, model.getId()));
@@ -588,8 +944,16 @@ public class TourAction extends BaseAction<TourCommon> {
 	public static void main(String[] args) {
 		// String s = "2012年01";
 		// System.err.println(s.substring(5, 7));
-		Calendar c = Calendar.getInstance();
-		System.out.println(c.get(c.MONDAY));
+		// Calendar c = Calendar.getInstance();
+		// System.out.println(c.get(c.MONDAY));
+
+		List<Integer> tes = new ArrayList<Integer>();
+		tes.add(1);
+		tes.add(2);
+		tes.add(3);
+		System.out.println(tes.toString().substring(1,
+				tes.toString().length() - 1));
+
 	}
 
 	public Long getDetailId() {
@@ -678,6 +1042,30 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setBeans(Collection<TourDetail> beans) {
 		this.beans = beans;
+	}
+
+	public String[] getTempTourIds() {
+		return tempTourIds;
+	}
+
+	public void setTempTourIds(String[] tempTourIds) {
+		this.tempTourIds = tempTourIds;
+	}
+
+	public String getReprotType() {
+		return reprotType;
+	}
+
+	public void setReprotType(String reprotType) {
+		this.reprotType = reprotType;
+	}
+
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, Object> parameters) {
+		this.parameters = parameters;
 	}
 
 }

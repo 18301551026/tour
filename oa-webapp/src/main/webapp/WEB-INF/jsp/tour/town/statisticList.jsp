@@ -12,11 +12,38 @@
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
+<script type="text/javascript">
+	$(function() {
+		$("#reportHtmlButton").click(function() {
+			$("#reprotType").val('html');
+			$("#queryForm").attr("action",ctx+"/tour/export!townExportXlsOaHtml.action")
+			$("#queryForm").submit();
+		});
+		$("#exportExcelButton").click(function() {
+			$("#reprotType").val('xls');
+			$("#queryForm").attr("action",ctx+"/tour/export!townExportXlsOaHtml.action")
+			$("#queryForm").submit();
+		});
+		$("#exportWordButton").click(function() {
+			$("#queryForm").attr("action",ctx+"/tour/export!townExportWord.action")
+			$("#queryForm").submit();
+		});
+	});
+</script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="queryButton" class="btn btn-info">
+				<button id="reportHtmlButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 报表html
+				</button>
+				<button id="exportExcelButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 导出excel
+				</button>
+				<button id="exportWordButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 导出word
+				</button>
+				<button id="queryButton" class="btn btn-info"  actionUrl="${ctx}/tour/townStatistic!townStatisticList.action">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
 			</div>
@@ -30,8 +57,7 @@
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/townStatistic!townStatisticList.action"
 				method="post">
-				<s:hidden name="status"></s:hidden>
-				<s:hidden name="statisticType"></s:hidden>
+				<s:hidden name="reprotType" id="reprotType"></s:hidden>
 				<table class="formTable">
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
@@ -54,7 +80,6 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-
 					<th>类型</th>
 					<th>个数</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
@@ -65,7 +90,10 @@
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${factoryType}</td>
+
+						<td>${factoryType}<input type="hidden" value="${tourIds }"
+							name="tempTourIds">
+						</td>
 						<td>${totalFactoryCount }</td>
 						<Td>${totalPersonCount }</Td>
 						<Td>${totalIncome }</Td>

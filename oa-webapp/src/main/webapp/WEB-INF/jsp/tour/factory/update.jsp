@@ -20,7 +20,7 @@
 	line-height: 34px;
 	padding: 0;
 	text-align: right;
-	width: 10%;
+	width: 16%;
 }
 
 .form-control {
@@ -37,7 +37,7 @@
 	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
 		ease-in-out 0s;
 	vertical-align: middle;
-	width: 90%;
+	width: 85%;
 }
 
 font {
@@ -72,7 +72,8 @@ font {
 		<button type="button" class="btn btn-info" id="saveButton">
 			<span class="glyphicon glyphicon-ok"></span> 保存
 		</button>
-		<button type="button" class="btn btn-info" id="resetButton">
+		<button type="button" class="btn btn-info" id="resetButton"
+			actionUrl="${ctx}/tour/noReported!toUpdate.action?id=${id}">
 			<span class="glyphicon glyphicon-repeat"></span> 重置
 		</button>
 	</div>
@@ -114,13 +115,20 @@ font {
 				<c:if test="${i%2==0 }">
 					<tr>
 				</c:if>
+
 				<c:if test="${i%2==0 }">
 					<Td class="control-label"><label for="voteOptions">${beans[i].name }：</label></Td>
-					<Td class="query_input"><input type="hidden"
-						name="beans[${i }].id" value="${beans[i].id }"> <input
-						name="beans[${i }].money" placeholder="请输入${beans[i].name }"
-						type="text" class="form-control validate[required] pull-left"
-						value="${beans[i].money }" style="margin-bottom: 2px;"> <font>(万元)</font></Td>
+					<Td class="query_input"
+						<c:if test="${i==(detailNum-1) }"> colspan="3"</c:if>><input
+						type="hidden" name="beans[${i }].id" value="${beans[i].id }">
+						<input name="beans[${i }].money"
+						placeholder="请输入${beans[i].name }" type="text"
+						class="form-control validate[required] pull-left"
+						value="${beans[i].money }"
+						<c:if test="${i==(detailNum-1) }">
+							 style="margin-bottom: 2px;width: 94%"
+						</c:if>>
+						<font>(万元)</font></Td>
 				</c:if>
 				<c:if test="${i%2!=0 }">
 					<Td class="control-label"><label for="voteOptions">${beans[i].name }：</label></Td>

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,7 +19,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 
 @Entity
 @Table(name = "user_")
@@ -33,11 +33,11 @@ public class User implements Serializable {
 	private String userName;
 	private String realName;
 	private String password;
+	private String desc;
 	private Dept dept;
 
 	private Set<Role> roles = new HashSet<Role>();
 	private Set<Job> jobs = new HashSet<Job>();
-	
 
 	@Id
 	@GeneratedValue
@@ -101,8 +101,9 @@ public class User implements Serializable {
 	public void setJobs(Set<Job> jobs) {
 		this.jobs = jobs;
 	}
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="dept_id_")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "dept_id_")
 	public Dept getDept() {
 		return dept;
 	}
@@ -111,7 +112,14 @@ public class User implements Serializable {
 		this.dept = dept;
 	}
 
-	
+	@Lob
+	@Column(name = "desc_")
+	public String getDesc() {
+		return desc;
+	}
 
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 
 }

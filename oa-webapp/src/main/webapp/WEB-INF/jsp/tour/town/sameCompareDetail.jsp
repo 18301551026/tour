@@ -19,24 +19,24 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
+					<th>时间</th>
 					<th>子项名称</th>
 					<th colspan="2">子项收入&nbsp;<font color="green">(万元)</font></th>
-					<th>时间</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr align="center">
 					<Td></Td>
+					<Td></Td>
 					<td>本年</td>
 					<td>上一年</td>
-					<Td></Td>
 				</tr>
 				<c:forEach items="${sameCompareDetaiList }" var="d">
 					<tr>
+						<td>${d.time}</td>
 						<td>${d.name }</td>
 						<Td>${d.nowMoney }</Td>
 						<Td>${d.lastMoney }</Td>
-						<td>${d.time}</td>
 					</tr>
 				</c:forEach>
 			</tbody>

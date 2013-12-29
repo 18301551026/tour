@@ -30,8 +30,9 @@
 		id="editForm">
 		<table class="formTable table">
 			<tr>
-				<Td class="control-label"><label for="jobName">职位名称：</label></Td>
-				<Td class="query_input" colspan="2"><s:textfield name="jobName"
+				<Td class="control-label" style="width: 3%"><label
+					for="jobName">职位名称：</label></Td>
+				<Td class="query_input" colspan="3"><s:textfield name="jobName"
 						placeholder="请输入职位名称" cssClass="form-control validate[required]"
 						id="jobName"></s:textfield></Td>
 			</tr>

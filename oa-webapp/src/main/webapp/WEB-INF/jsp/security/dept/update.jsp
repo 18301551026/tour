@@ -17,9 +17,9 @@
 		<label>名称：</label>
 		<s:textfield name="text" cssClass="easyui-validatebox form-control"
 			data-options="required:true" placeholder="请输入名称"></s:textfield>
-		<br /> <label>级别：</label>
+		<%--<br />  <label>级别：</label>
 		<s:select list="#{'区级':'区级','镇级':'镇级','企业':'企业' }" name="deptLevel"
-			id="deptLevel" cssClass="form-control"></s:select>
+			id="deptLevel" cssClass="form-control"></s:select> --%>
 		<c:if test="${deptLevel=='企业' }">
 			<br class="t" />
 			<label class="t">类型：</label>
@@ -42,10 +42,15 @@
 	font-size: 12px;
 	height: 25px;
 	line-height: 1.42857;
-	padding: 2px; transition : border-color 0.15s ease-in-out 0s,
-	box-shadow 0.15s ease-in-out 0s; vertical-align : middle; line-height :
-	1.42857; padding : 2px; transition : border-color 0.15s ease-in-out 0s,
-	box-shadow 0.15s ease-in-out 0s; vertical-align : middle;
+	padding: 2px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
+	line-height: 1.42857;
+	padding: 2px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
 	width: 67%;
 	padding: 2px;
 	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.action.extension" value="action"></constant>
+
+	<package name="jasper" namespace="/tour" extends="jasperreports-default">
+		<action name="export" class="tourAction">
+			<result name="xls" type="jasper">
+				<param name="location">/reports/tour_statistic_report.jasper</param>
+				<param name="dataSource">myList</param>
+				<param name="format">XLS</param>
+				<param name="reportParameters">parameters</param>
+				<param name="contentDisposition">attachment;filename="${exportFileName}"</param>
+			</result>
+			<result name="html" type="jasper">
+				<param name="location">/reports/tour_statistic_report.jasper</param>
+				<param name="dataSource">myList</param>
+				<param name="format">HTML</param>
+				<param name="imageServletUrl">  
+			        <![CDATA[/servlets/image?image=]]>
+				</param>
+				<param name="reportParameters">parameters</param>
+			</result>
+		</action>
+	</package>
+
+
+</struts>

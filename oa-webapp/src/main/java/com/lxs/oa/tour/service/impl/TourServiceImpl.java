@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.lxs.core.common.page.PageResult;
 import com.lxs.oa.tour.dao.ITourDao;
+import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
 
@@ -28,5 +29,10 @@ public class TourServiceImpl implements ITourService {
 			Integer currentMonth, Integer pageMonthNum) {
 		return tourDao.findSameCompare(nowCriteria, lastCriteria, startDate,
 				endDate, currentMonth, pageMonthNum);
+	}
+
+	public List<StatisticReportModel> getReportList(String startDate,
+			String endDate, List<Dept> deptList) {
+		return tourDao.getReportList(startDate, endDate, deptList);
 	}
 }

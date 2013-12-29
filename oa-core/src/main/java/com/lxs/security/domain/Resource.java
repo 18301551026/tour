@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -25,19 +26,20 @@ public class Resource implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -1175741324536566394L;
-	
+
 	private Long id;
 	private String url;
-	
+	private String desc;
+
 	private Set<Role> roles = new HashSet<Role>();
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id_")
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -60,5 +62,15 @@ public class Resource implements Serializable {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-	
+
+	@Lob
+	@Column(name = "desc_")
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
 }

@@ -145,4 +145,13 @@ public class Dept implements Serializable {
 	public void setText(String text) {
 		this.text = text;
 	}
+	
+	private Integer tempLevel;
+	public Integer getTempLevel() {
+		return tempLevel;
+	}
+
+	public void setTempLevel(Integer tempLevel) {
+		this.tempLevel = tempLevel;
+	}
 }

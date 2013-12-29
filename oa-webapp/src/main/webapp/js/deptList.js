@@ -67,7 +67,7 @@ function editFun(id) {
 		parent.$.modalDialog({
 			title : '编辑节点',
 			width : 400,
-			height : 330,
+			height : 300,
 			href : ctx + '/security/dept!toUpdate.action?id=' + node.id,
 			buttons : [
 					{
@@ -91,17 +91,25 @@ function editFun(id) {
 }
 
 function addFun(flag) {
-	var url
+	var url;
+	var level = 0;
 	if (flag) {
-		url = ctx + '/security/dept!toAdd.action';
+		url = ctx + '/security/dept!toAdd.action?tempLevel=' + level;
 	} else {
 		var node = treeGrid.treegrid('getSelected');
-		url = ctx + '/security/dept!toAdd.action?id=' + node.id
+		var deptLevel = node.deptLevel;
+		if (deptLevel == '镇级') {
+			level = 2;
+		} else if (deptLevel == '区级') {
+			level = 1;
+		}
+		url = ctx + '/security/dept!toAdd.action?id=' + node.id + "&tempLevel="
+				+ level;
 	}
 	parent.$.modalDialog({
 		title : '添加节点',
 		width : 400,
-		height : 330,
+		height : 300,
 		href : url,
 		buttons : [ {
 			text : '添加',
@@ -140,6 +148,14 @@ function undo() {
 function onContextMenu(e, row) {
 	e.preventDefault();
 	$(this).treegrid('select', row.id);
+	if (row.deptLevel == '企业') {
+		var item = $('#mm').menu('findItem', '添加子节点');
+		$('#mm').menu('disableItem', item.target);
+	} else {
+		var item = $('#mm').menu('findItem', '添加子节点');
+		$('#mm').menu('enableItem', item.target);
+	}
+
 	$('#mm').menu('show', {
 		left : e.pageX,
 		top : e.pageY

@@ -20,12 +20,35 @@
 		<s:hidden name="pid" value="%{id}"></s:hidden>
 		<label>名称：</label><input name="text" type="text"
 			class="easyui-validatebox form-control" data-options="required:true"
-			placeholder="请输入名称" /><br /> <label>级别：</label> <select
+			placeholder="请输入名称" /><br /><!--  <label>级别：</label> <select
 			id="deptLevel" name="deptLevel" id="deptLevel" class="form-control">
 			<option value="区级"selected="selected">区级</option>
 			<option value="镇级">镇级</option>
 			<option value="企业" >企业</option>
-		</select><br /> <label>描述：</label>
+		</select><br /> -->
+		<input type="hidden" name="deptLevel"
+		<c:if test="${tempLevel==0 }">
+			 value="区级"
+		</c:if>
+		<c:if test="${tempLevel==1 }">
+			 value="镇级"
+		</c:if>
+		<c:if test="${tempLevel==2 }">
+			 value="企业"
+		</c:if>
+		/>
+		<c:if test="${tempLevel==2  }">
+		<label >类型：</label>
+		 <select name="deptType" class="form-control">
+				<option value="观光园">观光园</option>
+				<option value="民俗旅游">民俗旅游</option>
+				<option value="旅游住宿">旅游住宿</option>
+				<option value="旅游风景">旅游风景</option>
+				<option value="工业旅游">工业旅游</option>
+		</select>
+		<Br/>
+		</c:if>
+		 <label>描述：</label>
 		<s:textarea name="deptDesc" cssClass="form-control"
 			cssStyle="height:80px"></s:textarea>
 	</form>
