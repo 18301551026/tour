@@ -20,6 +20,7 @@ import com.lxs.security.domain.Menu;
 import com.lxs.security.service.IDeptService;
 import com.opensymphony.xwork2.ActionContext;
 
+
 @Controller
 @Scope("prototype")
 @Namespace("/security")
