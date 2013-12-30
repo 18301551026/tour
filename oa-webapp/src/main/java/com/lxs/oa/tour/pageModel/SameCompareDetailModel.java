@@ -6,8 +6,8 @@ package com.lxs.oa.tour.pageModel;
  */
 public class SameCompareDetailModel {
 	private String name;
-	private Long nowMoney;
-	private Long lastMoney;
+	private Double nowMoney;
+	private Double lastMoney;
 	private String time;
 	public String getName() {
 		return name;
@@ -15,16 +15,16 @@ public class SameCompareDetailModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Long getNowMoney() {
+	public Double getNowMoney() {
 		return nowMoney;
 	}
-	public void setNowMoney(Long nowMoney) {
+	public void setNowMoney(Double nowMoney) {
 		this.nowMoney = nowMoney;
 	}
-	public Long getLastMoney() {
+	public Double getLastMoney() {
 		return lastMoney;
 	}
-	public void setLastMoney(Long lastMoney) {
+	public void setLastMoney(Double lastMoney) {
 		this.lastMoney = lastMoney;
 	}
 	public String getTime() {

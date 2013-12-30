@@ -18,12 +18,17 @@
 		<s:hidden name="pid" value="%{id}"></s:hidden>
 		<label>名称：</label><input name="name" type="text"
 			class="easyui-validatebox form-control" data-options="required:true"
-			placeholder="请输入名称" /><br /> <label class="control-label">url：</label><input
-			name="url" type="text" placeholder="请输入节点url" class="form-control" /><br />
+			placeholder="请输入名称" /><br /> 
+		<label class="control-label">url：</label>
+			<input name="url" type="text" placeholder="请输入节点url" class="form-control" /><br />
 		<label>排序：</label><input name="order" type="text" value="0"
 			class="easyui-validatebox form-control"
 			data-options="validType:'number'" title="请输入输入节点排序" /><br />
-		</div>
+		<label>是否展开：</label>
+			是<input  type="radio" name="open" value="true">&nbsp;
+			否<input checked="checked" type="radio" name="open" value="false">&nbsp;
+		<br />
+		<Br/>
 		<label>图标地址：</label><input type="text" name="icon"
 			class="form-control"></input><br />
 	</form>

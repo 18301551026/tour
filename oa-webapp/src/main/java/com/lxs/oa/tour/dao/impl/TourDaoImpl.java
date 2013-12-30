@@ -19,6 +19,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import com.lxs.core.common.TimeUtil;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.oa.tour.common.FactoryTypeEnum;
 import com.lxs.oa.tour.dao.ITourDao;
@@ -29,6 +30,7 @@ import com.lxs.oa.tour.pageModel.StatisticModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.User;
+
 
 @Repository
 public class TourDaoImpl implements ITourDao {
@@ -54,7 +56,7 @@ public class TourDaoImpl implements ITourDao {
 
 		for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
 			String str = typeEnum.getValue();
-			Long tempTotalIncome = 0l;// 总收入
+			Double tempTotalIncome = 0d;// 总收入
 			Long tempTotalPersonNum = 0l;// 总接待人次
 			Long tempNum = 0l; // 工厂总数
 			String tourIds = ""; // ids
@@ -378,13 +380,9 @@ public class TourDaoImpl implements ITourDao {
 		sql.append(" where c.user_id_ in (  "
 				+ userIds.substring(0, userIds.length() - 1));
 		sql.append(" ) and  ");
-		sql.append(" report_year_ >= " + startYear);
+		sql.append(" c.long_time_ >= " + TimeUtil.getTimeInMillis(startYear+"年"+startMonth+"月"));
 		sql.append(" and ");
-		sql.append(" report_month_ >= " + startMonth);
-		sql.append(" and ");
-		sql.append(" report_year_<= " + endYear);
-		sql.append(" and ");
-		sql.append(" report_month_ <= " + endMonth);
+		sql.append(" c.long_time_<= " + TimeUtil.getTimeInMillis(endYear+"年"+endMonth+"月"));
 		sql.append(" GROUP BY type_, name_  ");
 		System.out.println(sql.toString());
 		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
@@ -411,15 +409,10 @@ public class TourDaoImpl implements ITourDao {
 		incomeSql.append(" where c.user_id_ in (  "
 				+ userIds.substring(0, userIds.length() - 1));
 		incomeSql.append(" ) and  ");
-		incomeSql.append(" report_year_ >= " + startYear);
+		incomeSql.append(" c.long_time_ >= " + TimeUtil.getTimeInMillis(startYear+"年"+startMonth+"月"));
 		incomeSql.append(" and ");
-		incomeSql.append(" report_month_ >= " + startMonth);
-		incomeSql.append(" and ");
-		incomeSql.append(" report_year_<= " + endYear);
-		incomeSql.append(" and ");
-		incomeSql.append(" report_month_ <= " + endMonth);
+		incomeSql.append(" c.long_time_<= " + TimeUtil.getTimeInMillis(endYear+"年"+endMonth+"月"));
 		incomeSql.append("	GROUP BY type_ ");
-
 		SQLQuery query1 = sessionFactory.getCurrentSession().createSQLQuery(
 				incomeSql.toString());
 		List<Object[]> totalList = query1.list();
@@ -507,8 +500,8 @@ public class TourDaoImpl implements ITourDao {
 				lastModel.setYearType("去年");
 				nowModel.setType(typeEnum.getValue());
 				lastModel.setType(typeEnum.getValue());
-				nowModel.setYearAndMonth(year + "年" + month + "月");
-				lastModel.setYearAndMonth(year + "年" + month + "月");
+//				nowModel.setYearAndMonth(year + "年" + month + "月");
+//				lastModel.setYearAndMonth(year + "年" + month + "月");
 
 				Long nowPersonNumValues = 0l;
 				Double nowMoneyValues = 0d;
@@ -592,8 +585,8 @@ public class TourDaoImpl implements ITourDao {
 					lastModel.setYearType("去年");
 					nowModel.setType(typeEnum.getValue());
 					lastModel.setType(typeEnum.getValue());
-					nowModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
-					lastModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
+//					nowModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
+//					lastModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
 
 					Long nowPersonNumValues = 0l;
 					Double nowMoneyValues = 0d;

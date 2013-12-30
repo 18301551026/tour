@@ -91,14 +91,14 @@ font {
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
-				<Td class="control-label"><label for="totalPersonNum">接待人次：</label>
-				<Td class="query_input"><s:textfield name="totalPersonNum"
-						placeholder="请输入接待人次" cssClass="form-control validate[required]"
+				<Td class="control-label" style="width: 3%;"><label for="totalPersonNum">接待人次：</label>
+				<Td class="query_input" colspan="3"><s:textfield name="totalPersonNum"
+						placeholder="请输入接待人次" cssStyle="width:94%" cssClass="form-control validate[required]"
 						id="totalPersonNum"></s:textfield> <font>(人次)</font></Td>
-				<Td class="control-label"><label for="totalIncome">总收入：</label>
+				<%-- <Td class="control-label"><label for="totalIncome">总收入：</label>
 				<Td class="query_input"><s:textfield name="totalIncome"
 						placeholder="请输入总收入" cssClass="form-control validate[required]"
-						id="totalIncome"></s:textfield> <font>(万元)</font></Td>
+						id="totalIncome"></s:textfield> <font>(万元)</font></Td> --%>
 			</tr>
 			<%-- <c:forEach items="${beans }" var="d" >
 				<Tr>

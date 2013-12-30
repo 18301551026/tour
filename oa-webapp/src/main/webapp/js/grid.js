@@ -25,8 +25,9 @@ $(function() {
 
 	});
 	$('#queryButton').click(function() {
-		if($(this).attr("actionUrl")){
-			$("#queryForm").attr("action",$(this).attr("actionUrl"));
+		$("#queryForm").attr("target", "_self");
+		if ($(this).attr("actionUrl")) {
+			$("#queryForm").attr("action", $(this).attr("actionUrl"));
 		}
 		$("#queryForm").submit();
 	});

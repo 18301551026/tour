@@ -1,7 +1,6 @@
 package com.lxs.oa.tour.pageModel;
 
 public class SameCompareChartModel {
-	private String yearAndMonth;
 	private String type;
 	private String yearType;
 	private Long personNumValues;
@@ -39,11 +38,4 @@ public class SameCompareChartModel {
 		this.moneyValues = moneyValues;
 	}
 
-	public String getYearAndMonth() {
-		return yearAndMonth;
-	}
-
-	public void setYearAndMonth(String yearAndMonth) {
-		this.yearAndMonth = yearAndMonth;
-	}
 }

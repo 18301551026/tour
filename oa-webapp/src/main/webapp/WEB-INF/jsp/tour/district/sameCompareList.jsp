@@ -8,30 +8,58 @@
 <%@ include file="/common/include-jquery.jsp"%>
 <script type="text/javascript"
 	src="${ctx }/js/My97DatePicker/WdatePicker.js"></script>
+<%@ include file="/common/include-jquery-easyui.jsp"%>
 <%@ include file="/common/include-bootstap.jsp"%>
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <script type="text/javascript">
-	$(
-			function() {
-				$("#pillarButton").click(
-						function() {
-							$("#queryForm").attr("action",
-									ctx + "/tour/chart!districtChart.action")
-							$("#queryForm").submit();
-						})
-			})
+	$(function() {
+				$("#chartButton").click(function(){
+					parent.$.modalDialog({
+						title : '选择同比时间',
+						width : 340,
+						height : 160,
+						href : ctx + '/tour/townSameCompare!toSelectChart.action?deptType=区',
+						buttons : [
+								{
+									text : 'html查看',
+									iconCls : "icon-edit",
+									handler : function() {
+										var f = parent.$.modalDialog.handler
+												.find('#chartForm');
+										f.attr("action",ctx+"/tour/chart!districtHtmlChart.action")
+										f.submit();
+									}
+								}, {
+									text : 'word导出',
+									iconCls : "icon-edit",
+									handler : function() {
+										var f = parent.$.modalDialog.handler
+										.find('#chartForm');
+										f.attr("action",ctx+"/tour/chart!districtWordChart.action")
+										f.submit();
+									}
+								}, {
+									text : '取消',
+									iconCls : "icon-cancel",
+									handler : function() {
+										parent.$.modalDialog.handler.dialog('close');
+									}
+								} ]
+					});
+				});
+	})
 </script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="pillarButton" class="btn btn-info">
-					<span class="glyphicon glyphicon-print"></span> 柱形图展示
-				</button>
 				<button id="queryButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-search"></span> 查询
+				</button>
+				<button id="chartButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 图表
 				</button>
 			</div>
 			<div class="pull-right" style="margin-top: 6px;">

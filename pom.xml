@@ -462,6 +462,12 @@
 							<name>user_</name>
 						</table>
 						<table>
+							<name>tour_common_</name>
+						</table>
+						<table>
+							<name>tour_detail_</name>
+						</table>
+						<table>
 							<name>job_</name>
 						</table>
 						<table>

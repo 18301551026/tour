@@ -56,7 +56,38 @@ public class TimeUtil {
 		// System.out.println("获得某年某月某周星期几的日期 "+weekdatetodata(2009, 2, 2, 3));
 
 	}
-
+	
+	/**格式为2013年12月
+	 * @param date
+	 * @return
+	 */
+	public static Long getTimeInMillis(String date){
+		Long time=0l;
+		Calendar calendar=Calendar.getInstance();
+		try {
+			Integer tempYear=Integer.parseInt(date.substring(
+					0, 4).trim());
+			Integer tempMonth=Integer.parseInt(date.substring(
+					5, 7).trim());
+			calendar.set(calendar.YEAR,tempYear);
+			calendar.set(calendar.MONTH,tempMonth-1);
+			calendar.add(calendar.HOUR, Integer.parseInt("-"+calendar.get(calendar.HOUR)));
+			calendar.add(calendar.MINUTE, Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
+			calendar.add(calendar.SECOND, Integer.parseInt("-"+calendar.get(calendar.SECOND)));
+			calendar.add(calendar.MILLISECOND, Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
+			time=calendar.getTimeInMillis();;
+		} catch (Exception e) {
+			Calendar c1=Calendar.getInstance();//为上个月
+			c1.add(c1.MONTH, -1);
+			c1.add(calendar.HOUR, Integer.parseInt("-"+calendar.get(calendar.HOUR)));
+			c1.add(calendar.MINUTE, Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
+			c1.add(calendar.SECOND, Integer.parseInt("-"+calendar.get(calendar.SECOND)));
+			c1.add(calendar.MILLISECOND, Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
+			return c1.getTimeInMillis();
+		}
+		return time;
+	}
+	
 	public static String getFolderName() {
 		TimeUtil tt = new TimeUtil();
 		String Path = "/wafplatform/staticsmanage/datahtml/";

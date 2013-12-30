@@ -33,7 +33,7 @@
 				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label" style="width: 3%"><label
+						<Td class="control-label" style="width: 4%"><label
 							for="address">类型：</label></Td>
 						<Td class="query_input"><s:select cssClass="form-control"
 								list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"

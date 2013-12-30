@@ -15,6 +15,27 @@
 <%@ include file="/common/include-styles.jsp"%>
 
 </head>
+<script type="text/javascript">
+	$(function(){
+		$("#reprotYearAndMonth").blur(function(){
+			var reprotYearAndMonth=$(this).val();
+			if(reprotYearAndMonth){
+				$.ajax({
+					   type: "POST",
+					   url: ctx+"/tour/noReported!checkUserIsReportThisMonth.action",
+					   data: "reprotYearAndMonth="+reprotYearAndMonth,
+					   success: function(msg){
+					     if(msg=='已经申报'){
+					    	 alert("您"+reprotYearAndMonth+"已经申报了，不能再申报了");
+					    	 $("#reprotYearAndMonth").val('');
+					    	 
+					     }
+					   }
+				});	
+			}
+		});
+	})
+</script>
 <style type="text/css">
 .formTable .control-label {
 	font-size: 13px;
@@ -75,14 +96,14 @@ font {
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
-				<Td class="control-label"><label for="totalPersonNum">接待人次：</label>
-				<Td class="query_input"><s:textfield name="totalPersonNum"
+				<Td class="control-label" style="width: 3%"><label for="totalPersonNum">接待人次：</label>
+				<Td class="query_input" colspan="4"><s:textfield name="totalPersonNum"
 						placeholder="请输入接待人次" cssClass="form-control validate[required]"
-						id="totalPersonNum"></s:textfield> <font>(人次)</font></Td>
-				<Td class="control-label"><label for="totalIncome">总收入：</label>
+						id="totalPersonNum" cssStyle="width:94%"></s:textfield> <font>(人次)</font></Td>
+				<%-- <Td class="control-label"><label for="totalIncome">总收入：</label>
 				<Td class="query_input"><s:textfield name="totalIncome"
 						placeholder="请输入总收入" cssClass="form-control validate[required]"
-						id="totalIncome"></s:textfield> <font>(万元)</font></Td>
+						id="totalIncome"></s:textfield> <font>(万元)</font></Td> --%>
 			</tr>
 			<c:if test="${deptType=='观光园' }">
 				<tr>
@@ -151,7 +172,7 @@ font {
 							id="visitLive"></s:textfield> <font>(万元)</font></Td>
 				</tr>
 				<tr>
-					<Td class="control-label" width="3"><label for="visitOther">其它收入：</label>
+					<Td class="control-label" width="3%"><label for="visitOther">其它收入：</label>
 						<input type="hidden" name="labelTexts" value="其它收入" /></Td>
 					<Td class="query_input" colspan="3"><s:textfield
 							name="inputMoneys" placeholder="请输入其它收入"
@@ -162,7 +183,7 @@ font {
 			<!-- 民俗 -->
 			<c:if test="${deptType=='民俗旅游' }">
 				<tr>
-					<Td class="control-label"><label for="customSellAndProcess">出售和加工自农产品收入：</label>
+					<Td class="control-label"><label for="customSellAndProcess">出售和农产品收入：</label>
 						<input type="hidden" name="labelTexts" value="出售和加工自农产品收入" /></Td>
 					<Td class="query_input" colspan="3"><s:textfield
 							name="inputMoneys" placeholder="请输入出售和加工自农产品收入"
@@ -179,11 +200,11 @@ font {
 						<input type="hidden" name="labelTexts" value="住宿收入" /></Td>
 					<Td class="query_input"><s:textfield name="inputMoneys"
 							placeholder="请输入住宿收入" cssClass="form-control validate[required]"
-							id="customLive" cssStyle="width:96%"></s:textfield> <font>(万元)</font></Td>
+							id="customLive"></s:textfield> <font>(万元)</font></Td>
 				</tr>
 			</c:if>
 			<!-- 旅游景区 -->
-			<c:if test="${deptType=='旅游景区' }">
+			<c:if test="${deptType=='旅游风景' }">
 				<tr>
 					</Td>
 					<Td class="control-label"><label for="jingQuTicket">门票收入：</label>

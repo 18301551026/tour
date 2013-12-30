@@ -1,11 +1,9 @@
 package com.lxs.oa.tour.action;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -13,29 +11,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.DefaultJasperReportsContext;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
 import net.sf.jasperreports.engine.util.FileBufferedOutputStream;
-import net.sf.jasperreports.engine.util.JRLoader;
-import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -50,6 +36,7 @@ import org.springframework.stereotype.Controller;
 
 import com.lxs.core.action.BaseAction;
 import com.lxs.core.common.SystemConstant;
+import com.lxs.core.common.TimeUtil;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.oa.tour.common.StatisticTypeEnum;
 import com.lxs.oa.tour.common.StatusEnum;
@@ -79,13 +66,15 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
-		@Action(value = "townChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		
 		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
 		@Action(value = "townSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
+				@Result(name="toSelectChart",location="/WEB-INF/jsp/tour/town/selectChart.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/sameCompareDetail.jsp") }),
 		@Action(value = "districtSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/district/sameCompareList.jsp"),
+				@Result(name="toSelectChart",location="/WEB-INF/jsp/tour/district/selectChart.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/district/sameCompareDetail.jsp") }),
 		@Action(value = "townStatistic", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
@@ -96,7 +85,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	private ITourService tourService;
 	private String deptType;
 	private String[] labelTexts;
-	private Long[] inputMoneys;
+	private Double[] inputMoneys;
 	private String reprotYearAndMonth;
 	private Long detailId;
 	private Long money;
@@ -124,10 +113,60 @@ public class TourAction extends BaseAction<TourCommon> {
 	/**
 	 * 图表
 	 */
+	
+	public String toSelectChart(){
+		return "toSelectChart";
+	}
+	public void townWordChart() throws Exception{
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		List<SameCompareChartModel> modelList = tourService.getCharts(
+				nowCriteria, lastCriteria, startDate, null, currentMonth,
+				pageMonthNum);
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_sameCompare_chart.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"), "ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+	}
 	/**
-	 * 镇同比图表
+	 * 镇同比html图表
 	 */
-	public String townChart() {
+	public String townHtmlChart() {
 		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
 		list.add(new SameCompareModel(23l, 34l, 456d, 678d, "观光园"));
 		list.add(new SameCompareModel(24l, 35l, 455d, 677d, "民俗旅游"));
@@ -148,13 +187,82 @@ public class TourAction extends BaseAction<TourCommon> {
 				StatusEnum.reported.getValue()));
 
 		List<SameCompareChartModel> modelList = tourService.getCharts(
-				nowCriteria, lastCriteria, startDate, endDate, currentMonth,
+				nowCriteria, lastCriteria, startDate, null, currentMonth,
 				pageMonthNum);
 		ActionContext.getContext().put("myList", modelList);
 
 		return "html";
 	}
+	public void districtWordChart() throws Exception{
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
 
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		List<SameCompareChartModel> modelList = tourService.getCharts(
+				nowCriteria, lastCriteria, startDate, null, currentMonth,
+				pageMonthNum);
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_sameCompare_chart.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"), "ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+	}
+	/**
+	 * 区同比html图表
+	 */
+	public String districtHtmlChart() {
+
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		districtAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+
+		List<SameCompareChartModel> modelList = tourService.getCharts(
+				nowCriteria, lastCriteria, startDate, null, currentMonth,
+				pageMonthNum);
+		ActionContext.getContext().put("myList", modelList);
+
+		return "html";
+	}
 	/**
 	 * 区同比图表
 	 */
@@ -404,14 +512,6 @@ public class TourAction extends BaseAction<TourCommon> {
 		fbos.dispose();
 	}
 
-	public String test2() throws Exception {
-		// 连接
-		Class.forName("com.mysql.jdbc.Driver");
-		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/oa",
-				"root", "root");
-		return "pdf1";
-	}
-
 	public void test3() throws Exception {
 		// 连接
 		Class.forName("com.mysql.jdbc.Driver");
@@ -494,9 +594,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			criteria.createAlias("user", "u");
 			criteria.add(Restrictions.eq("u.id", u.getId()));
 			criteria.add(Restrictions.eq("status", model.getStatus()));
-			if (null != deptType && deptType.trim().length() != 0) {
-				criteria.add(Restrictions.eq("type", deptType));
-			}
+//			if (null != deptType && deptType.trim().length() != 0) {
+//				criteria.add(Restrictions.eq("type", deptType));
+//			}
 
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.town.getValue())) { // 镇政府
@@ -555,8 +655,25 @@ public class TourAction extends BaseAction<TourCommon> {
 		// criteria.add(Restrictions.eq("u.dept.deptType", deptType));
 		// }
 		addDataCondition(criteria);
+		Calendar calendar = Calendar.getInstance();
+		startDate = calendar.get(calendar.YEAR) + "年"
+				+ (calendar.get(calendar.MONTH)) + "月";
 	}
-
+	/**
+	 * 检查用户这个月是否申报过
+	 */
+	public void checkUserIsReportThisMonth(){
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		DetachedCriteria criteria=DetachedCriteria.forClass(TourCommon.class);
+		criteria.createAlias("user", "u");
+		criteria.add(Restrictions.eq("u.id", u.getId()));
+		criteria.add(Restrictions.eq("time", TimeUtil.getTimeInMillis(reprotYearAndMonth)));
+		List<TourCommon> list=baseService.find(criteria);
+		if (null!=list&&list.size()!=0) {
+			getOut().print("已经申报");
+		}
+		
+	}
 	/**
 	 * 给criteria添加时间条件
 	 * 
@@ -565,53 +682,24 @@ public class TourAction extends BaseAction<TourCommon> {
 	public void addDataCondition(DetachedCriteria criteria) {
 		if (null != startDate && startDate.length() != 0 && endDate != null
 				&& endDate.length() != 0) {// 有查询开始时间和结束时间
-			Criterion c1 = Restrictions.ge("reportYear",
-					Integer.parseInt(startDate.substring(0, 4).trim()));
-			Criterion c2 = Restrictions.ge("reportMonth",
-					Integer.parseInt(startDate.substring(5, 7).trim()));
-			Criterion c3 = Restrictions.and(c1, c2);
 
-			Criterion c5 = Restrictions.le("reportYear",
-					Integer.parseInt(endDate.substring(0, 4).trim()));
-			Criterion c6 = Restrictions.le("reportMonth",
-					Integer.parseInt(endDate.substring(5, 7).trim()));
-			Criterion c4 = Restrictions.and(c5, c6);
-
-			criteria.add(Restrictions.and(c3, c4));
+			criteria.add(Restrictions.and(Restrictions.ge("time",
+					TimeUtil.getTimeInMillis(startDate)), Restrictions.le(
+					"time", TimeUtil.getTimeInMillis(endDate))));
 		} else if (null != startDate && startDate.length() != 0
 				&& (endDate == null || endDate.trim().length() == 0)) {// 有开始时间没结束时间
-			Criterion c1 = Restrictions.ge("reportYear",
-					Integer.parseInt(startDate.substring(0, 4).trim()));
-			Criterion c2 = Restrictions.ge("reportMonth",
-					Integer.parseInt(startDate.substring(5, 7).trim()));
-			Criterion c3 = Restrictions.and(c1, c2);
-
-			Calendar c = Calendar.getInstance();
-			Criterion c5 = Restrictions.le("reportYear", c.get(c.YEAR));
-			Criterion c6 = Restrictions.le("reportMonth", c.get(c.MONTH) + 1);
-			Criterion c4 = Restrictions.and(c5, c6);
-
-			criteria.add(Restrictions.and(c3, c4));
+			criteria.add(Restrictions.eq("time",
+					TimeUtil.getTimeInMillis(startDate)));
 
 		} else if ((null == startDate || startDate.trim().length() == 0)
-				&& endDate != null && endDate.length() != 0) {// 有开始时间没结束时间
-			Criterion c5 = Restrictions.le("reportYear",
-					Integer.parseInt(endDate.substring(0, 4).trim()));
-			Criterion c6 = Restrictions.le("reportMonth",
-					Integer.parseInt(endDate.substring(5, 7).trim()));
-			criteria.add(Restrictions.and(c5, c6));
+				&& (endDate != null && endDate.length() != 0)) {// 没开始时间有结束时间
+			criteria.add(Restrictions.eq("time",
+					TimeUtil.getTimeInMillis(startDate)));
 		} else if ((null == startDate || startDate.trim().length() == 0)
 				&& null == endDate || endDate.trim().length() == 0) {
-			Calendar calendar = Calendar.getInstance();// 默认为上个月
-			Criterion c1 = Restrictions.eq("reportYear",
-					calendar.get(calendar.YEAR));
-			Criterion c2 = Restrictions.eq("reportMonth",
-					calendar.get(calendar.MONTH));
-			criteria.add(Restrictions.and(c1, c2));
-			/*
-			 * startDate = calendar.get(calendar.YEAR) + "年" +
-			 * (calendar.get(calendar.MONTH)) + "月";
-			 */
+			criteria.add(Restrictions.eq("time",
+					TimeUtil.getTimeInMillis("默认时间为上个月时间")));
+
 		}
 	}
 
@@ -861,8 +949,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<SameCompareDetailModel> modelDetails = new ArrayList<SameCompareDetailModel>();
 		for (String str : detailNames) {
 			SameCompareDetailModel tempDetail = new SameCompareDetailModel();
-			Long nowMoney = 0l;
-			Long lastMoney = 0l;
+			Double nowMoney = 0d;
+			Double lastMoney = 0d;
 			String time = null;
 			for (TourCommon comm : nowList) {
 				for (TourDetail d : comm.getDetails()) {
@@ -919,7 +1007,7 @@ public class TourAction extends BaseAction<TourCommon> {
 
 				for (String name : detailNames) {
 					TourDetail tempD = new TourDetail();
-					Long money = 0l;
+					Double money = 0d;
 					for (TourCommon com : list) {
 						for (TourDetail d : com.getDetails()) {
 							if (name.equals(d.getName())) {
@@ -940,14 +1028,24 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	@Override
 	public void beforeSave(TourCommon model) {
+		Integer tempYear = Integer.parseInt(reprotYearAndMonth.substring(0, 4)
+				.trim());
+		Integer tempMonth = Integer.parseInt(reprotYearAndMonth.substring(5, 7)
+				.trim());
+		model.setReportDate(new Date());
+		model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(0, 4)
+				.trim()));
+		model.setReportMonth(Integer.parseInt(reprotYearAndMonth
+				.substring(5, 7).trim()));
+		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));
+		Double totalIncome=0d;
+		for(Double d:inputMoneys){
+			totalIncome+=d;
+		}
+		model.setTotalIncome(totalIncome);
 		if (null == beans || beans.size() == 0) {
 			User u = (User) ActionContext.getContext().getSession()
 					.get(SystemConstant.CURRENT_USER);
-			model.setReportDate(new Date());
-			model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(
-					0, 4).trim()));
-			model.setReportMonth(Integer.parseInt(reprotYearAndMonth.substring(
-					5, 7).trim()));
 			model.setUser(u);
 			model.setStatus(StatusEnum.notReport.getValue());
 		} else {
@@ -957,7 +1055,6 @@ public class TourAction extends BaseAction<TourCommon> {
 							d.getId());
 					tempDetail.setMoney(d.getMoney());
 					baseService.update(tempDetail);
-
 				}
 			}
 		}
@@ -978,10 +1075,10 @@ public class TourAction extends BaseAction<TourCommon> {
 	public void afterSave(TourCommon m) {
 		if (null == beans || beans.size() == 0) {
 			for (int i = 0; i < inputMoneys.length; i++) {
-				Long temp = inputMoneys[i];
+				Double temp = inputMoneys[i];
 				String lbl = labelTexts[i];
 				if (null == temp) {
-					temp = 0l;
+					temp = 0d;
 				}
 				TourDetail detail = new TourDetail();
 				detail.setCommon(m);
@@ -1001,11 +1098,11 @@ public class TourAction extends BaseAction<TourCommon> {
 		this.labelTexts = labelTexts;
 	}
 
-	public Long[] getInputMoneys() {
+	public Double[] getInputMoneys() {
 		return inputMoneys;
 	}
 
-	public void setInputMoneys(Long[] inputMoneys) {
+	public void setInputMoneys(Double[] inputMoneys) {
 		this.inputMoneys = inputMoneys;
 	}
 
@@ -1023,12 +1120,38 @@ public class TourAction extends BaseAction<TourCommon> {
 		// Calendar c = Calendar.getInstance();
 		// System.out.println(c.get(c.MONDAY));
 
-		List<Integer> tes = new ArrayList<Integer>();
-		tes.add(1);
-		tes.add(2);
-		tes.add(3);
-		System.out.println(tes.toString().substring(1,
-				tes.toString().length() - 1));
+		// List<Integer> tes = new ArrayList<Integer>();
+		// tes.add(1);
+		// tes.add(2);
+		// tes.add(3);
+		// System.out.println(tes.toString().substring(1,
+		// // tes.toString().length() - 1));
+		// Calendar calendar=Calendar.getInstance();
+		// Long now=calendar.getTimeInMillis();
+		// calendar.add(calendar.MONTH, 1);
+		// Long next=calendar.getTimeInMillis();
+		// System.out.println(now);
+		// System.out.println(next);
+		// System.out.println(new
+		// SimpleDateFormat("yyyy年MM月").format(calendar.getTime()));
+		// calendar.add(calendar.HOUR,
+		// Integer.parseInt("-"+calendar.get(calendar.HOUR)));
+		// calendar.add(calendar.MINUTE,
+		// Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
+		// calendar.add(calendar.SECOND,
+		// Integer.parseInt("-"+calendar.get(calendar.SECOND)));
+		// calendar.add(calendar.MILLISECOND,
+		// Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
+		// System.out.println(new
+		// SimpleDateFormat("yyyy年MM月").format(calendar.getTime()));
+		// System.out.println(new SimpleDateFormat("yyyy年MM月").format(now));
+		// System.out.println(now<next);
+
+//		Long longTime = TimeUtil.getTimeInMillis("2014年01月");
+//		System.out.println(longTime);
+//		System.out.println(new SimpleDateFormat("yyyy年MM月").format(longTime));
+			
+		System.out.println(new SimpleDateFormat("yyyy年MM月").format(new Date()));
 
 	}
 

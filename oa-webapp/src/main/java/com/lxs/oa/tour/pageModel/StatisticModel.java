@@ -10,7 +10,7 @@ public class StatisticModel {
 	private String factoryType;// 企业类型
 	private Long totalFactoryCount;// 个数
 	private Long totalPersonCount; // 接待总人数
-	private Long totalIncome; // 总收入
+	private Double totalIncome; // 总收入
 	private String tourIds;
 
 	public Long getTotalFactoryCount() {
@@ -29,11 +29,11 @@ public class StatisticModel {
 		this.totalPersonCount = totalPersonCount;
 	}
 
-	public Long getTotalIncome() {
+	public Double getTotalIncome() {
 		return totalIncome;
 	}
 
-	public void setTotalIncome(Long totalIncome) {
+	public void setTotalIncome(Double totalIncome) {
 		this.totalIncome = totalIncome;
 	}
 

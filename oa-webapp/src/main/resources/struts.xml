@@ -27,14 +27,14 @@
 		</action>
 		<action name="chart" class="tourAction">
 			<result name="xls" type="jasper">
-				<param name="location">/reports/tour_statistic_report.jasper</param>
+				<param name="location">/reports/tour_sameCompare_chart.jasper</param>
 				<param name="dataSource">myList</param>
 				<param name="format">XLS</param>
 				<param name="reportParameters">parameters</param>
 				<param name="contentDisposition">attachment;filename="${exportFileName}"</param>
 			</result>
 			<result name="html" type="jasper">
-				<param name="location">/reports/sameCompare_tour_report.jasper</param>
+				<param name="location">/reports/tour_sameCompare_chart.jasper</param>
 				<param name="dataSource">myList</param>
 				<param name="format">HTML</param>
 				<param name="imageServletUrl">  

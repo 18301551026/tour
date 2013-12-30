@@ -17,14 +17,17 @@
 		$("#reportHtmlButton").click(function() {
 			$("#reprotType").val('html');
 			$("#queryForm").attr("action",ctx+"/tour/export!townExportXlsOaHtml.action")
+			$("#queryForm").attr("target","_blank");
 			$("#queryForm").submit();
 		});
 		$("#exportExcelButton").click(function() {
 			$("#reprotType").val('xls');
-			$("#queryForm").attr("action",ctx+"/tour/export!townExportXlsOaHtml.action")
+			$("#queryForm").attr("action",ctx+"/tour/export!townExportXlsOaHtml.action");
+			$("#queryForm").attr("target","_blank");
 			$("#queryForm").submit();
 		});
 		$("#exportWordButton").click(function() {
+			$("#queryForm").attr("target","_blank");
 			$("#queryForm").attr("action",ctx+"/tour/export!townExportWord.action")
 			$("#queryForm").submit();
 		});
@@ -54,7 +57,7 @@
 			</div>
 		</div>
 		<div class="panel-body hide" id="queryPanel">
-			<form role="form" id="queryForm" class="form-horizontal"
+			<form role="form" id="queryForm" class="form-horizontal" target="_self"
 				action="${ctx}/tour/townStatistic!townStatisticList.action"
 				method="post">
 				<s:hidden name="reprotType" id="reprotType"></s:hidden>

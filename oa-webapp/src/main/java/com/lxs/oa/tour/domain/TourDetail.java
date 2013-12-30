@@ -17,7 +17,7 @@ public class TourDetail implements Serializable {
 	private Long id;
 	private TourCommon common;
 	private String name;
-	private Long money;
+	private Double money;
 
 	@Id
 	@GeneratedValue
@@ -50,11 +50,11 @@ public class TourDetail implements Serializable {
 	}
 
 	@Column(name = "money_")
-	public Long getMoney() {
+	public Double getMoney() {
 		return money;
 	}
 
-	public void setMoney(Long money) {
+	public void setMoney(Double money) {
 		this.money = money;
 	}
 }

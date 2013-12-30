@@ -30,15 +30,17 @@ import com.lxs.security.domain.User;
 public class TourCommon implements Serializable {
 	private Long id;
 	private Integer totalPersonNum;// 接待人次
-	private Integer totalIncome; // 总收入
+	private Double totalIncome; // 总收入
 	private Date reportDate;// 申报时间
 	private Integer status;// 申报状态
 	private Integer reportMonth;// 申报月份
 	private Integer reportYear; // 申报年份
+	private Long time;
 	private String desc; // 描述
 	private User user;
 	private String type;
-	@Column(name="type_")
+
+	@Column(name = "type_")
 	public String getType() {
 		return type;
 	}
@@ -48,7 +50,6 @@ public class TourCommon implements Serializable {
 	}
 
 	private List<TourDetail> details = new ArrayList<TourDetail>();// 详情
-	 
 
 	@Id
 	@GeneratedValue
@@ -71,11 +72,11 @@ public class TourCommon implements Serializable {
 	}
 
 	@Column(name = "total_income_")
-	public Integer getTotalIncome() {
+	public Double getTotalIncome() {
 		return totalIncome;
 	}
 
-	public void setTotalIncome(Integer totalIncome) {
+	public void setTotalIncome(Double totalIncome) {
 		this.totalIncome = totalIncome;
 	}
 
@@ -98,7 +99,6 @@ public class TourCommon implements Serializable {
 		this.status = status;
 	}
 
-	
 	@Column(name = "report_month_")
 	public Integer getReportMonth() {
 		return reportMonth;
@@ -157,5 +157,13 @@ public class TourCommon implements Serializable {
 		this.statisticType = statisticType;
 	}
 
-	
+	@Column(name = "long_time_")
+	public Long getTime() {
+		return time;
+	}
+
+	public void setTime(Long time) {
+		this.time = time;
+	}
+
 }

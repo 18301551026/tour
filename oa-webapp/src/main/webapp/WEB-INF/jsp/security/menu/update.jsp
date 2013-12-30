@@ -8,7 +8,6 @@
 <%@ include file="/common/include-jquery-easyui.jsp"%>
 <title>修改节点</title>
 
-
 </head>
 <body>
 	<script type="text/javascript" src="${ctx }/js/menu-update.js"></script>
@@ -26,7 +25,21 @@
 		<s:textfield name="order" type="text"
 			cssClass="easyui-validatebox form-control"
 			data-options="validType:'number'" placeholder="请输入节点排序"></s:textfield>
-		<br /> <label>图标地址：</label>
+		<br />
+		<label>是否展开：</label>
+			是<input 
+			<c:if test="${open }">
+			checked="checked"
+		</c:if> 
+			 type="radio" name="open" value="true">&nbsp;
+			否<input
+			<c:if test="${!open }">
+			checked="checked"
+		</c:if> 
+			 type="radio" name="open" value="false">&nbsp;
+		<br />
+		<Br/>
+		<label>图标地址：</label>
 		<s:textfield type="text" name="icon" cssClass="form-control"
 			placeholder="请输入图标地址"></s:textfield>
 		<br />

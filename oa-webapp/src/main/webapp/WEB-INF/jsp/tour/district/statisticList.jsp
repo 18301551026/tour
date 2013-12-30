@@ -16,15 +16,18 @@
 		$(function() {
 			$("#reportHtmlButton").click(function() {
 				$("#reprotType").val('html');
+				$("#queryForm").attr("target","_blank");
 				$("#queryForm").attr("action",ctx+"/tour/export!districtExportXlsOaHtml.action")
 				$("#queryForm").submit();
 			});
 			$("#exportExcelButton").click(function() {
 				$("#reprotType").val('xls');
+				$("#queryForm").attr("target","_blank");
 				$("#queryForm").attr("action",ctx+"/tour/export!districtExportXlsOaHtml.action")
 				$("#queryForm").submit();
 			});
 			$("#exportWordButton").click(function() {
+				$("#queryForm").attr("target","_blank");
 				$("#queryForm").attr("action",ctx+"/tour/export!districtExportWord.action")
 				$("#queryForm").submit();
 			});

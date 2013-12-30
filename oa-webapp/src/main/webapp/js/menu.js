@@ -64,7 +64,7 @@ function editFun(id) {
 		parent.$.modalDialog({
 			title : '编辑节点',
 			width : 400,
-			height : 280,
+			height : 320,
 			href : ctx + '/security/menu!toEdit.action?id=' + node.id,
 			buttons : [
 					{
@@ -98,7 +98,7 @@ function addFun(flag) {
 	parent.$.modalDialog({
 		title : '添加节点',
 		width : 400,
-		height : 280,
+		height : 320,
 		href : url,
 		buttons : [ {
 			text : '添加',
