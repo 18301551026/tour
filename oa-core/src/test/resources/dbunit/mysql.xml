@@ -25,8 +25,8 @@
       <value>1</value>
       <value>/oa/js/ztree/css/zTreeStyle/img/diy/7.png</value>
       <value>行政办公</value>
-      <value>true</value>
-      <value>0</value>
+      <value>false</value>
+      <value>2</value>
       <value/>
       <value/>
       <null/>
@@ -36,7 +36,7 @@
       <value>/oa/js/ztree/css/zTreeStyle/img/diy/8.png</value>
       <value>工作流管理</value>
       <value>false</value>
-      <value>1</value>
+      <value>3</value>
       <value/>
       <value/>
       <null/>
@@ -46,7 +46,7 @@
       <value>/oa/js/ztree/css/zTreeStyle/img/diy/9.png</value>
       <value>系统管理</value>
       <value>false</value>
-      <value>2</value>
+      <value>1</value>
       <value/>
       <value/>
       <null/>
@@ -256,7 +256,7 @@
       <value/>
       <value>个人办公</value>
       <value>false</value>
-      <value>3</value>
+      <value>4</value>
       <value/>
       <value/>
       <null/>
@@ -266,7 +266,7 @@
       <value/>
       <value>公共信息</value>
       <value>false</value>
-      <value>4</value>
+      <value>5</value>
       <value/>
       <value/>
       <null/>
@@ -484,9 +484,9 @@
     <row>
       <value>54</value>
       <value/>
-      <value>旅游统计</value>
-      <value>false</value>
-      <value>5</value>
+      <value>营业数据</value>
+      <value>true</value>
+      <value>0</value>
       <null/>
       <value/>
       <null/>
@@ -495,7 +495,7 @@
       <value>55</value>
       <value/>
       <value>企业</value>
-      <value>false</value>
+      <value>true</value>
       <value>0</value>
       <null/>
       <value/>
@@ -505,7 +505,7 @@
       <value>56</value>
       <value/>
       <value>镇政府</value>
-      <value>false</value>
+      <value>true</value>
       <value>1</value>
       <null/>
       <value/>
@@ -515,7 +515,7 @@
       <value>57</value>
       <value/>
       <value>区</value>
-      <value>false</value>
+      <value>true</value>
       <value>2</value>
       <null/>
       <value/>
@@ -604,106 +604,106 @@
   </table>
   <table name="user_">
     <column>id_</column>
+    <column>desc_</column>
     <column>password_</column>
     <column>real_name_</column>
     <column>user_name_</column>
     <column>dept_id_</column>
-    <column>desc_</column>
     <row>
       <value>1</value>
+      <null/>
       <value>1</value>
       <value>系统管理员</value>
       <value>admin</value>
       <value>1</value>
-      <null/>
     </row>
     <row>
       <value>2</value>
+      <null/>
       <value>1</value>
       <value>刘雪松</value>
       <value>lxs</value>
       <value>3</value>
-      <null/>
     </row>
     <row>
       <value>3</value>
+      <null/>
       <value>1</value>
       <value>冯威</value>
       <value>fw</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>4</value>
+      <null/>
       <value>1</value>
       <value>马雷</value>
       <value>ml</value>
       <value>8</value>
-      <null/>
     </row>
     <row>
       <value>5</value>
+      <null/>
       <value>1</value>
       <value>刘彦芳</value>
       <value>lyf</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>6</value>
+      <null/>
       <value>1</value>
       <value>王冰</value>
       <value>wb</value>
       <value>7</value>
-      <null/>
     </row>
     <row>
       <value>7</value>
+      <null/>
       <value>1</value>
       <value>张发涛</value>
       <value>zft</value>
       <value>10</value>
-      <null/>
     </row>
     <row>
       <value>8</value>
+      <null/>
       <value>2</value>
       <value>李雅格</value>
       <value>lyg</value>
       <value>7</value>
-      <null/>
     </row>
     <row>
       <value>9</value>
+      <null/>
       <value>1</value>
       <value>宋相营</value>
       <value>sxy</value>
       <value>12</value>
-      <null/>
     </row>
     <row>
       <value>10</value>
+      <null/>
       <value>1</value>
       <value>总经理</value>
       <value>manager</value>
       <null/>
-      <null/>
     </row>
     <row>
       <value>11</value>
+      <null/>
       <value>1</value>
       <value>董事长</value>
       <value>boss</value>
       <null/>
-      <null/>
     </row>
     <row>
       <value>12</value>
+      <null/>
       <value>1</value>
       <value>赵立文</value>
       <value>zlw</value>
       <value>15</value>
-      <null/>
     </row>
   </table>
   <table name="job_">
@@ -732,27 +732,27 @@
   </table>
   <table name="ROLE_">
     <column>id_</column>
-    <column>role_name_</column>
     <column>desc_</column>
+    <column>role_name_</column>
     <row>
       <value>1</value>
-      <value>管理员</value>
       <null/>
+      <value>管理员</value>
     </row>
     <row>
       <value>2</value>
-      <value>区</value>
       <null/>
+      <value>区</value>
     </row>
     <row>
       <value>3</value>
-      <value>企业</value>
       <null/>
+      <value>企业</value>
     </row>
     <row>
       <value>4</value>
-      <value>镇政府</value>
       <null/>
+      <value>镇政府</value>
     </row>
   </table>
   <table name="DEPT_">
@@ -761,17 +761,17 @@
     <column>dept_level_</column>
     <column>dept_type_</column>
     <column>icon_</column>
+    <column>tempLevel</column>
     <column>text_</column>
     <column>pid_</column>
-    <column>tempLevel</column>
     <row>
       <value>1</value>
       <value>这是大兴区</value>
       <value>区级</value>
       <null/>
       <null/>
-      <value>大兴区</value>
       <null/>
+      <value>大兴区</value>
       <null/>
     </row>
     <row>
@@ -780,9 +780,9 @@
       <value>镇级</value>
       <null/>
       <null/>
+      <null/>
       <value>西红门镇</value>
       <value>1</value>
-      <null/>
     </row>
     <row>
       <value>3</value>
@@ -790,9 +790,9 @@
       <value>企业</value>
       <value>工业旅游</value>
       <null/>
+      <null/>
       <value>西红门镇工业旅游</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>7</value>
@@ -800,9 +800,9 @@
       <value>企业</value>
       <value>民俗旅游</value>
       <null/>
+      <null/>
       <value>西红门镇民俗旅游</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>8</value>
@@ -810,9 +810,9 @@
       <value>企业</value>
       <value>观光园</value>
       <null/>
+      <null/>
       <value>西红门镇观光园</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>9</value>
@@ -820,9 +820,9 @@
       <value>企业</value>
       <value>旅游住宿</value>
       <null/>
+      <null/>
       <value>西红门镇旅游住宿</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>10</value>
@@ -830,9 +830,9 @@
       <value>企业</value>
       <value>旅游风景</value>
       <null/>
+      <null/>
       <value>西红门镇旅游风景</value>
       <value>2</value>
-      <null/>
     </row>
     <row>
       <value>11</value>
@@ -840,9 +840,9 @@
       <value>镇级</value>
       <null/>
       <null/>
+      <null/>
       <value><![CDATA[ 黄村镇]]></value>
       <value>1</value>
-      <null/>
     </row>
     <row>
       <value>12</value>
@@ -850,9 +850,9 @@
       <value>企业</value>
       <value>观光园</value>
       <null/>
+      <null/>
       <value>黄村镇观光园</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>14</value>
@@ -860,9 +860,9 @@
       <value>企业</value>
       <value>民俗旅游</value>
       <null/>
+      <null/>
       <value>黄村镇民俗旅游</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>15</value>
@@ -870,9 +870,9 @@
       <value>企业</value>
       <value>工业旅游</value>
       <null/>
+      <null/>
       <value>黄村镇工业旅游</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>16</value>
@@ -880,9 +880,9 @@
       <value>企业</value>
       <value>旅游住宿</value>
       <null/>
+      <null/>
       <value>黄村镇旅游住宿</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>17</value>
@@ -890,9 +890,9 @@
       <value>企业</value>
       <value>旅游风景</value>
       <null/>
+      <null/>
       <value>黄村镇旅游风景</value>
       <value>11</value>
-      <null/>
     </row>
     <row>
       <value>21</value>
@@ -900,9 +900,9 @@
       <value>企业</value>
       <value>工业旅游</value>
       <null/>
+      <null/>
       <value>西红门镇工业旅游</value>
       <value>2</value>
-      <null/>
     </row>
   </table>
   <table name="user_job_">

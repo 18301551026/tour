@@ -19,7 +19,6 @@ public class UserServiceImplTest {
 	private IUserServiceWs userServiceWs; 
 	
 
-	@Test
 	public void testLoginWs() {
 		String json = userServiceWs.loginWs("lxs", "1");
 		System.out.println(json);

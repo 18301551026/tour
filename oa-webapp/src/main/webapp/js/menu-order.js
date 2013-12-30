@@ -14,7 +14,7 @@ $(function() {
 	$.post(ctx + '/security/menu!findMenu.action', function(data) {
 		var nodes = eval(data);
 		var zTree = $.fn.zTree.init($("#menuUpdateTree"), setting, nodes);
-		zTree.expandAll(true);
+		//zTree.expandAll(true);
 	});
 	$("#saveMenuOrder").click(function() {
 		var zTree = $.fn.zTree.getZTreeObj("menuUpdateTree");
