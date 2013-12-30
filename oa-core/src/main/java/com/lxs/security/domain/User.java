@@ -20,8 +20,6 @@ import javax.persistence.Table;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-<<<<<<< HEAD
-=======
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.annotation.JSONType;

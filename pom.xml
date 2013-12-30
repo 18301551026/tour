@@ -22,11 +22,8 @@
 		<oracle.version>11g</oracle.version>
 		<c3p0.version>0.9.5-pre1</c3p0.version>
 		<jasperreports.version>5.5.0</jasperreports.version>
-<<<<<<< HEAD
 		<poi.version>3.7</poi.version>
-=======
 		<cxf.version>3.0.0-milestone1</cxf.version>
->>>>>>> branch 'master' of https://github.com/18301551026/tour.git
 	</properties>
 
 	<scm>
