@@ -46,6 +46,7 @@
                 <value>com.lxs.oa.message.domain</value>
                 <value>com.lxs.oa.tour.domain</value>
                 <value>com.lxs.tour.domain</value>
+                <value>com.lxs.notification.domain</value>
             </list>
         </property>
         <property name="hibernateProperties">

@@ -15,6 +15,15 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
+		<!-- quartz -->
+		<dependency>
+		    <groupId>org.quartz-scheduler</groupId>
+		    <artifactId>quartz</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.quartz-scheduler</groupId>
+		    <artifactId>quartz-jobs</artifactId>
+		</dependency>		
 		<!-- cxf -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>

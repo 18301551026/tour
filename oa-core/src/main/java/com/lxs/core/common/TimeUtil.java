@@ -22,10 +22,11 @@ public class TimeUtil {
 	 */
 	public static void main(String[] args) {
 		TimeUtil tt = new TimeUtil();
-		System.out.println("获取当天日期:" + tt.getNowTime("yyyy-MM-dd HH:mm:ss"));
-		System.out.println(tt.strToDate(tt.getNowTime("yyyy-MM-dd HH:mm:ss"),
-				"yyyy-MM-dd HH:mm:ss"));
-		;
+		System.out.println(tt.getTimeInMillis("2013年12月"));
+//		System.out.println(tt.getThisSeasonTime(1));
+//		System.out.println("获取当天日期:" + tt.getNowTime("yyyy-MM-dd HH:mm:ss"));
+//		System.out.println(tt.strToDate(tt.getNowTime("yyyy-MM-dd HH:mm:ss"),
+//				"yyyy-MM-dd HH:mm:ss"));
 		// System.out.println("获得当前日期的前七天"+tt.getDateAfter(new Date(), 7));
 		// System.out.println(DateToStr((tt.getDateAfter(new Date(),
 		// 1)),"yyyy-MM-dd"));;

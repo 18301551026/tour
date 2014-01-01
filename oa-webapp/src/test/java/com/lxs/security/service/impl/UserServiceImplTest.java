@@ -22,8 +22,8 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testLoginWs() {
-		String json = userServiceWs.loginWs("lxs22", "1");
-		System.out.println("null".equals(json));
+		String json = userServiceWs.doLoginWs("6d39ff1d7d4a480db9d623e8394227b3", "lxs", "1");
+		System.out.println(json);
 		
 //		String json = "{\"dept\":{\"deptType\":\"工业旅游\",\"id\":3},\"id\":2,\"realName\":\"刘雪松\"}";
 //		User u = JSON.parseObject(json, User.class);

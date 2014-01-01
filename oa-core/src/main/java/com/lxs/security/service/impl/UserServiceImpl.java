@@ -2,15 +2,16 @@ package com.lxs.security.service.impl;
 
 import javax.annotation.Resource;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.lxs.core.cache.ClearCache;
 import com.lxs.core.dao.IBaseDao;
+import com.lxs.notification.domain.ApnUser;
 import com.lxs.security.dao.IUserDao;
-import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.Job;
 import com.lxs.security.domain.Role;
 import com.lxs.security.domain.User;
@@ -72,10 +73,30 @@ public class UserServiceImpl implements IUserService, IUserServiceWs {
 	}
 
 	@Override
-	public String loginWs(String userName, String password) {
+	public String doLoginWs(String xmppUserName, String userName, String password) {
+		updateXmppUser(xmppUserName, userName);
+		
 		User user = userDao.login(userName, password);
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter("id", "dept", "deptType", "realName");
 		return JSON.toJSONString(user, filter);
+	}
+	
+	/**
+	 * 修改app_user 表，关联xmpp_user和系统user
+	 * @param xmppUserName
+	 * @param userName
+	 */
+	private void updateXmppUser(String xmppUserName, String userName) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(ApnUser.class);
+		criteria.add(Restrictions.eq("username", xmppUserName));
+		ApnUser apnUser = baseDao.uniqueResult(criteria);
+		
+		criteria = DetachedCriteria.forClass(User.class);
+		criteria.add(Restrictions.eq("userName", userName));
+		User user = baseDao.uniqueResult(criteria);
+		
+		apnUser.setUser(user);
+		baseDao.save(apnUser);
 	}
 
 

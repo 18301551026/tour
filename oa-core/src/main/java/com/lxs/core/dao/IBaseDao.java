@@ -51,6 +51,12 @@ public interface IBaseDao {
 	 * @param criteria
 	 */
 	public abstract <T> List<T> find(DetachedCriteria criteria);
+	
+	/**
+	 * 标准查询，返回单一结果
+	 * @param criteria
+	 */
+	public abstract <T> T uniqueResult(DetachedCriteria criteria);	
 
 	/**
 	 * 分页查询

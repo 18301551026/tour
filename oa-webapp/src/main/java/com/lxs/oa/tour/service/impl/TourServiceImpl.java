@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
+import com.lxs.core.common.TimeUtil;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.core.dao.IBaseDao;
 import com.lxs.oa.tour.common.StatusEnum;
@@ -108,13 +109,35 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 	@Override
 	public String addTourWs(String json) {
 		TourCommon c = JSON.parseObject(json, TourCommon.class);
+		
 		c.setStatus(StatusEnum.notReport.getValue());
+		
 		Double totalMoney = 0d;
 		for (TourDetail d : c.getDetails()) {
 			totalMoney = totalMoney + d.getMoney();
 		}		
 		c.setTotalIncome(totalMoney);
-		//FIXME 添加之前的数据处理
+		
+		if (c.getReportMonth() >=1 && c.getReportMonth() <=3) {
+			c.setQuarter(1);
+		} 
+		if (c.getReportMonth() >=4 && c.getReportMonth() <=6) {
+			c.setQuarter(2);
+		} 
+		if (c.getReportMonth() >=7 && c.getReportMonth() <=9) {
+			c.setQuarter(3);
+		}
+		if (c.getReportMonth() >=10 && c.getReportMonth() <=12) {
+			c.setQuarter(4);
+		}
+		
+		String yearMonthDate = c.getReportYear() + "年" + c.getReportMonth() + "月";
+		c.setTime(TimeUtil.getTimeInMillis(yearMonthDate));
+		
+		if (existSameTimeTour(c.getReportYear(), c.getReportMonth(), c.getUser().getId())) {
+			return "false";
+		}
+		
 		baseDao.add(c);
 		
 		for (TourDetail d : c.getDetails()) {
@@ -132,5 +155,19 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 				"id", "totalPersonNum", "totalIncome", "reportMonth", 
 				"reportYear", "details", "name", "money");
 		return JSON.toJSONString(c, filter);		
+	}
+
+	private boolean existSameTimeTour(int year, int month, Long userId) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
+		criteria.createAlias("user", "u");
+		criteria.add(Restrictions.eq("u.id", userId));
+		criteria.add(Restrictions.eq("reportMonth", month));
+		criteria.add(Restrictions.eq("reportYear", year));
+		List<TourCommon> list = baseDao.find(criteria);
+		if (null != list && list.size() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

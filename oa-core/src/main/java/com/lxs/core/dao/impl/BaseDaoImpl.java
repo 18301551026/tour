@@ -75,5 +75,11 @@ public class BaseDaoImpl implements IBaseDao {
 		
 		return page;
 	}
+
+	@Override
+	public <T> T uniqueResult(DetachedCriteria criteria) {
+		Criteria c = criteria.getExecutableCriteria(sessionFactory.getCurrentSession());
+		return (T) c.uniqueResult();
+	}
 	
 }

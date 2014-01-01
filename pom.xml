@@ -10,7 +10,7 @@
 
 	<properties>
 		<junit.version>4.11</junit.version>
-		<spring.version>3.2.3.RELEASE</spring.version>
+		<spring.version>3.2.6.RELEASE</spring.version>
 		<hibernate.version>4.2.2.Final</hibernate.version>
 		<struts.version>2.3.8</struts.version>
 		<servlet.version>3.0.1</servlet.version>
@@ -24,6 +24,7 @@
 		<jasperreports.version>5.5.0</jasperreports.version>
 		<poi.version>3.7</poi.version>
 		<cxf.version>3.0.0-milestone1</cxf.version>
+		<quartz.version>2.2.1</quartz.version>
 	</properties>
 
 	<scm>
@@ -58,6 +59,18 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- quartz -->
+			<dependency>
+			    <groupId>org.quartz-scheduler</groupId>
+			    <artifactId>quartz</artifactId>
+			    <version>${quartz.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.quartz-scheduler</groupId>
+			    <artifactId>quartz-jobs</artifactId>
+			    <version>${quartz.version}</version>
+			</dependency>		
+		
 			<!-- cxf -->
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
