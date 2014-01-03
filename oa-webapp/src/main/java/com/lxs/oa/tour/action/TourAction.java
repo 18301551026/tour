@@ -43,6 +43,7 @@ import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
 import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
+import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
@@ -66,7 +67,12 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
 		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
-		@Action(value = "townQuarterSameCompare", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/quarterSameCompareList.jsp") }),
+		@Action(value = "townQuarterSameCompare", className = "tourAction", results = {
+				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/quarterSameCompareList.jsp"),
+				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/town/quarterSelectChart.jsp") }),
+		@Action(value = "districtQuarterSameCompare", className = "tourAction", results = {
+				@Result(name = "list", location = "/WEB-INF/jsp/tour/district/quarterSameCompareList.jsp"),
+				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/district/quarterSelectChart.jsp") }),
 		@Action(value = "townSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
 				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/town/selectChart.jsp"),
@@ -108,21 +114,18 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	// 保存报表类型
 	private String reprotType;
-	
-	//保存季度(查询)
-	private Integer quarters[]={1,2,3,4};
-	//季度同比分页
-	private Long currentQuarter;//当前季度
-	private Long currentYear;
-	private Long quarterNum=1l;
-	private boolean orention=true;//判断是向上还是向下
-	
+
+	// 保存季度(查询)
+	private Integer quarters[] = { 1, 2, 3, 4 };
+	private Integer startYear = 0;
+	private Integer endYear = 0;
 
 	/**
 	 * 图表
 	 */
 
 	public String toSelectChart() {
+		startYear=Calendar.getInstance().get(Calendar.YEAR);
 		return "toSelectChart";
 	}
 
@@ -194,6 +197,254 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<SameCompareChartModel> modelList = tourService.getCharts(
 				nowCriteria, lastCriteria, startDate, null, currentMonth,
 				pageMonthNum);
+		ActionContext.getContext().put("myList", modelList);
+
+		return "html";
+	}
+
+	/**
+	 * 区季度同比导出word
+	 * 
+	 * @throws Exception
+	 */
+	public void districtQuarterWordChart() throws Exception {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		for (Dept dept : list) {
+			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+			for (Dept factory : factyList) {
+				for (User tempU : factory.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
+
+		}
+
+		String reportDate = startYear + "";
+		if (null != quarters && quarters.length != 0) {
+
+			int qu = quarters[0];
+			if (qu == 1) {
+				reportDate += "一季度";
+			} else if (qu == 2) {
+				reportDate += "二季度";
+			} else if (qu == 3) {
+				reportDate += "三季度";
+			} else if (qu == 4) {
+				reportDate += "四季度";
+			}
+		}
+		parameters.put("deptName", u.getDept().getText());
+		parameters.put("reportDate", reportDate);
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
+				userIds, startYear, endYear, qu);
+
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_sameCompare_chart.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"),
+				"ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+	}
+
+	/**
+	 * 区季度同比html图表
+	 */
+	public String districtQuarterHtmlChart() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		for (Dept dept : list) {
+			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+			for (Dept factory : factyList) {
+				for (User tempU : factory.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
+
+		}
+
+		String reportDate = startYear + "";
+		if (null != quarters && quarters.length != 0) {
+
+			int qu = quarters[0];
+			if (qu == 1) {
+				reportDate += "一季度";
+			} else if (qu == 2) {
+				reportDate += "二季度";
+			} else if (qu == 3) {
+				reportDate += "三季度";
+			} else if (qu == 4) {
+				reportDate += "四季度";
+			}
+		}
+		parameters.put("deptName", u.getDept().getText());
+		parameters.put("reportDate", reportDate);
+
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
+				userIds, startYear, endYear, qu);
+
+		ActionContext.getContext().put("myList", modelList);
+
+		return "html";
+	}
+
+	/**
+	 * 镇季度同比导出word
+	 * 
+	 * @throws Exception
+	 */
+	public void townQuarterWordChart() throws Exception {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+		for (Dept dept : list) {
+			for (User tempU : dept.getUsers()) {// 企业中所有用户
+				userIds.add(tempU.getId());
+			}
+		}
+
+		String reportDate = startYear + "";
+		if (null != quarters && quarters.length != 0) {
+
+			int qu = quarters[0];
+			if (qu == 1) {
+				reportDate += "一季度";
+			} else if (qu == 2) {
+				reportDate += "二季度";
+			} else if (qu == 3) {
+				reportDate += "三季度";
+			} else if (qu == 4) {
+				reportDate += "四季度";
+			}
+		}
+		parameters.put("deptName", u.getDept().getText());
+		parameters.put("reportDate", reportDate);
+
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
+				userIds, startYear, endYear, qu);
+
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(modelList);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "tour_sameCompare_chart.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"),
+				"ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
+	}
+
+	/**
+	 * 镇季度同比html图表
+	 */
+	public String townQuarterHtmlChart() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+		for (Dept dept : list) {
+			for (User tempU : dept.getUsers()) {// 企业中所有用户
+				userIds.add(tempU.getId());
+			}
+		}
+
+		String reportDate = startYear + "";
+		if (null != quarters && quarters.length != 0) {
+
+			int qu = quarters[0];
+			if (qu == 1) {
+				reportDate += "一季度";
+			} else if (qu == 2) {
+				reportDate += "二季度";
+			} else if (qu == 3) {
+				reportDate += "三季度";
+			} else if (qu == 4) {
+				reportDate += "四季度";
+			}
+		}
+		parameters.put("deptName", u.getDept().getText());
+		parameters.put("reportDate", reportDate);
+
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
+				userIds, startYear, endYear, qu);
 		ActionContext.getContext().put("myList", modelList);
 
 		return "html";
@@ -326,7 +577,8 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
 		String reportDate = "";
-		reportDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil.getTimeInMillis("上个月"));
+		reportDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
+				.getTimeInMillis("上个月"));
 		if (null != startDate && startDate.trim().length() != 0
 				&& endDate != null && endDate.trim().length() != 0) {
 			reportDate = startDate + "--" + endDate;
@@ -492,20 +744,20 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.town.getValue())) { // 镇政府
-				List<Long> userIds = new ArrayList<Long>();
-				u = baseService.get(User.class, u.getId());
-				List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
-				for (Dept dept : list) {
-					for (User tempU : dept.getUsers()) {// 企业中所有用户
-						userIds.add(tempU.getId());
-					}
+			List<Long> userIds = new ArrayList<Long>();
+			u = baseService.get(User.class, u.getId());
+			List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+			for (Dept dept : list) {
+				for (User tempU : dept.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
 				}
-				if (userIds.size() != 0) {
-					criteria.createAlias("user", "u");
-					criteria.add(Restrictions.in("u.id", userIds));
-				} else {
-					criteria.add(Restrictions.isNull("user"));
-				}
+			}
+			if (userIds.size() != 0) {
+				criteria.createAlias("user", "u");
+				criteria.add(Restrictions.in("u.id", userIds));
+			} else {
+				criteria.add(Restrictions.isNull("user"));
+			}
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
 		} else if (model.getStatisticType().equals(
@@ -553,7 +805,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.createAlias("user", "u");
 		criteria.add(Restrictions.eq("u.id", u.getId()));
-		criteria.add(Restrictions.eq("time",TimeUtil.getTimeInMillis(reprotYearAndMonth)));
+		criteria.add(Restrictions.eq("time",
+				TimeUtil.getTimeInMillis(reprotYearAndMonth)));
 		List<TourCommon> list = baseService.find(criteria);
 		if (null != list && list.size() != 0) {
 			getOut().print("已经申报");
@@ -568,10 +821,12 @@ public class TourAction extends BaseAction<TourCommon> {
 	 */
 	public void addDataCondition(DetachedCriteria criteria) {
 		if (null != startDate && startDate.trim().length() != 0) {
-			criteria.add(Restrictions.ge("time",TimeUtil.getTimeInMillis(startDate)));
+			criteria.add(Restrictions.ge("time",
+					TimeUtil.getTimeInMillis(startDate)));
 		}
 		if (null != endDate && endDate.trim().length() != 0) {
-			criteria.add(Restrictions.le("time",TimeUtil.getTimeInMillis(endDate)));
+			criteria.add(Restrictions.le("time",
+					TimeUtil.getTimeInMillis(endDate)));
 		}
 	}
 
@@ -626,15 +881,14 @@ public class TourAction extends BaseAction<TourCommon> {
 					.getTimeInMillis("默认是上月"));
 			startDate = strDate;
 			endDate = strDate;
-			criteria.add(Restrictions.eq("time",TimeUtil
-					.getTimeInMillis("默认是上月")));
+			criteria.add(Restrictions.eq("time",
+					TimeUtil.getTimeInMillis("默认是上月")));
 
 		}
 		PageResult page = tourService.findStatistic(criteria, u.getId(), u
 				.getDept().getChildren());
 		ActionContext.getContext().put(PAGE, page);
 
-		
 		return LIST;
 	}
 
@@ -686,8 +940,8 @@ public class TourAction extends BaseAction<TourCommon> {
 					.getTimeInMillis("默认是上月"));
 			startDate = strDate;
 			endDate = strDate;
-			criteria.add(Restrictions.eq("time",TimeUtil
-					.getTimeInMillis("默认是上月")));
+			criteria.add(Restrictions.eq("time",
+					TimeUtil.getTimeInMillis("默认是上月")));
 
 		}
 		List<Dept> deptList = new ArrayList<Dept>();
@@ -697,8 +951,6 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findStatistic(criteria, user.getId(),
 				deptList);
 		ActionContext.getContext().put(PAGE, page);
-
-		
 
 		return LIST;
 	}
@@ -720,8 +972,9 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
-		
-		if (null != u.getDept() && null != u.getDept().getFactoryType()&&null!=u.getDept().getFactoryType().getOptions()) {
+
+		if (null != u.getDept() && null != u.getDept().getFactoryType()
+				&& null != u.getDept().getFactoryType().getOptions()) {
 			ActionContext.getContext().put("factoryOptions",
 					u.getDept().getFactoryType().getOptions());
 		}
@@ -733,20 +986,19 @@ public class TourAction extends BaseAction<TourCommon> {
 	 * @return
 	 */
 	public String townSameCompare() {
-		DetachedCriteria nowCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		townAddCondition(nowCriteria);
-		nowCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
 
-		DetachedCriteria lastCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		townAddCondition(lastCriteria);
-		lastCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
-
-		PageResult page = tourService.findSameCompare(nowCriteria,
-				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+		for (Dept dept : list) {
+			for (User tempU : dept.getUsers()) {// 企业中所有用户
+				userIds.add(tempU.getId());
+			}
+		}
+		PageResult page = tourService.findSameCompare(userIds, startDate,
+				endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
 		if ((null == startDate || startDate.trim().length() == 0)
 				&& null == endDate || endDate.trim().length() == 0) {
@@ -765,20 +1017,23 @@ public class TourAction extends BaseAction<TourCommon> {
 	 * @return
 	 */
 	public String districtSameCompare() {
-		DetachedCriteria nowCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		districtAddCondition(nowCriteria);
-		nowCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
 
-		DetachedCriteria lastCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		districtAddCondition(lastCriteria);
-		lastCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		for (Dept dept : list) {
+			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+			for (Dept factory : factyList) {
+				for (User tempU : factory.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
 
-		PageResult page = tourService.findSameCompare(nowCriteria,
-				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
+		}
+		PageResult page = tourService.findSameCompare(userIds, startDate,
+				endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
 		if ((null == startDate || startDate.trim().length() == 0)
 				&& null == endDate || endDate.trim().length() == 0) {
@@ -886,8 +1141,8 @@ public class TourAction extends BaseAction<TourCommon> {
 					}
 				}
 			}
-			Double p=0d;
-			p=getPercent(nowMoney, lastMoney);
+			Double p = 0d;
+			p = getPercent(nowMoney, lastMoney);
 			tempDetail.setPercent(p);
 			tempDetail.setNowMoney(nowMoney);
 			tempDetail.setLastMoney(lastMoney);
@@ -947,33 +1202,34 @@ public class TourAction extends BaseAction<TourCommon> {
 				.trim());
 		Integer tempMonth = Integer.parseInt(reprotYearAndMonth.substring(5, 7)
 				.trim());
-		if (tempMonth>=2&&tempMonth<=4) {
+		if (tempMonth >= 2 && tempMonth <= 4) {
 			model.setQuarter(1);
 		}
-		if (tempMonth>=5&&tempMonth<=7) {
+		if (tempMonth >= 5 && tempMonth <= 7) {
 			model.setQuarter(2);
 		}
-		if (tempMonth>=8&&tempMonth<=10) {
+		if (tempMonth >= 8 && tempMonth <= 10) {
 			model.setQuarter(3);
 		}
-		if (tempMonth>=11||tempMonth==1) {
+		if (tempMonth >= 11 || tempMonth == 1) {
 			model.setQuarter(4);
 		}
-		
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		model.setType(u.getDept().getFactoryType().getName());
 		model.setReportDate(new Date());
 		model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(0, 4)
 				.trim()));
 		model.setReportMonth(Integer.parseInt(reprotYearAndMonth
 				.substring(5, 7).trim()));
-		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));// 
+		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));//
 		Double totalIncome = 0d;
 		for (Double d : inputMoneys) {
 			totalIncome += d;
 		}
 		model.setTotalIncome(totalIncome);
 		if (null == beans || beans.size() == 0) {
-			User u = (User) ActionContext.getContext().getSession()
-					.get(SystemConstant.CURRENT_USER);
 			model.setUser(u);
 			model.setStatus(StatusEnum.notReport.getValue());
 		} else {
@@ -1017,48 +1273,103 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 
 	}
-	public String townQuarterSameCompare(){
-		DetachedCriteria nowCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		townAddCondition(nowCriteria);
-		nowCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
 
-		DetachedCriteria lastCriteria = DetachedCriteria
-				.forClass(TourCommon.class);
-		townAddCondition(lastCriteria);
-		lastCriteria.add(Restrictions.eq("status",
-				StatusEnum.reported.getValue()));
-		PageResult page=tourService.findQuarterSameCompare(nowCriteria, lastCriteria, startDate, endDate,currentQuarter,currentYear,quarterNum,orention,quarters);
-		Long count=0l;
-		if (null==startDate||startDate.trim().length()==0) {
-			count=1l;
+	public String quarterChart() {
+
+		return reprotType;
+	}
+
+	public String townQuarterSameCompare() {
+		if (pageSize == 10) {
+			pageSize = 1;
 		}
-		if (null!=startDate&&startDate.trim().length()!=0) {
-			Long startYear=Long.parseLong(startDate.trim());
-			Long endYear=0l;
-			if (null==endDate||endDate.trim().length()==0) {
-				Calendar calendar=Calendar.getInstance();
-				endYear=Long.parseLong(calendar.get(calendar.YEAR)+"");
+		List<FactoryType> types = baseService.find(DetachedCriteria
+				.forClass(FactoryType.class));
+		ActionContext.getContext().put("typeNums", types.size());
+
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+		for (Dept dept : list) {
+			for (User tempU : dept.getUsers()) {// 企业中所有用户
+				userIds.add(tempU.getId());
 			}
-			if (null!=endYear&&endDate.trim().length()!=0) {
-				endYear=Long.parseLong(endDate.trim());
-			}
-			
-			count=(endYear-startYear)*quarters.length;
 		}
-		
-		page.setRowCount(count);
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareModel> modelList = tourService
+				.getQuarterSameCompareModels(userIds, startYear, endYear, qu);// 全部数据
+		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
+
+		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+				.size())); i++) {
+			resultList.add(modelList.get(i));
+		}
+		PageResult page = new PageResult();
+		page.setRowCount(modelList.size() / types.size());
+		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
-	public List<FactoryType> getAllFactoryType(){
-		List<FactoryType> list=new ArrayList<FactoryType>();
-		DetachedCriteria criteria=DetachedCriteria.forClass(FactoryType.class);
-		list=baseService.find(criteria);
-		return list;
-		
+
+	public String districtQuarterSameCompare() {
+		if (pageSize == 10) {
+			pageSize = 1;
+		}
+		List<FactoryType> types = baseService.find(DetachedCriteria
+				.forClass(FactoryType.class));
+		ActionContext.getContext().put("typeNums", types.size());
+
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		List<Long> userIds = new ArrayList<Long>();
+		u = baseService.get(User.class, u.getId());
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		for (Dept dept : list) {
+			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+			for (Dept factory : factyList) {
+				for (User tempU : factory.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
+
+		}
+		List<Integer> qu = new ArrayList<Integer>();
+		if (null != quarters && quarters.length != 0) {
+			for (int i : quarters) {
+				qu.add(i);
+			}
+		}
+		List<SameCompareModel> modelList = tourService
+				.getQuarterSameCompareModels(userIds, startYear, endYear, qu);// 全部数据
+		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
+
+		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+				.size())); i++) {
+			resultList.add(modelList.get(i));
+		}
+		PageResult page = new PageResult();
+		page.setRowCount(modelList.size() / types.size());
+		page.setResult(resultList);
+		ActionContext.getContext().put(PAGE, page);
+		return LIST;
 	}
+
+	public List<FactoryType> getAllFactoryType() {
+		List<FactoryType> list = new ArrayList<FactoryType>();
+		DetachedCriteria criteria = DetachedCriteria
+				.forClass(FactoryType.class);
+		list = baseService.find(criteria);
+		return list;
+
+	}
+
 	public String[] getLabelTexts() {
 		return labelTexts;
 	}
@@ -1084,29 +1395,31 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 
 	public static void main(String[] args) {
-		Calendar calendar=Calendar.getInstance();
-		int date=Integer.parseInt("-"+calendar.get(calendar.DATE));
-		int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
-		int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
-		int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
-		int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
-		
+		Calendar calendar = Calendar.getInstance();
+		int date = Integer.parseInt("-" + calendar.get(calendar.DATE));
+		int hour = Integer.parseInt("-" + calendar.get(calendar.HOUR));
+		int minute = Integer.parseInt("-" + calendar.get(calendar.MINUTE));
+		int second = Integer.parseInt("-" + calendar.get(calendar.SECOND));
+		int mi = Integer.parseInt("-" + calendar.get(calendar.MILLISECOND));
+
 		calendar.add(calendar.MILLISECOND, mi);
 		calendar.add(calendar.SECOND, second);
-		calendar.add(calendar.MINUTE,minute);
+		calendar.add(calendar.MINUTE, minute);
 		calendar.add(calendar.HOUR, hour);
 		calendar.add(calendar.DATE, date);
-		
+
 		System.out.println(calendar.get(calendar.DATE));
-		String strDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.format(calendar.getTime());
 		System.out.println(strDate);
 		System.out.println("---------------------");
-		
-		Long l1=TimeUtil.getTimeInMillis("2013年11月");
-		String strDate1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(l1);
+
+		Long l1 = TimeUtil.getTimeInMillis("2013年11月");
+		String strDate1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.format(l1);
 		System.out.println(1l);
 		System.out.println(strDate1);
-		
+
 	}
 
 	public Long getDetailId() {
@@ -1221,44 +1534,28 @@ public class TourAction extends BaseAction<TourCommon> {
 		this.parameters = parameters;
 	}
 
-	public Long getCurrentQuarter() {
-		return currentQuarter;
-	}
-
-	public void setCurrentQuarter(Long currentQuarter) {
-		this.currentQuarter = currentQuarter;
-	}
-
-	public Long getCurrentYear() {
-		return currentYear;
-	}
-
-	public void setCurrentYear(Long currentYear) {
-		this.currentYear = currentYear;
-	}
-
-	public Long getQuarterNum() {
-		return quarterNum;
-	}
-
-	public void setQuarterNum(Long quarterNum) {
-		this.quarterNum = quarterNum;
-	}
-
-	public boolean isOrention() {
-		return orention;
-	}
-
-	public void setOrention(boolean orention) {
-		this.orention = orention;
-	}
-
 	public Integer[] getQuarters() {
 		return quarters;
 	}
 
 	public void setQuarters(Integer[] quarters) {
 		this.quarters = quarters;
+	}
+
+	public Integer getStartYear() {
+		return startYear;
+	}
+
+	public void setStartYear(Integer startYear) {
+		this.startYear = startYear;
+	}
+
+	public Integer getEndYear() {
+		return endYear;
+	}
+
+	public void setEndYear(Integer endYear) {
+		this.endYear = endYear;
 	}
 
 }

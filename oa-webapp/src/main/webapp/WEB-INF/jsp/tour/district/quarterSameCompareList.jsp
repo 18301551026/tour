@@ -20,7 +20,7 @@
 				title : '选择同比年份和季度',
 				width : 340,
 				height :240,
-				href : ctx + '/tour/townQuarterSameCompare!toSelectChart.action',
+				href : ctx + '/tour/districtQuarterSameCompare!toSelectChart.action',
 				buttons : [
 						{
 							text : 'html查看',
@@ -28,7 +28,7 @@
 							handler : function() {
 								var f = parent.$.modalDialog.handler
 										.find('#chartForm');
-								f.attr("action",ctx+"/tour/chart!townQuarterHtmlChart.action")
+								f.attr("action",ctx+"/tour/chart!districtQuarterHtmlChart.action")
 								f.submit();
 							}
 						}, {
@@ -37,7 +37,7 @@
 							handler : function() {
 								var f = parent.$.modalDialog.handler
 								.find('#chartForm');
-								f.attr("action",ctx+"/tour/chart!townQuarterWordChart.action")
+								f.attr("action",ctx+"/tour/chart!districtQuarterWordChart.action")
 								f.submit();
 							}
 						}, {
@@ -56,7 +56,7 @@
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
 				<button id="queryButton" class="btn btn-info"
-					actionUrl="${ctx}/tour/townQuarterSameCompare!townQuarterSameCompare.action">
+					actionUrl="${ctx}/tour/districtQuarterSameCompare!districtQuarterSameCompare.action">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
 				<button id="chartButton" class="btn btn-info">
@@ -71,7 +71,7 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/townQuarterSameCompare!townQuarterSameCompare.action"
+				action="${ctx}/tour/districtQuarterSameCompare!districtQuarterSameCompare.action"
 				method="post">
 				<table class="formTable">
 					<Tr>

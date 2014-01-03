@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
+import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
@@ -25,10 +26,9 @@ public class TourServiceImpl implements ITourService {
 		return tourDao.findStatistic(criteria, userId, deptList);
 	}
 
-	public PageResult findSameCompare(DetachedCriteria nowCriteria,
-			DetachedCriteria lastCriteria, String startDate, String endDate,
+	public PageResult findSameCompare(List<Long> userIds, String startDate, String endDate,
 			Integer currentMonth, Integer pageMonthNum) {
-		return tourDao.findSameCompare(nowCriteria, lastCriteria, startDate,
+		return tourDao.findSameCompare(userIds, startDate,
 				endDate, currentMonth, pageMonthNum);
 	}
 
@@ -39,7 +39,14 @@ public class TourServiceImpl implements ITourService {
 	public List<SameCompareChartModel> getCharts(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Integer currentMonth,Integer pageMonthNum){
 		return tourDao.getCharts(nowCriteria, lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 	}
-	public PageResult findQuarterSameCompare(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Long currentQuarter,Long currentYear,Long quarterNum,Boolean orention,Integer[] quarters){
-		return tourDao.findQuarterSameCompare(nowCriteria, lastCriteria, startDate, endDate, currentQuarter, currentYear, quarterNum, orention,quarters);
+
+	@Override
+	public List<SameCompareModel> getQuarterSameCompareModels(
+			List<Long> userIds, int startDate, int endDate,
+			List<Integer> quarters) {
+		return tourDao.getQuarterSameCompareModels(userIds, startDate, endDate, quarters);
+	}
+	public List<SameCompareChartModel> getQuarterCharts(List<Long> userIds,int startDate,int endDate,List<Integer> quarters){
+		return tourDao.getQuarterCharts(userIds, startDate, endDate, quarters);
 	}
 }
