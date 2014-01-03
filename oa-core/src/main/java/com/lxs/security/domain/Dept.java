@@ -24,6 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.annotation.JSONType;
+import com.lxs.tour.domain.FactoryType;
 
 @SuppressWarnings("serial")
 @Entity
@@ -40,6 +41,7 @@ public class Dept implements Serializable {
 	private List<Dept> children = new ArrayList<Dept>();
 	private String deptType;
 	private String deptLevel;
+	private FactoryType factoryType;
 	@Column(name="dept_type_")
 	public String getDeptType() {
 		return deptType;
@@ -153,5 +155,14 @@ public class Dept implements Serializable {
 
 	public void setTempLevel(Integer tempLevel) {
 		this.tempLevel = tempLevel;
+	}
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="factory_type_id_")
+	public FactoryType getFactoryType() {
+		return factoryType;
+	}
+
+	public void setFactoryType(FactoryType factoryType) {
+		this.factoryType = factoryType;
 	}
 }

@@ -18,4 +18,6 @@ public interface ITourService {
 	public List<StatisticReportModel> getReportList(String startDate,String endDate,List<Dept> deptList);
 	
 	public List<SameCompareChartModel> getCharts(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Integer currentMonth,Integer pageMonthNum);
+	
+	public PageResult findQuarterSameCompare(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Long currentQuarter,Long currentYear,Long quarterNum,Boolean orention,Integer[] quarters);
 }

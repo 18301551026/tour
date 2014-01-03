@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tour_sameCompare_chart" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c79fde07-293f-4aae-9bb8-c6642222ba9b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="reportDate" class="java.lang.String"/>
+	<parameter name="deptName" class="java.lang.String"/>
+	<field name="type" class="java.lang.String"/>
+	<field name="yearType" class="java.lang.String"/>
+	<field name="personNumValues" class="java.lang.Long"/>
+	<field name="moneyValues" class="java.lang.Double"/>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="a5828d41-8373-4035-a1f8-bb959d0fe3ef" x="330" y="4" width="215" height="53"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[旅游同比情况展示]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="2341e43c-bd1b-47f3-9cbd-f35bf6b19559" x="1" y="57" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{reportDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6c82b127-3093-482e-b241-b248f2cdc831" x="136" y="4" width="194" height="53"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{deptName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<summary>
+		<band height="602" splitType="Stretch">
+			<barChart>
+				<chart theme="eye.candy.sixties">
+					<reportElement uuid="b430e2a7-4020-43bf-b6ab-d51025e97cda" x="0" y="39" width="555" height="229"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Top"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{yearType}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{type}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{personNumValues}]]></valueExpression>
+						<itemHyperlink>
+							<hyperlinkTooltipExpression><![CDATA[$F{yearType}]]></hyperlinkTooltipExpression>
+						</itemHyperlink>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisLabelExpression><![CDATA["(人次)"]]></valueAxisLabelExpression>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<staticText>
+				<reportElement uuid="dbd81626-6889-401e-be19-8abcc770c6a3" x="0" y="19" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[接待人数]]></text>
+			</staticText>
+			<barChart>
+				<chart theme="eye.candy.sixties">
+					<reportElement uuid="ef80a395-131e-4dc7-993c-6803ab97031d" x="0" y="316" width="555" height="229"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Top"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{yearType}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{type}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{moneyValues}]]></valueExpression>
+						<itemHyperlink>
+							<hyperlinkTooltipExpression><![CDATA[$F{yearType}]]></hyperlinkTooltipExpression>
+						</itemHyperlink>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisLabelExpression><![CDATA["(万元)"]]></valueAxisLabelExpression>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<staticText>
+				<reportElement uuid="4ab8cb40-3b8f-4b60-87a2-64c1d3a24c10" x="1" y="296" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[总收入]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

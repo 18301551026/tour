@@ -9,6 +9,7 @@ public class SameCompareDetailModel {
 	private Double nowMoney;
 	private Double lastMoney;
 	private String time;
+	private Double percent;
 	public String getName() {
 		return name;
 	}
@@ -32,5 +33,11 @@ public class SameCompareDetailModel {
 	}
 	public void setTime(String time) {
 		this.time = time;
+	}
+	public Double getPercent() {
+		return percent;
+	}
+	public void setPercent(Double percent) {
+		this.percent = percent;
 	}
 }

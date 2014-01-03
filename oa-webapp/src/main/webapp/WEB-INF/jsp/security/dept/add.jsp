@@ -39,13 +39,15 @@
 		/>
 		<c:if test="${tempLevel==2  }">
 		<label >类型：</label>
-		 <select name="deptType" class="form-control">
+		 <!-- <select name="deptType" class="form-control">
 				<option value="观光园">观光园</option>
 				<option value="民俗旅游">民俗旅游</option>
 				<option value="旅游住宿">旅游住宿</option>
 				<option value="旅游风景">旅游风景</option>
 				<option value="工业旅游">工业旅游</option>
-		</select>
+		</select> -->
+		<s:select list="allFactoryType" name="factoryType.id" cssClass="form-control" listKey="id" listValue="name"></s:select>
+		
 		<Br/>
 		</c:if>
 		 <label>描述：</label>

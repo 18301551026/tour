@@ -39,4 +39,7 @@ public class TourServiceImpl implements ITourService {
 	public List<SameCompareChartModel> getCharts(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Integer currentMonth,Integer pageMonthNum){
 		return tourDao.getCharts(nowCriteria, lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 	}
+	public PageResult findQuarterSameCompare(DetachedCriteria nowCriteria,DetachedCriteria lastCriteria,String startDate,String endDate,Long currentQuarter,Long currentYear,Long quarterNum,Boolean orention,Integer[] quarters){
+		return tourDao.findQuarterSameCompare(nowCriteria, lastCriteria, startDate, endDate, currentQuarter, currentYear, quarterNum, orention,quarters);
+	}
 }

@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>区同比</title>
+<title>季度同比</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
 <script type="text/javascript"
@@ -14,48 +14,49 @@
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <script type="text/javascript">
-	$(function() {
-				$("#chartButton").click(function(){
-					parent.$.modalDialog({
-						title : '选择同比时间',
-						width : 340,
-						height : 160,
-						href : ctx + '/tour/townSameCompare!toSelectChart.action?deptType=区',
-						buttons : [
-								{
-									text : 'html查看',
-									iconCls : "icon-edit",
-									handler : function() {
-										var f = parent.$.modalDialog.handler
-												.find('#chartForm');
-										f.attr("action",ctx+"/tour/chart!districtHtmlChart.action")
-										f.submit();
-									}
-								}, {
-									text : 'word导出',
-									iconCls : "icon-edit",
-									handler : function() {
-										var f = parent.$.modalDialog.handler
+	$(function(){
+		$("#chartButton").click(function(){
+			parent.$.modalDialog({
+				title : '选择同比时间',
+				width : 340,
+				height : 160,
+				href : ctx + '/tour/townSameCompare!toSelectChart.action?deptType=镇',
+				buttons : [
+						{
+							text : 'html查看',
+							iconCls : "icon-edit",
+							handler : function() {
+								var f = parent.$.modalDialog.handler
 										.find('#chartForm');
-										f.attr("action",ctx+"/tour/chart!districtWordChart.action")
-										f.submit();
-									}
-								}, {
-									text : '取消',
-									iconCls : "icon-cancel",
-									handler : function() {
-										parent.$.modalDialog.handler.dialog('close');
-									}
-								} ]
-					});
-				});
+								f.attr("action",ctx+"/tour/chart!townHtmlChart.action")
+								f.submit();
+							}
+						}, {
+							text : 'word导出',
+							iconCls : "icon-edit",
+							handler : function() {
+								var f = parent.$.modalDialog.handler
+								.find('#chartForm');
+								f.attr("action",ctx+"/tour/chart!townWordChart.action")
+								f.submit();
+							}
+						}, {
+							text : '取消',
+							iconCls : "icon-cancel",
+							handler : function() {
+								parent.$.modalDialog.handler.dialog('close');
+							}
+						} ]
+			});
+		});
 	})
 </script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<button id="queryButton" class="btn btn-info">
+				<button id="queryButton" class="btn btn-info"
+					actionUrl="${ctx}/tour/townQuarterSameCompare!townQuarterSameCompare.action">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
 				<button id="chartButton" class="btn btn-info">
@@ -70,53 +71,63 @@
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/districtSameCompare!districtSameCompare.action"
+				action="${ctx}/tour/townQuarterSameCompare!townQuarterSameCompare.action"
 				method="post">
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
+						<Td class="control-label" style="width: 4%"><label>选择日期：</label></Td>
 						<Td class="query_input" colspan="3"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
 							type="text" name="startDate" value="${startDate }"
-							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy',maxDate:'#F{$dp.$D(\'d4312\')||\'%y\'}'})" />&nbsp;至&nbsp;
 							<input id="d4312" type="text" class="form-control"
 							style="width: 45%; display: inline;" name="endDate"
 							value="${endDate }"
-							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y'})" />
 						</Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 4%"><label>选择季度：</label></Td>
+						<td class="query_input" colspan="3">
+							<s:checkboxlist list="#{1:'一季度',2:'二季度',3:'三季度',4:'四季度' }" name="quarters"  theme="simple"></s:checkboxlist>
+						</td>
+					</tr>
 				</table>
 			</form>
 		</div>
 	</div>
-	<form method="post" action="${ctx }/tour/reported!delete.action"
+	<form method="post" 
 		id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th>时间</th>
+					<th>年份</th>
+					<th>季度</th>
 					<th>类型</th>
 					<th colspan="3">接待人次</th>
 					<th colspan="3">总收入&nbsp;<font color="green;">(万元)</font>
 					</th>
+
 					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr align="center">
 					<Td></Td>
+					<td></td>
 					<Td></Td>
 					<td>本年</td>
 					<td>上一年</td>
-					<Td>百分比</Td>
+					<td>百分比</td>
 					<td>本年</td>
 					<td>上一年</td>
-					<Td>百分比</Td>
+					<td>百分比</td>
 					<Td></Td>
 				</tr>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${year }年${month}月</td>
+						<td>${year }</td>
+						<td>${quarter }</td>
 						<Td>${type }</Td>
 						<Td>${nowTotalPersonNum }</Td>
 						<Td>${lastTotalPersonNum }</Td>
@@ -141,7 +152,7 @@
 							</c:if>
 						</td>
 						<td><a
-							href="${ctx }/tour/districtSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
+							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>
@@ -160,7 +171,6 @@
 					queryForm = $(this);
 				}
 			});
-
 			//如果不存在queryForm
 			if (!queryForm) {
 				$(document.body).append(
@@ -171,16 +181,23 @@
 
 			//在form中添加currentMonth,pageMonthNum对象
 			queryForm
-					.append('<s:hidden name="currentMonth" id="start"></s:hidden>');
+					.append('<s:hidden name="start" id="start"></s:hidden>');//
 			queryForm
-					.append('<s:hidden name="pageMonthNum" id="pageSize"></s:hidden>');
+					.append('<s:hidden name="orention" id="orention"></s:hidden>');//
+			queryForm
+					.append('<s:hidden name="currentQuarter" id="currentQuarter"></s:hidden>');//当前季度
+			queryForm
+			.append('<s:hidden name="currentYear" id="quarter"></s:hidden>');//当前年份
+			queryForm
+					.append('<s:hidden name="quarterNum" id="pageSize"></s:hidden>');//每页显示的季度数
 
 			//初始化分页变量
 			var start = parseInt($('#start').val());
 			var pageSize = parseInt($('#pageSize').val());
 			//总页数
 			var pageCount = parseInt($('#pageCount').html());
-
+						
+			
 			//判断边界
 			if (start == 0) {
 				$('#prev').toggleClass("disabled");
@@ -244,10 +261,12 @@
 
 	<div class="pagination pull-right">
 		<ul class="pagination-sm">
+			<c:if test="${page.rowCount!=0.0 }">
 			<li class="disabled"><a>共<span id="rowCount">${page.rowCount}</span>个月<span
 					id="pageCount">${pageCount }</span>页
 			</a></li>
 			<li id="first"><a href="javascript:void(0)">首页</a></li>
+			</c:if> 
 			<li id="prev"><a href="javascript:void(0)">上一页</a></li>
 
 			<c:forEach var="i" begin="${begin }" end="${end}">
@@ -262,10 +281,12 @@
 			</c:forEach>
 
 			<li id="next"><a href="javascript:void(0)">下一页</a></li>
-			<li id="last"><a href="javascript:void(0)">末页</a></li>
+			<c:if test="${page.rowCount!=0.0 }"> 
+				<li id="last"><a href="javascript:void(0)">末页</a></li> 
+			</c:if>
 			<li><a> <s:select
-						list="#{1:'1个月', 2:'2个月', 3:'3个月', 4: '4个月', 5: '5个月' }"
-						id="setPageSize" name="pageMonthNum"
+						list="#{1:'1个季度', 2:'2个季度', 3:'3个季度', 4: '4个季度', 5: '5个季度' }"
+						id="setPageSize" name="pageSize"
 						cssStyle="width:80px; margin:0px;">
 					</s:select>
 			</a></li>

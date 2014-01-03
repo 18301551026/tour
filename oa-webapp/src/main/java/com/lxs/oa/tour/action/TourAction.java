@@ -2,7 +2,6 @@ package com.lxs.oa.tour.action;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,8 +27,8 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -44,11 +43,11 @@ import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.domain.TourDetail;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
 import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
-import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.User;
+import com.lxs.tour.domain.FactoryType;
 import com.opensymphony.xwork2.ActionContext;
 
 @Controller
@@ -66,15 +65,15 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
-		
 		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		@Action(value = "townQuarterSameCompare", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/quarterSameCompareList.jsp") }),
 		@Action(value = "townSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
-				@Result(name="toSelectChart",location="/WEB-INF/jsp/tour/town/selectChart.jsp"),
+				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/town/selectChart.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/sameCompareDetail.jsp") }),
 		@Action(value = "districtSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/district/sameCompareList.jsp"),
-				@Result(name="toSelectChart",location="/WEB-INF/jsp/tour/district/selectChart.jsp"),
+				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/district/selectChart.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/district/sameCompareDetail.jsp") }),
 		@Action(value = "townStatistic", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
@@ -109,15 +108,25 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	// 保存报表类型
 	private String reprotType;
+	
+	//保存季度(查询)
+	private Integer quarters[]={1,2,3,4};
+	//季度同比分页
+	private Long currentQuarter;//当前季度
+	private Long currentYear;
+	private Long quarterNum=1l;
+	private boolean orention=true;//判断是向上还是向下
+	
 
 	/**
 	 * 图表
 	 */
-	
-	public String toSelectChart(){
+
+	public String toSelectChart() {
 		return "toSelectChart";
 	}
-	public void townWordChart() throws Exception{
+
+	public void townWordChart() throws Exception {
 		DetachedCriteria nowCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
 		townAddCondition(nowCriteria);
@@ -129,7 +138,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		townAddCondition(lastCriteria);
 		lastCriteria.add(Restrictions.eq("status",
 				StatusEnum.reported.getValue()));
-
+		addParameters();
 		List<SameCompareChartModel> modelList = tourService.getCharts(
 				nowCriteria, lastCriteria, startDate, null, currentMonth,
 				pageMonthNum);
@@ -146,7 +155,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
 		exporter.exportReport();
 		fbos.close();
-		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"), "ISO8859_1");
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"),
+				"ISO8859_1");
 		response.setCharacterEncoding("UTF-8");
 		;
 		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
@@ -163,23 +173,18 @@ public class TourAction extends BaseAction<TourCommon> {
 		fbos.close();
 		fbos.dispose();
 	}
+
 	/**
 	 * 镇同比html图表
 	 */
 	public String townHtmlChart() {
-		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
-		list.add(new SameCompareModel(23l, 34l, 456d, 678d, "观光园"));
-		list.add(new SameCompareModel(24l, 35l, 455d, 677d, "民俗旅游"));
-		list.add(new SameCompareModel(25l, 36l, 454d, 676d, "旅游风景"));
-		list.add(new SameCompareModel(26l, 37l, 453d, 675d, "旅游住宿"));
-		list.add(new SameCompareModel(27l, 38l, 452d, 674d, "工业旅游"));
 
 		DetachedCriteria nowCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
 		townAddCondition(nowCriteria);
 		nowCriteria.add(Restrictions.eq("status",
 				StatusEnum.reported.getValue()));
-
+		addParameters();
 		DetachedCriteria lastCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
 		townAddCondition(lastCriteria);
@@ -193,7 +198,8 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		return "html";
 	}
-	public void districtWordChart() throws Exception{
+
+	public void districtWordChart() throws Exception {
 		DetachedCriteria nowCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
 		districtAddCondition(nowCriteria);
@@ -205,7 +211,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		districtAddCondition(lastCriteria);
 		lastCriteria.add(Restrictions.eq("status",
 				StatusEnum.reported.getValue()));
-
+		addParameters();
 		List<SameCompareChartModel> modelList = tourService.getCharts(
 				nowCriteria, lastCriteria, startDate, null, currentMonth,
 				pageMonthNum);
@@ -222,7 +228,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
 		exporter.exportReport();
 		fbos.close();
-		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"), "ISO8859_1");
+		String fileName = new String("镇域旅游发展同比.docx".getBytes("GBK"),
+				"ISO8859_1");
 		response.setCharacterEncoding("UTF-8");
 		;
 		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
@@ -239,6 +246,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		fbos.close();
 		fbos.dispose();
 	}
+
 	/**
 	 * 区同比html图表
 	 */
@@ -249,7 +257,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		districtAddCondition(nowCriteria);
 		nowCriteria.add(Restrictions.eq("status",
 				StatusEnum.reported.getValue()));
-
+		addParameters();
 		DetachedCriteria lastCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
 		districtAddCondition(lastCriteria);
@@ -263,6 +271,7 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		return "html";
 	}
+
 	/**
 	 * 区同比图表
 	 */
@@ -317,12 +326,10 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
 		String reportDate = "";
-		Calendar calendar = Calendar.getInstance();
-		reportDate = calendar.get(calendar.YEAR) + "年"
-				+ calendar.get(calendar.MONTH) + "月";
+		reportDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil.getTimeInMillis("上个月"));
 		if (null != startDate && startDate.trim().length() != 0
 				&& endDate != null && endDate.trim().length() != 0) {
-			reportDate += startDate + "--" + endDate;
+			reportDate = startDate + "--" + endDate;
 		} else if (((null != startDate && startDate.trim().length() != 0) && (null == endDate || endDate
 				.trim().length() == 0))) {
 			reportDate = startDate;
@@ -453,118 +460,6 @@ public class TourAction extends BaseAction<TourCommon> {
 		return reprotType;
 	}
 
-	public String test1() {
-		User u = (User) ActionContext.getContext().getSession()
-				.get(SystemConstant.CURRENT_USER);
-		u = baseService.get(User.class, u.getId());
-		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
-		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
-		townAddCondition(criteria);
-		addDataCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, u.getId(), u
-				.getDept().getChildren());
-		ActionContext.getContext().put("myList", page.getResult());
-		return "pdf";
-	}
-
-	public String test5() {
-		List<Dept> deptList = new ArrayList<Dept>();
-		List<StatisticReportModel> list = tourService.getReportList(startDate,
-				endDate, deptList);
-		ActionContext.getContext().put("myList", list);
-		return "statisticXls";
-	}
-
-	public void test6() throws Exception {
-		List<Dept> deptList = new ArrayList<Dept>();
-		List<StatisticReportModel> list = tourService.getReportList(startDate,
-				endDate, deptList);
-		// 报表参数
-		String path = ServletActionContext.getServletContext().getRealPath("/")
-				+ "reports/";
-
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("reportDate", startDate + "--" + endDate);
-		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
-		JRBeanCollectionDataSource dataSource = null;
-		dataSource = new JRBeanCollectionDataSource(list);
-		JRDocxExporter exporter = new JRDocxExporter(
-				DefaultJasperReportsContext.getInstance());
-		JasperPrint jasperPrint = JasperFillManager.fillReport(path
-				+ "tour_statistic_report.jasper", map, dataSource);
-		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
-		exporter.exportReport();
-		fbos.close();
-
-		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-		response.setHeader("Content-Disposition",
-				"attachment; filename=\"document.docx\"");
-		response.setContentLength(fbos.size());
-		ServletOutputStream ouputStream = response.getOutputStream();
-
-		fbos.writeData(ouputStream);
-		fbos.dispose();
-		ouputStream.flush();
-
-		ouputStream.close();
-		fbos.close();
-		fbos.dispose();
-	}
-
-	public void test3() throws Exception {
-		// 连接
-		Class.forName("com.mysql.jdbc.Driver");
-		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/oa",
-				"root", "root");
-
-		// 报表参数
-		Map<String, Object> map = new HashMap<String, Object>();
-		String path = ServletActionContext.getServletContext().getRealPath("/")
-				+ "reports/";
-		map.put("SUBREPORT_DIR", path);
-
-		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
-		JasperPrint jasperPrint = JasperFillManager.fillReport(path
-				+ "userInfo.jasper", map, conn);
-		JRDocxExporter exporter = new JRDocxExporter(
-				DefaultJasperReportsContext.getInstance());
-		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
-
-		exporter.exportReport();
-		fbos.close();
-
-		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-		response.setHeader("Content-Disposition",
-				"attachment; filename=\"file.docx\"");
-		response.setContentLength(fbos.size());
-		ServletOutputStream ouputStream = response.getOutputStream();
-
-		fbos.writeData(ouputStream);
-		fbos.dispose();
-		ouputStream.flush();
-
-		ouputStream.close();
-		fbos.close();
-		fbos.dispose();
-
-	}
-
-	public String test4() throws Exception {
-		User u = (User) ActionContext.getContext().getSession()
-				.get(SystemConstant.CURRENT_USER);
-		u = baseService.get(User.class, u.getId());
-		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
-		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
-		townAddCondition(criteria);
-		addDataCondition(criteria);
-		PageResult page = tourService.findStatistic(criteria, u.getId(), u
-				.getDept().getChildren());
-		ActionContext.getContext().put("myList", page.getResult());
-		return "xls";
-	}
-
 	/**
 	 * 获取下载文件显示名称（客户端名称）
 	 * 
@@ -594,13 +489,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			criteria.createAlias("user", "u");
 			criteria.add(Restrictions.eq("u.id", u.getId()));
 			criteria.add(Restrictions.eq("status", model.getStatus()));
-//			if (null != deptType && deptType.trim().length() != 0) {
-//				criteria.add(Restrictions.eq("type", deptType));
-//			}
 
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.town.getValue())) { // 镇政府
-			if (model.getStatus().equals(StatusEnum.townList.getValue())) { // 列表
 				List<Long> userIds = new ArrayList<Long>();
 				u = baseService.get(User.class, u.getId());
 				List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
@@ -609,22 +500,16 @@ public class TourAction extends BaseAction<TourCommon> {
 						userIds.add(tempU.getId());
 					}
 				}
-
 				if (userIds.size() != 0) {
 					criteria.createAlias("user", "u");
 					criteria.add(Restrictions.in("u.id", userIds));
 				} else {
 					criteria.add(Restrictions.isNull("user"));
 				}
-			} else if (model.getStatus().equals(
-					StatusEnum.townStatistic.getValue())) { // 统计列表
-
-			}
-
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
 		} else if (model.getStatisticType().equals(
-				StatusEnum.districtList.getValue())) {
+				StatisticTypeEnum.district.getValue())) {
 			List<Long> userIds = new ArrayList<Long>();
 			u = baseService.get(User.class, u.getId());
 			List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
@@ -650,56 +535,43 @@ public class TourAction extends BaseAction<TourCommon> {
 		if (null != deptType && deptType.trim().length() != 0) {
 			criteria.add(Restrictions.eq("type", deptType));
 		}
-		// if (null != deptType) {
-		// criteria.createAlias("user", "u");
-		// criteria.add(Restrictions.eq("u.dept.deptType", deptType));
-		// }
+		criteria.addOrder(Order.desc("time"));
 		addDataCondition(criteria);
 		Calendar calendar = Calendar.getInstance();
-		startDate = calendar.get(calendar.YEAR) + "年"
-				+ (calendar.get(calendar.MONTH)) + "月";
+		// startDate = calendar.get(calendar.YEAR) + "年"
+		// + (calendar.get(calendar.MONTH)) + "月";
+		// endDate = calendar.get(calendar.YEAR) + "年"
+		// + (calendar.get(calendar.MONTH)) + "月";
 	}
+
 	/**
 	 * 检查用户这个月是否申报过
 	 */
-	public void checkUserIsReportThisMonth(){
-		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
-		DetachedCriteria criteria=DetachedCriteria.forClass(TourCommon.class);
+	public void checkUserIsReportThisMonth() {
+		User u = (User) ActionContext.getContext().getSession()
+				.get(SystemConstant.CURRENT_USER);
+		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.createAlias("user", "u");
 		criteria.add(Restrictions.eq("u.id", u.getId()));
-		criteria.add(Restrictions.eq("time", TimeUtil.getTimeInMillis(reprotYearAndMonth)));
-		List<TourCommon> list=baseService.find(criteria);
-		if (null!=list&&list.size()!=0) {
+		criteria.add(Restrictions.eq("time",TimeUtil.getTimeInMillis(reprotYearAndMonth)));
+		List<TourCommon> list = baseService.find(criteria);
+		if (null != list && list.size() != 0) {
 			getOut().print("已经申报");
 		}
-		
+
 	}
+
 	/**
 	 * 给criteria添加时间条件
 	 * 
 	 * @param criteria
 	 */
 	public void addDataCondition(DetachedCriteria criteria) {
-		if (null != startDate && startDate.length() != 0 && endDate != null
-				&& endDate.length() != 0) {// 有查询开始时间和结束时间
-
-			criteria.add(Restrictions.and(Restrictions.ge("time",
-					TimeUtil.getTimeInMillis(startDate)), Restrictions.le(
-					"time", TimeUtil.getTimeInMillis(endDate))));
-		} else if (null != startDate && startDate.length() != 0
-				&& (endDate == null || endDate.trim().length() == 0)) {// 有开始时间没结束时间
-			criteria.add(Restrictions.eq("time",
-					TimeUtil.getTimeInMillis(startDate)));
-
-		} else if ((null == startDate || startDate.trim().length() == 0)
-				&& (endDate != null && endDate.length() != 0)) {// 没开始时间有结束时间
-			criteria.add(Restrictions.eq("time",
-					TimeUtil.getTimeInMillis(startDate)));
-		} else if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
-			criteria.add(Restrictions.eq("time",
-					TimeUtil.getTimeInMillis("默认时间为上个月时间")));
-
+		if (null != startDate && startDate.trim().length() != 0) {
+			criteria.add(Restrictions.ge("time",TimeUtil.getTimeInMillis(startDate)));
+		}
+		if (null != endDate && endDate.trim().length() != 0) {
+			criteria.add(Restrictions.le("time",TimeUtil.getTimeInMillis(endDate)));
 		}
 	}
 
@@ -748,17 +620,21 @@ public class TourAction extends BaseAction<TourCommon> {
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		townAddCondition(criteria);
 		addDataCondition(criteria);
+		if ((null == startDate || startDate.trim().length() == 0)
+				&& null == endDate || endDate.trim().length() == 0) {
+			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
+					.getTimeInMillis("默认是上月"));
+			startDate = strDate;
+			endDate = strDate;
+			criteria.add(Restrictions.eq("time",TimeUtil
+					.getTimeInMillis("默认是上月")));
+
+		}
 		PageResult page = tourService.findStatistic(criteria, u.getId(), u
 				.getDept().getChildren());
 		ActionContext.getContext().put(PAGE, page);
 
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
-			Calendar calendar = Calendar.getInstance();// 默认为上个月
-			startDate = calendar.get(calendar.YEAR) + "年"
-					+ (calendar.get(calendar.MONTH)) + "月";
-
-		}
+		
 		return LIST;
 	}
 
@@ -804,6 +680,16 @@ public class TourAction extends BaseAction<TourCommon> {
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		districtAddCondition(criteria);
 		addDataCondition(criteria);
+		if ((null == startDate || startDate.trim().length() == 0)
+				&& null == endDate || endDate.trim().length() == 0) {
+			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
+					.getTimeInMillis("默认是上月"));
+			startDate = strDate;
+			endDate = strDate;
+			criteria.add(Restrictions.eq("time",TimeUtil
+					.getTimeInMillis("默认是上月")));
+
+		}
 		List<Dept> deptList = new ArrayList<Dept>();
 		for (Dept d1 : user.getDept().getChildren()) {
 			deptList.addAll(d1.getChildren());
@@ -812,13 +698,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				deptList);
 		ActionContext.getContext().put(PAGE, page);
 
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
-			Calendar calendar = Calendar.getInstance();// 默认为上个月
-			startDate = calendar.get(calendar.YEAR) + "年"
-					+ (calendar.get(calendar.MONTH)) + "月";
-
-		}
+		
 
 		return LIST;
 	}
@@ -840,9 +720,10 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
-		if (null != u.getDept() && null != u.getDept().getDeptType()) {
-			ActionContext.getContext().put("deptType",
-					u.getDept().getDeptType());
+		
+		if (null != u.getDept() && null != u.getDept().getFactoryType()&&null!=u.getDept().getFactoryType().getOptions()) {
+			ActionContext.getContext().put("factoryOptions",
+					u.getDept().getFactoryType().getOptions());
 		}
 	}
 
@@ -867,12 +748,13 @@ public class TourAction extends BaseAction<TourCommon> {
 		PageResult page = tourService.findSameCompare(nowCriteria,
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
-
 		if ((null == startDate || startDate.trim().length() == 0)
-				&& (null == endDate || endDate.trim().length() == 0)) {
-			Calendar calendar = Calendar.getInstance();// 默认为上个月
-			startDate = calendar.get(calendar.YEAR) + "年"
-					+ (calendar.get(calendar.MONTH)) + "月";
+				&& null == endDate || endDate.trim().length() == 0) {
+			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
+					.getTimeInMillis("默认是上月"));
+			startDate = strDate;
+			endDate = strDate;
+
 		}
 		return LIST;
 	}
@@ -899,12 +781,42 @@ public class TourAction extends BaseAction<TourCommon> {
 				lastCriteria, startDate, endDate, currentMonth, pageMonthNum);
 		ActionContext.getContext().put(PAGE, page);
 		if ((null == startDate || startDate.trim().length() == 0)
-				&& (null == endDate || endDate.trim().length() == 0)) {
-			Calendar calendar = Calendar.getInstance();// 默认为上个月
-			startDate = calendar.get(calendar.YEAR) + "年"
-					+ (calendar.get(calendar.MONTH)) + "月";
+				&& null == endDate || endDate.trim().length() == 0) {
+			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
+					.getTimeInMillis("默认是上月"));
+			startDate = strDate;
+			endDate = strDate;
+
 		}
 		return LIST;
+	}
+
+	public static Double getPercent(Double now, Double last) {
+		Double percent = 0d;
+		percent = (now - last) / last;
+		if (percent.toString().equals("NaN")) {
+			return 0d;
+		}
+
+		int i = 0;
+		percent = percent * 100;
+		i = percent.toString().indexOf(".");
+		if (i != 0
+				&& percent.toString()
+						.substring(i + 1, percent.toString().length()).length() >= 3) {
+			if (null != percent.toString().substring(i + 3, i + 4)
+					&& Integer.parseInt(percent.toString().substring(i + 3,
+							i + 4)) >= 5) {
+				if (percent > 0) {
+					percent += 0.01d;
+				} else {
+					percent -= 0.01d;
+				}
+			}
+			percent = Double
+					.parseDouble(percent.toString().substring(0, i + 3));
+		}
+		return percent;
 	}
 
 	/**
@@ -974,6 +886,9 @@ public class TourAction extends BaseAction<TourCommon> {
 					}
 				}
 			}
+			Double p=0d;
+			p=getPercent(nowMoney, lastMoney);
+			tempDetail.setPercent(p);
 			tempDetail.setNowMoney(nowMoney);
 			tempDetail.setLastMoney(lastMoney);
 			tempDetail.setName(str);
@@ -1028,19 +943,32 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	@Override
 	public void beforeSave(TourCommon model) {
-		Integer tempYear = Integer.parseInt(reprotYearAndMonth.substring(0, 4)
+		Long tempYear = Long.parseLong(reprotYearAndMonth.substring(0, 4)
 				.trim());
 		Integer tempMonth = Integer.parseInt(reprotYearAndMonth.substring(5, 7)
 				.trim());
+		if (tempMonth>=2&&tempMonth<=4) {
+			model.setQuarter(1);
+		}
+		if (tempMonth>=5&&tempMonth<=7) {
+			model.setQuarter(2);
+		}
+		if (tempMonth>=8&&tempMonth<=10) {
+			model.setQuarter(3);
+		}
+		if (tempMonth>=11||tempMonth==1) {
+			model.setQuarter(4);
+		}
+		
 		model.setReportDate(new Date());
 		model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(0, 4)
 				.trim()));
 		model.setReportMonth(Integer.parseInt(reprotYearAndMonth
 				.substring(5, 7).trim()));
-		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));
-		Double totalIncome=0d;
-		for(Double d:inputMoneys){
-			totalIncome+=d;
+		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));// 
+		Double totalIncome = 0d;
+		for (Double d : inputMoneys) {
+			totalIncome += d;
 		}
 		model.setTotalIncome(totalIncome);
 		if (null == beans || beans.size() == 0) {
@@ -1089,7 +1017,48 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 
 	}
+	public String townQuarterSameCompare(){
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(nowCriteria);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
 
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		townAddCondition(lastCriteria);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+		PageResult page=tourService.findQuarterSameCompare(nowCriteria, lastCriteria, startDate, endDate,currentQuarter,currentYear,quarterNum,orention,quarters);
+		Long count=0l;
+		if (null==startDate||startDate.trim().length()==0) {
+			count=1l;
+		}
+		if (null!=startDate&&startDate.trim().length()!=0) {
+			Long startYear=Long.parseLong(startDate.trim());
+			Long endYear=0l;
+			if (null==endDate||endDate.trim().length()==0) {
+				Calendar calendar=Calendar.getInstance();
+				endYear=Long.parseLong(calendar.get(calendar.YEAR)+"");
+			}
+			if (null!=endYear&&endDate.trim().length()!=0) {
+				endYear=Long.parseLong(endDate.trim());
+			}
+			
+			count=(endYear-startYear)*quarters.length;
+		}
+		
+		page.setRowCount(count);
+		ActionContext.getContext().put(PAGE, page);
+		return LIST;
+	}
+	public List<FactoryType> getAllFactoryType(){
+		List<FactoryType> list=new ArrayList<FactoryType>();
+		DetachedCriteria criteria=DetachedCriteria.forClass(FactoryType.class);
+		list=baseService.find(criteria);
+		return list;
+		
+	}
 	public String[] getLabelTexts() {
 		return labelTexts;
 	}
@@ -1115,44 +1084,29 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 
 	public static void main(String[] args) {
-		// String s = "2012年01";
-		// System.err.println(s.substring(5, 7));
-		// Calendar c = Calendar.getInstance();
-		// System.out.println(c.get(c.MONDAY));
-
-		// List<Integer> tes = new ArrayList<Integer>();
-		// tes.add(1);
-		// tes.add(2);
-		// tes.add(3);
-		// System.out.println(tes.toString().substring(1,
-		// // tes.toString().length() - 1));
-		// Calendar calendar=Calendar.getInstance();
-		// Long now=calendar.getTimeInMillis();
-		// calendar.add(calendar.MONTH, 1);
-		// Long next=calendar.getTimeInMillis();
-		// System.out.println(now);
-		// System.out.println(next);
-		// System.out.println(new
-		// SimpleDateFormat("yyyy年MM月").format(calendar.getTime()));
-		// calendar.add(calendar.HOUR,
-		// Integer.parseInt("-"+calendar.get(calendar.HOUR)));
-		// calendar.add(calendar.MINUTE,
-		// Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
-		// calendar.add(calendar.SECOND,
-		// Integer.parseInt("-"+calendar.get(calendar.SECOND)));
-		// calendar.add(calendar.MILLISECOND,
-		// Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
-		// System.out.println(new
-		// SimpleDateFormat("yyyy年MM月").format(calendar.getTime()));
-		// System.out.println(new SimpleDateFormat("yyyy年MM月").format(now));
-		// System.out.println(now<next);
-
-//		Long longTime = TimeUtil.getTimeInMillis("2014年01月");
-//		System.out.println(longTime);
-//		System.out.println(new SimpleDateFormat("yyyy年MM月").format(longTime));
-			
-		System.out.println(new SimpleDateFormat("yyyy年MM月").format(new Date()));
-
+		Calendar calendar=Calendar.getInstance();
+		int date=Integer.parseInt("-"+calendar.get(calendar.DATE));
+		int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
+		int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
+		int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
+		int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
+		
+		calendar.add(calendar.MILLISECOND, mi);
+		calendar.add(calendar.SECOND, second);
+		calendar.add(calendar.MINUTE,minute);
+		calendar.add(calendar.HOUR, hour);
+		calendar.add(calendar.DATE, date);
+		
+		System.out.println(calendar.get(calendar.DATE));
+		String strDate=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+		System.out.println(strDate);
+		System.out.println("---------------------");
+		
+		Long l1=TimeUtil.getTimeInMillis("2013年11月");
+		String strDate1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(l1);
+		System.out.println(1l);
+		System.out.println(strDate1);
+		
 	}
 
 	public Long getDetailId() {
@@ -1265,6 +1219,46 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
+	}
+
+	public Long getCurrentQuarter() {
+		return currentQuarter;
+	}
+
+	public void setCurrentQuarter(Long currentQuarter) {
+		this.currentQuarter = currentQuarter;
+	}
+
+	public Long getCurrentYear() {
+		return currentYear;
+	}
+
+	public void setCurrentYear(Long currentYear) {
+		this.currentYear = currentYear;
+	}
+
+	public Long getQuarterNum() {
+		return quarterNum;
+	}
+
+	public void setQuarterNum(Long quarterNum) {
+		this.quarterNum = quarterNum;
+	}
+
+	public boolean isOrention() {
+		return orention;
+	}
+
+	public void setOrention(boolean orention) {
+		this.orention = orention;
+	}
+
+	public Integer[] getQuarters() {
+		return quarters;
+	}
+
+	public void setQuarters(Integer[] quarters) {
+		this.quarters = quarters;
 	}
 
 }

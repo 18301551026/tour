@@ -1,5 +1,6 @@
 package com.lxs.security.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -8,6 +9,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -18,6 +20,7 @@ import com.lxs.core.common.BeanUtil;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.Menu;
 import com.lxs.security.service.IDeptService;
+import com.lxs.tour.domain.FactoryType;
 import com.opensymphony.xwork2.ActionContext;
 
 
@@ -35,7 +38,20 @@ import com.opensymphony.xwork2.ActionContext;
 public class DeptAction extends BaseAction<Dept> {
 	@Resource
 	private IDeptService deptService;
-
+	public List<FactoryType> getAllFactoryType(){
+		List<FactoryType> list=new ArrayList<FactoryType>();
+		DetachedCriteria criteria=DetachedCriteria.forClass(FactoryType.class);
+		list=baseService.find(criteria);
+		return list;
+		
+	}
+	@Override
+	public void beforeSave(Dept model) {
+		if (null!=model.getFactoryType()&&null!=model.getFactoryType().getId()) {
+			FactoryType t=baseService.get(FactoryType.class, model.getFactoryType().getId());
+			model.setDeptType(t.getName());
+		}
+	}
 	public void getAllDept() {
 		List<Dept> list = deptService.findAllDept();
 		for (Dept dept : list) {
@@ -48,9 +64,10 @@ public class DeptAction extends BaseAction<Dept> {
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Dept.class);
 		filter.getExcludes().add("parent");
 		String json = JSON.toJSONString(list, filter);
+		System.out.println(json);
 		getOut().print(json);
 	}
-
+	
 	public void deleteDept() {
 		baseService.delete(baseService.get(modelClass, model.getId()));
 		getOut().print("成功");
@@ -60,6 +77,10 @@ public class DeptAction extends BaseAction<Dept> {
 		Dept d = baseService.get(Dept.class, model.getId());
 		BeanUtil.copy(model, d);
 		baseService.save(d);
+		if (null!=d.getFactoryType()&&null!=d.getFactoryType().getId()) {
+			FactoryType t=baseService.get(FactoryType.class, d.getFactoryType().getId());
+			d.setDeptType(t.getName());
+		}
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Menu.class);
 		filter.getExcludes().add("children");
 		getOut().print(JSON.toJSONString(d, filter));

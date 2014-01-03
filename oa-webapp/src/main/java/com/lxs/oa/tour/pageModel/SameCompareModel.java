@@ -14,6 +14,9 @@ public class SameCompareModel {
 	private Double nowTotalIncome;// 本年相应月份总收入
 	private Double lastTotalIncome;// 去年相应月份总收入
 	private String type;// 类型
+	private Double incomePercent;
+	private Double personNumPercent;
+	private String quarter;//季度
 
 	private String nowIds;
 	private String lastIds;
@@ -101,6 +104,31 @@ public class SameCompareModel {
 	public void setLastTotalIncome(Double lastTotalIncome) {
 		this.lastTotalIncome = lastTotalIncome;
 	}
+
+	public Double getIncomePercent() {
+		return incomePercent;
+	}
+
+	public void setIncomePercent(Double incomePercent) {
+		this.incomePercent = incomePercent;
+	}
+
+	public Double getPersonNumPercent() {
+		return personNumPercent;
+	}
+
+	public void setPersonNumPercent(Double personNumPercent) {
+		this.personNumPercent = personNumPercent;
+	}
+
+	public String getQuarter() {
+		return quarter;
+	}
+
+	public void setQuarter(String quarter) {
+		this.quarter = quarter;
+	}
+
 
 	
 }
