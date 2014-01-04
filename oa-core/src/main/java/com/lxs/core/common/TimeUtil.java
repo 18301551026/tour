@@ -63,39 +63,48 @@ public class TimeUtil {
 	 */
 	public static Long getTimeInMillis(String date){
 		Long time=0l;
-		Calendar calendar=Calendar.getInstance();
 		try {
+			Calendar calendar=Calendar.getInstance();
 			Integer tempYear=Integer.parseInt(date.substring(
 					0, 4).trim());
 			Integer tempMonth=Integer.parseInt(date.substring(
 					5, 7).trim());
 			calendar.set(calendar.YEAR,tempYear);
-			calendar.set(calendar.MONTH,tempMonth-1);
-			calendar.add(calendar.HOUR, Integer.parseInt("-"+calendar.get(calendar.HOUR)));
-			calendar.add(calendar.MINUTE, Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
-			calendar.add(calendar.SECOND, Integer.parseInt("-"+calendar.get(calendar.SECOND)));
-			calendar.add(calendar.MILLISECOND, Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
+			calendar.set(calendar.MONTH,tempMonth);
+			
+			int date1=Integer.parseInt("-"+calendar.get(calendar.DATE));
+			int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
+			int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
+			int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
+			int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
+			
+			calendar.add(calendar.MILLISECOND, mi);
+			calendar.add(calendar.SECOND, second);
+			calendar.add(calendar.MINUTE,minute);
+			calendar.add(calendar.HOUR, hour);
+			calendar.add(calendar.DATE, date1);
+			
 			time=calendar.getTimeInMillis();;
 		} catch (Exception e) {
-			Calendar c1=Calendar.getInstance();//为上个月
-			c1.add(c1.MONTH, -1);
-			c1.add(calendar.HOUR, Integer.parseInt("-"+calendar.get(calendar.HOUR)));
-			c1.add(calendar.MINUTE, Integer.parseInt("-"+calendar.get(calendar.MINUTE)));
-			c1.add(calendar.SECOND, Integer.parseInt("-"+calendar.get(calendar.SECOND)));
-			c1.add(calendar.MILLISECOND, Integer.parseInt("-"+calendar.get(calendar.MILLISECOND)));
-			return c1.getTimeInMillis();
+			Calendar calendar=Calendar.getInstance();
+			int date1=Integer.parseInt("-"+calendar.get(calendar.DATE));
+			int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
+			int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
+			int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
+			int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
+			
+			
+			calendar.add(calendar.MILLISECOND, mi);
+			calendar.add(calendar.SECOND, second);
+			calendar.add(calendar.MINUTE,minute);
+			calendar.add(calendar.HOUR, hour);
+			calendar.add(calendar.DATE, date1);
+			time= calendar.getTimeInMillis();
+		}finally{
+			return time;
 		}
-		return time;
 	}
 	
-	public static String getFolderName() {
-		TimeUtil tt = new TimeUtil();
-		String Path = "/wafplatform/staticsmanage/datahtml/";
-		Path += tt.getNowTime("yyyyMMdd") + "/";
-		return Path;
-
-	}
-
 	/**
 	 * 
 	 * @param year

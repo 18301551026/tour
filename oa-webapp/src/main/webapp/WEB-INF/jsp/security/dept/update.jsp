@@ -23,9 +23,10 @@
 		<c:if test="${deptLevel=='企业' }">
 			<br class="t" />
 			<label class="t">类型：</label>
-			<s:select cssClass="form-control t"
+			<%-- <s:select cssClass="form-control t"
 				list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
-				name="deptType"></s:select>
+				name="deptType"></s:select> --%>
+			<s:select list="allFactoryType" name="factoryType.id" cssClass="form-control" listKey="id" listValue="name"></s:select>
 		</c:if>
 		<br /> <label>描述：</label>
 		<s:textarea name="deptDesc" cssClass="form-control"

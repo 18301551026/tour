@@ -20,7 +20,7 @@
 	line-height: 34px;
 	padding: 0;
 	text-align: right;
-	width: 16%;
+	width: 18%;
 }
 
 .form-control {

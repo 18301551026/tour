@@ -456,6 +456,12 @@
 							<name>vote_type_</name>
 						</table>
 						<table>
+							<name>factory_type_</name>
+						</table>
+						<table>
+							<name>factory_option_</name>
+						</table>
+						<table>
 							<name>menu_</name>
 						</table>
 						<table>

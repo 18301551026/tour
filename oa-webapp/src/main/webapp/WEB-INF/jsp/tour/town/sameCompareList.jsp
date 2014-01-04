@@ -63,6 +63,11 @@
 					<span class="glyphicon glyphicon-print"></span> 图表
 				</button>
 			</div>
+			<div class="pull-right" style="margin-top: 6px;">
+				<a href="javascript:void(0)" title="查询表单"
+					id="showOrHideQueryPanelBtn"><span
+					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
+			</div>
 		</div>
 		<div class="panel-body hide" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
@@ -92,8 +97,8 @@
 				<tr>
 					<th>时间</th>
 					<th>类型</th>
-					<th colspan="2">接待人次</th>
-					<th colspan="2">总收入&nbsp;<font color="green;">(万元)</font>
+					<th colspan="3">接待人次</th>
+					<th colspan="3">总收入&nbsp;<font color="green;">(万元)</font>
 					</th>
 
 					<th>操作</th>
@@ -105,8 +110,10 @@
 					<Td></Td>
 					<td>本年</td>
 					<td>上一年</td>
+					<td>百分比</td>
 					<td>本年</td>
 					<td>上一年</td>
+					<td>百分比</td>
 					<Td></Td>
 				</tr>
 				<s:iterator value="#page.result">
@@ -115,8 +122,26 @@
 						<Td>${type }</Td>
 						<Td>${nowTotalPersonNum }</Td>
 						<Td>${lastTotalPersonNum }</Td>
+						<td>
+							
+							<c:if test="${fn:startsWith(personNumPercent, '-') }">
+								<font color="red">${personNumPercent }%</font>
+							</c:if>
+							<c:if test="${!fn:startsWith(personNumPercent, '-') }">
+								<font color="green">${personNumPercent }%</font>
+							</c:if>
+							
+						</td>
 						<Td>${nowTotalIncome }</Td>
 						<Td>${lastTotalIncome }</Td>
+						<td>
+							<c:if test="${fn:startsWith(incomePercent, '-') }">
+								<font color="red">${incomePercent }%</font>
+							</c:if>
+							<c:if test="${!fn:startsWith(incomePercent, '-') }">
+								<font color="green">${incomePercent }%</font>
+							</c:if>
+						</td>
 						<td><a
 							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
 					</tr>

@@ -21,7 +21,7 @@
 				<tr>
 					<th>时间</th>
 					<th>子项名称</th>
-					<th colspan="2">子项收入&nbsp;<font color="green">(万元)</font></th>
+					<th colspan="3">子项收入&nbsp;<font color="green">(万元)</font></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -30,6 +30,7 @@
 					<Td></Td>
 					<td>本年</td>
 					<td>上一年</td>
+					<td>百分比</td>
 				</tr>
 				<c:forEach items="${sameCompareDetaiList }" var="d">
 					<tr>
@@ -37,6 +38,16 @@
 						<td>${d.name }</td>
 						<Td>${d.nowMoney }</Td>
 						<Td>${d.lastMoney }</Td>
+						<td>
+							
+							<c:if test="${fn:startsWith(d.percent, '-') }">
+								<font color="red">${d.percent }%</font>
+							</c:if>
+							<c:if test="${!fn:startsWith(d.percent, '-') }">
+								<font color="green">${d.percent }%</font>
+							</c:if>
+							
+						</td>
 					</tr>
 				</c:forEach>
 			</tbody>

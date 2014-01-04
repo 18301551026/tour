@@ -3,6 +3,7 @@ package com.lxs.oa.tour.dao.impl;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lxs.core.common.TimeUtil;
 import com.lxs.core.common.page.PageResult;
-import com.lxs.oa.tour.common.FactoryTypeEnum;
+import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
@@ -30,7 +32,7 @@ import com.lxs.oa.tour.pageModel.StatisticModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.User;
-
+import com.lxs.tour.domain.FactoryType;
 
 @Repository
 public class TourDaoImpl implements ITourDao {
@@ -40,6 +42,10 @@ public class TourDaoImpl implements ITourDao {
 	@Override
 	public PageResult findStatistic(DetachedCriteria criteria, Long userId,
 			List<Dept> deptList) {
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
+
 		PageResult page = new PageResult();
 		Criteria c = criteria.getExecutableCriteria(sessionFactory
 				.getCurrentSession());
@@ -54,8 +60,8 @@ public class TourDaoImpl implements ITourDao {
 		List<TourCommon> list = c.list();// 所有数据
 		List<StatisticModel> tempList = new ArrayList<StatisticModel>();
 
-		for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
-			String str = typeEnum.getValue();
+		for (FactoryType factoryType : typeList) {
+			String str = factoryType.getName();
 			Double tempTotalIncome = 0d;// 总收入
 			Long tempTotalPersonNum = 0l;// 总接待人次
 			Long tempNum = 0l; // 工厂总数
@@ -88,9 +94,12 @@ public class TourDaoImpl implements ITourDao {
 		return page;
 	}
 
-	public PageResult findSameCompare(DetachedCriteria nowCriteria,
-			DetachedCriteria lastCriteria, String startDate, String endDate,
-			Integer currentMonth, Integer pageMonthNum) {
+	public PageResult findSameCompare(List<Long> userIds, String startDate,
+			String endDate, Integer currentMonth, Integer pageMonthNum) {
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
+
 		PageResult page = new PageResult();
 		List<SameCompareModel> tempList = new ArrayList<SameCompareModel>();
 		Integer year = 0;
@@ -132,9 +141,30 @@ public class TourDaoImpl implements ITourDao {
 
 			int tempYear = calendar.get(calendar.YEAR);
 			int tempMonth = calendar.get(calendar.MONTH) + 1;
+
+			DetachedCriteria nowCriteria = DetachedCriteria
+					.forClass(TourCommon.class);
+			nowCriteria.add(Restrictions.eq("status",
+					StatusEnum.reported.getValue()));
+			if (userIds.size() != 0) {
+				nowCriteria.createAlias("user", "u");
+				nowCriteria.add(Restrictions.in("u.id", userIds));
+			} else {
+				nowCriteria.add(Restrictions.isNull("user"));
+			}
 			Criteria criteria1 = nowCriteria
 					.getExecutableCriteria(sessionFactory.getCurrentSession());
 
+			DetachedCriteria lastCriteria = DetachedCriteria
+					.forClass(TourCommon.class);
+			lastCriteria.add(Restrictions.eq("status",
+					StatusEnum.reported.getValue()));
+			if (userIds.size() != 0) {
+				lastCriteria.createAlias("user", "u");
+				lastCriteria.add(Restrictions.in("u.id", userIds));
+			} else {
+				lastCriteria.add(Restrictions.isNull("user"));
+			}
 			Criteria criteria2 = lastCriteria
 					.getExecutableCriteria(sessionFactory.getCurrentSession());
 
@@ -146,8 +176,9 @@ public class TourDaoImpl implements ITourDao {
 			int lastYear = tempYear - 1;
 			criteria2.add(Restrictions.eq("reportYear", lastYear));
 			criteria2.add(Restrictions.eq("reportMonth", tempMonth));
+
 			List<TourCommon> lastList = criteria2.list();
-			for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
+			for (FactoryType factoryType : typeList) {
 				SameCompareModel model = new SameCompareModel();
 				Long nowTotalCount = 0l;// 本年相应月份总个数
 				Long lastTotalCount = 0l;// 去年相应月份总个数
@@ -160,7 +191,7 @@ public class TourDaoImpl implements ITourDao {
 
 				// 本年的
 				for (TourCommon tourCommon : nowList) {
-					if (tourCommon.getType().equals(typeEnum.getValue())) {
+					if (tourCommon.getType().equals(factoryType.getName())) {
 						nowTotalCount += 1;
 						nowTotalIncome += tourCommon.getTotalIncome();
 						nowTotalPersonNum += tourCommon.getTotalPersonNum();
@@ -169,22 +200,27 @@ public class TourDaoImpl implements ITourDao {
 				}
 				// 去年
 				for (TourCommon tourCommon : lastList) {
-					if (tourCommon.getType().equals(typeEnum.getValue())) {
+					if (tourCommon.getType().equals(factoryType.getName())) {
 						lastTotalCount += 1;
 						lastTotalIncome += tourCommon.getTotalIncome();
 						lastTotalPersonNum += tourCommon.getTotalPersonNum();
 						lastIds += tourCommon.getId() + ",";
 					}
 				}
-				model.setType(typeEnum.getValue());
+				model.setType(factoryType.getName());
 				model.setYear(tempYear);
 				model.setMonth(tempMonth);
-				// model.setNowTotalCount(nowTotalCount);
-				// model.setLastTotalCount(lastTotalCount);
 				model.setNowTotalIncome(nowTotalIncome);
 				model.setLastTotalIncome(lastTotalIncome);
 				model.setNowTotalPersonNum(nowTotalPersonNum);
 				model.setLastTotalPersonNum(lastTotalPersonNum);
+				Double d = 0d;
+				d = getPercent(nowTotalIncome, lastTotalIncome);
+				model.setIncomePercent(d);
+				Double d1 = 0d;
+				d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
+						Double.parseDouble(lastTotalPersonNum + ""));
+				model.setPersonNumPercent(d1);
 				if (nowIds.trim().length() != 0) {
 					model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
 				}
@@ -228,6 +264,16 @@ public class TourDaoImpl implements ITourDao {
 				int tempYear = calendar.get(calendar.YEAR);
 				int tempMonth = calendar.get(calendar.MONTH) + 1;
 
+				DetachedCriteria nowCriteria = DetachedCriteria
+						.forClass(TourCommon.class);
+				nowCriteria.add(Restrictions.eq("status",
+						StatusEnum.reported.getValue()));
+				if (userIds.size() != 0) {
+					nowCriteria.createAlias("user", "u");
+					nowCriteria.add(Restrictions.in("u.id", userIds));
+				} else {
+					nowCriteria.add(Restrictions.isNull("user"));
+				}
 				Criteria criteria1 = nowCriteria
 						.getExecutableCriteria(sessionFactory
 								.getCurrentSession());
@@ -237,13 +283,23 @@ public class TourDaoImpl implements ITourDao {
 				List<TourCommon> nowList = criteria1.list();
 
 				int lastYear = tempYear - 1;
+				DetachedCriteria lastCriteria = DetachedCriteria
+						.forClass(TourCommon.class);
+				lastCriteria.add(Restrictions.eq("status",
+						StatusEnum.reported.getValue()));
+				if (userIds.size() != 0) {
+					lastCriteria.createAlias("user", "u");
+					lastCriteria.add(Restrictions.in("u.id", userIds));
+				} else {
+					lastCriteria.add(Restrictions.isNull("user"));
+				}
 				Criteria criteria2 = lastCriteria
 						.getExecutableCriteria(sessionFactory
 								.getCurrentSession());
 				criteria2.add(Restrictions.eq("reportYear", lastYear));
 				criteria2.add(Restrictions.eq("reportMonth", tempMonth));
 				List<TourCommon> lastList = criteria2.list();
-				for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
+				for (FactoryType factoryType : typeList) {
 					SameCompareModel model = new SameCompareModel();
 					Long nowTotalCount = 0l;// 本年相应月份总个数
 					Long lastTotalCount = 0l;// 去年相应月份总个数
@@ -256,7 +312,7 @@ public class TourDaoImpl implements ITourDao {
 
 					// 本年的
 					for (TourCommon tourCommon : nowList) {
-						if (tourCommon.getType().equals(typeEnum.getValue())) {
+						if (tourCommon.getType().equals(factoryType.getName())) {
 							nowTotalCount += 1;
 							nowTotalIncome += tourCommon.getTotalIncome();
 							nowTotalPersonNum += tourCommon.getTotalPersonNum();
@@ -265,7 +321,7 @@ public class TourDaoImpl implements ITourDao {
 					}
 					// 去年
 					for (TourCommon tourCommon : lastList) {
-						if (tourCommon.getType().equals(typeEnum.getValue())) {
+						if (tourCommon.getType().equals(factoryType.getName())) {
 							lastTotalCount += 1;
 							lastTotalIncome += tourCommon.getTotalIncome();
 							lastTotalPersonNum += tourCommon
@@ -273,15 +329,20 @@ public class TourDaoImpl implements ITourDao {
 							lastIds += tourCommon.getId() + ",";
 						}
 					}
-					model.setType(typeEnum.getValue());
+					model.setType(factoryType.getName());
 					model.setYear(tempYear);
 					model.setMonth(tempMonth);
-					// model.setNowTotalCount(nowTotalCount);
-					// model.setLastTotalCount(lastTotalCount);
 					model.setNowTotalIncome(nowTotalIncome);
 					model.setLastTotalIncome(lastTotalIncome);
 					model.setNowTotalPersonNum(nowTotalPersonNum);
 					model.setLastTotalPersonNum(lastTotalPersonNum);
+					Double d = 0d;
+					d = getPercent(nowTotalIncome, lastTotalIncome);
+					model.setIncomePercent(d);
+					Double d1 = 0d;
+					d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
+							Double.parseDouble(lastTotalPersonNum + ""));
+					model.setPersonNumPercent(d1);
 					if (nowIds.trim().length() != 0) {
 						model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
 					}
@@ -305,43 +366,37 @@ public class TourDaoImpl implements ITourDao {
 		return page;
 	}
 
-	public static void main(String[] args) {
-		// for (FactoryTypeEnum tempType : FactoryTypeEnum.values()) {
-		// tempType.getValue();
-		// }
-		// String ids = "2,3,";
-		// System.out.println(ids.substring(0, ids.length() - 1));
-		// Calendar c = Calendar.getInstance();
-		// c.set(c.YEAR, 2013);
-		// c.set(c.MONTH, 12);
-		// // System.out.println(c.get(c.MONTH) + "\t" + c.get(c.YEAR));
-		// Calendar c1 = Calendar.getInstance();
-		// c1.set(c1.YEAR, 2013);
-		// c1.set(c1.MONTH, 11);
-		// System.out.println(c.after(c1));
-		// ;
-
-	}
-
-	public void insertData() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection conn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/oa", "root", "root");
-		conn.setAutoCommit(false);
-		Statement st = null;
-		for (int i = 0; i < 100; i++) {
-			StringBuffer sql = new StringBuffer(
-					"insert into tour_common_ (id_,report_month_,report_year_,status_,total_income_,total_person_num_,type_,user_id_) ");
-			sql.append(" values (" + (100000 + i) + "," + 11 + "," + (1990 + i)
-					+ "," + 2 + "," + 100 + i + "," + 50 + i + ",'工业旅游',6)");
-			st = conn.createStatement();
-			st.execute(sql.toString());
+	public static Double getPercent(Double now, Double last) {
+		Double percent = 0d;
+		if (last == 0d && now == 0d) {
+			return 0d;
+		} else if (last == 0d && now != 0d) {
+			last = 1d;
+		}
+		percent = (now - last) / last;
+		if (percent.toString().equals("NaN")) {
+			return 0d;
 		}
 
-		conn.commit();
-		st.close();
-		conn.close();
-
+		int i = 0;
+		percent = percent * 100;
+		i = percent.toString().indexOf(".");
+		if (i != 0
+				&& percent.toString()
+						.substring(i + 1, percent.toString().length()).length() >= 3) {
+			if (null != percent.toString().substring(i + 3, i + 4)
+					&& Integer.parseInt(percent.toString().substring(i + 3,
+							i + 4)) >= 5) {
+				if (percent > 0) {
+					percent += 0.01d;
+				} else {
+					percent -= 0.01d;
+				}
+			}
+			percent = Double
+					.parseDouble(percent.toString().substring(0, i + 3));
+		}
+		return percent;
 	}
 
 	/*
@@ -380,9 +435,11 @@ public class TourDaoImpl implements ITourDao {
 		sql.append(" where c.user_id_ in (  "
 				+ userIds.substring(0, userIds.length() - 1));
 		sql.append(" ) and  ");
-		sql.append(" c.long_time_ >= " + TimeUtil.getTimeInMillis(startYear+"年"+startMonth+"月"));
+		sql.append(" c.long_time_ >= "
+				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
 		sql.append(" and ");
-		sql.append(" c.long_time_<= " + TimeUtil.getTimeInMillis(endYear+"年"+endMonth+"月"));
+		sql.append(" c.long_time_<= "
+				+ TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
 		sql.append(" GROUP BY type_, name_  ");
 		System.out.println(sql.toString());
 		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
@@ -401,7 +458,7 @@ public class TourDaoImpl implements ITourDao {
 					|| m.getType_().equals("工业旅游")) {
 				m.setUnit_("(家)");
 			}
-
+			m.setUnit_("(个)");
 			list.add(m);
 		}
 		StringBuffer incomeSql = new StringBuffer(
@@ -409,9 +466,11 @@ public class TourDaoImpl implements ITourDao {
 		incomeSql.append(" where c.user_id_ in (  "
 				+ userIds.substring(0, userIds.length() - 1));
 		incomeSql.append(" ) and  ");
-		incomeSql.append(" c.long_time_ >= " + TimeUtil.getTimeInMillis(startYear+"年"+startMonth+"月"));
+		incomeSql.append(" c.long_time_ >= "
+				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
 		incomeSql.append(" and ");
-		incomeSql.append(" c.long_time_<= " + TimeUtil.getTimeInMillis(endYear+"年"+endMonth+"月"));
+		incomeSql.append(" c.long_time_<= "
+				+ TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
 		incomeSql.append("	GROUP BY type_ ");
 		SQLQuery query1 = sessionFactory.getCurrentSession().createSQLQuery(
 				incomeSql.toString());
@@ -438,7 +497,9 @@ public class TourDaoImpl implements ITourDao {
 			DetachedCriteria lastCriteria, String startDate, String endDate,
 			Integer currentMonth, Integer pageMonthNum) {
 		List<SameCompareChartModel> list = new ArrayList<SameCompareChartModel>();
-
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
 		Integer year = 0;
 		Integer month = 0;
 		// 第一种情况默认查询上个月的
@@ -493,15 +554,15 @@ public class TourDaoImpl implements ITourDao {
 			criteria2.add(Restrictions.eq("reportYear", lastYear));
 			criteria2.add(Restrictions.eq("reportMonth", tempMonth));
 			List<TourCommon> lastList = criteria2.list();
-			for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
+			for (FactoryType factoryType : typeList) {
 				SameCompareChartModel nowModel = new SameCompareChartModel();
 				SameCompareChartModel lastModel = new SameCompareChartModel();
 				nowModel.setYearType("今年");
 				lastModel.setYearType("去年");
-				nowModel.setType(typeEnum.getValue());
-				lastModel.setType(typeEnum.getValue());
-//				nowModel.setYearAndMonth(year + "年" + month + "月");
-//				lastModel.setYearAndMonth(year + "年" + month + "月");
+				nowModel.setType(factoryType.getName());
+				lastModel.setType(factoryType.getName());
+				// nowModel.setYearAndMonth(year + "年" + month + "月");
+				// lastModel.setYearAndMonth(year + "年" + month + "月");
 
 				Long nowPersonNumValues = 0l;
 				Double nowMoneyValues = 0d;
@@ -510,14 +571,14 @@ public class TourDaoImpl implements ITourDao {
 
 				// 本年的
 				for (TourCommon tourCommon : nowList) {
-					if (tourCommon.getType().equals(typeEnum.getValue())) {
+					if (tourCommon.getType().equals(factoryType.getName())) {
 						nowPersonNumValues += tourCommon.getTotalPersonNum();
 						nowMoneyValues += tourCommon.getTotalIncome();
 					}
 				}
 				// 去年
 				for (TourCommon tourCommon : lastList) {
-					if (tourCommon.getType().equals(typeEnum.getValue())) {
+					if (tourCommon.getType().equals(factoryType.getName())) {
 						lastPersonNumValues += tourCommon.getTotalPersonNum();
 						lastMoneyValues += tourCommon.getTotalIncome();
 					}
@@ -577,16 +638,18 @@ public class TourDaoImpl implements ITourDao {
 				criteria2.add(Restrictions.eq("reportYear", lastYear));
 				criteria2.add(Restrictions.eq("reportMonth", tempMonth));
 				List<TourCommon> lastList = criteria2.list();
-				for (FactoryTypeEnum typeEnum : FactoryTypeEnum.values()) {
+				for (FactoryType factoryType : typeList) {
 
 					SameCompareChartModel nowModel = new SameCompareChartModel();
 					SameCompareChartModel lastModel = new SameCompareChartModel();
 					nowModel.setYearType("今年");
 					lastModel.setYearType("去年");
-					nowModel.setType(typeEnum.getValue());
-					lastModel.setType(typeEnum.getValue());
-//					nowModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
-//					lastModel.setYearAndMonth(tempYear + "年" + tempMonth + "月");
+					nowModel.setType(factoryType.getName());
+					lastModel.setType(factoryType.getName());
+					// nowModel.setYearAndMonth(tempYear + "年" + tempMonth +
+					// "月");
+					// lastModel.setYearAndMonth(tempYear + "年" + tempMonth +
+					// "月");
 
 					Long nowPersonNumValues = 0l;
 					Double nowMoneyValues = 0d;
@@ -595,7 +658,7 @@ public class TourDaoImpl implements ITourDao {
 
 					// 本年的
 					for (TourCommon tourCommon : nowList) {
-						if (tourCommon.getType().equals(typeEnum.getValue())) {
+						if (tourCommon.getType().equals(factoryType.getName())) {
 							nowPersonNumValues += tourCommon
 									.getTotalPersonNum();
 							nowMoneyValues += tourCommon.getTotalIncome();
@@ -603,7 +666,7 @@ public class TourDaoImpl implements ITourDao {
 					}
 					// 去年
 					for (TourCommon tourCommon : lastList) {
-						if (tourCommon.getType().equals(typeEnum.getValue())) {
+						if (tourCommon.getType().equals(factoryType.getName())) {
 							lastPersonNumValues += tourCommon
 									.getTotalPersonNum();
 							lastMoneyValues += tourCommon.getTotalIncome();
@@ -629,4 +692,250 @@ public class TourDaoImpl implements ITourDao {
 		return list;
 	}
 
+	@Override
+	public List<SameCompareModel> getQuarterSameCompareModels(
+			List<Long> userIds, int startDate, int endDate,
+			List<Integer> quarters) {
+		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
+		int nowYear = 0;
+		int nowMonth = 0;
+		Calendar calendar = Calendar.getInstance();
+		if (endDate == 0) {
+			endDate = calendar.get(calendar.YEAR);
+		}
+		String sql = "select min(report_year_) from tour_common_";
+		if (startDate == 0) {
+			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
+					sql);
+			List objList = query.list();
+			if (null != objList && objList.size() != 0) {
+				startDate = Integer.parseInt(objList.get(0).toString());
+			}
+		}
+		nowYear = calendar.get(calendar.YEAR);
+		nowMonth = calendar.get(calendar.MONTH) + 1;
+		for (int i = endDate; i >= startDate; i--) {// 年
+			for (int j = 4; j >= 1; j--) { // 季度
+				if (quarters.contains(j)) {// 如果是要查询的季度
+					String quarter = "";
+					if (j == 1) {
+						quarter = "一季度";
+						if (nowYear == i) {
+							if (nowMonth < 2) {
+								continue;
+							}
+						}
+					} else if (j == 2) {
+						quarter = "二季度";
+						if (nowYear == i) {
+							if (nowMonth < 5) {
+								continue;
+							}
+						}
+					} else if (j == 3) {
+						quarter = "三季度";
+						if (nowYear == i) {
+							if (nowMonth < 8) {
+								continue;
+							}
+						}
+					} else if (j == 4) {
+						quarter = "四季度";
+						if (nowYear == i) {
+							if (nowMonth < 11) {
+								continue;
+							}
+						}
+					}
+					
+					DetachedCriteria nowCriteria = DetachedCriteria
+							.forClass(TourCommon.class);
+					nowCriteria.add(Restrictions.eq("status",
+							StatusEnum.reported.getValue()));
+					if (userIds.size() != 0) {
+						nowCriteria.createAlias("user", "u");
+						nowCriteria.add(Restrictions.in("u.id", userIds));
+					} else {
+						nowCriteria.add(Restrictions.isNull("user"));
+					}
+					Criteria criteria1 = nowCriteria
+							.getExecutableCriteria(sessionFactory
+									.getCurrentSession());
+					criteria1.add(Restrictions.eq("quarter", j));
+					criteria1.add(Restrictions.eq("reportYear", i));
+
+					List<TourCommon> nowList = criteria1.list();
+
+					
+					
+					DetachedCriteria lastCriteria = DetachedCriteria
+							.forClass(TourCommon.class);
+					lastCriteria.add(Restrictions.eq("status",
+							StatusEnum.reported.getValue()));
+					if (userIds.size() != 0) {
+						lastCriteria.createAlias("user", "u");
+						lastCriteria.add(Restrictions.in("u.id", userIds));
+					} else {
+						lastCriteria.add(Restrictions.isNull("user"));
+					}
+					Criteria criteria2 = lastCriteria
+							.getExecutableCriteria(sessionFactory
+									.getCurrentSession());
+					criteria1.add(Restrictions.eq("reportYear", i-1));
+					criteria2.add(Restrictions.eq("quarter", j));
+
+					List<TourCommon> lastList = criteria2.list();
+
+					list.addAll(getSameCompareModel(i, quarter, nowList,
+							lastList));
+				}
+			}
+		}
+		return list;
+	}
+
+	public List<SameCompareModel> getSameCompareModel(Integer startYear,
+			String quarter, List<TourCommon> nowList, List<TourCommon> lastList) {
+		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
+		for (FactoryType factoryType : typeList) {
+			SameCompareModel model = new SameCompareModel();
+			Long nowTotalCount = 0l;// 本年相应月份总个数
+			Long lastTotalCount = 0l;// 去年相应月份总个数
+			Long nowTotalPersonNum = 0l;// 本年相应月份接待总人数
+			Long lastTotalPersonNum = 0l;// 去年相应月份接待总人数
+			Double nowTotalIncome = 0d;// 本年相应月份总收入
+			Double lastTotalIncome = 0d;// 去年相应月份总收入
+			String nowIds = "";
+			String lastIds = "";
+
+			// 本年的
+			for (TourCommon tourCommon : nowList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					nowTotalCount += 1;
+					nowTotalIncome += tourCommon.getTotalIncome();
+					nowTotalPersonNum += tourCommon.getTotalPersonNum();
+					nowIds += tourCommon.getId() + ",";
+				}
+			}
+			// 去年
+			for (TourCommon tourCommon : lastList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					lastTotalCount += 1;
+					lastTotalIncome += tourCommon.getTotalIncome();
+					lastTotalPersonNum += tourCommon.getTotalPersonNum();
+					lastIds += tourCommon.getId() + ",";
+				}
+			}
+			model.setType(factoryType.getName());
+			model.setYear(startYear);
+			model.setQuarter(quarter);
+			model.setNowTotalIncome(nowTotalIncome);
+			model.setLastTotalIncome(lastTotalIncome);
+			model.setNowTotalPersonNum(nowTotalPersonNum);
+			model.setLastTotalPersonNum(lastTotalPersonNum);
+			Double d = 0d;
+			d = getPercent(nowTotalIncome, lastTotalIncome);
+			model.setIncomePercent(d);
+			Double d1 = 0d;
+			d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
+					Double.parseDouble(lastTotalPersonNum + ""));
+			model.setPersonNumPercent(d1);
+			if (nowIds.trim().length() != 0) {
+				model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
+			}
+			if (lastIds.trim().length() != 0) {
+				model.setLastIds(lastIds.substring(0, lastIds.length() - 1));
+			}
+
+			list.add(model);
+		}
+		return list;
+	}
+
+	public List<SameCompareChartModel> getQuarterCharts(List<Long> userIds,
+			int startDate, int endDate, List<Integer> quarters) {
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
+		
+		List<SameCompareChartModel> list = new ArrayList<SameCompareChartModel>();
+
+		DetachedCriteria nowCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		nowCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+		if (userIds.size() != 0) {
+			nowCriteria.createAlias("user", "u");
+			nowCriteria.add(Restrictions.in("u.id", userIds));
+		} else {
+			nowCriteria.add(Restrictions.isNull("user"));
+		}
+		Criteria criteria1 = nowCriteria.getExecutableCriteria(sessionFactory
+				.getCurrentSession());
+		criteria1.add(Restrictions.eq("quarter",quarters.get(0)));//季度
+		criteria1.add(Restrictions.eq("reportYear", startDate));	//年
+
+		List<TourCommon> nowList = criteria1.list();
+
+		DetachedCriteria lastCriteria = DetachedCriteria
+				.forClass(TourCommon.class);
+		lastCriteria.add(Restrictions.eq("status",
+				StatusEnum.reported.getValue()));
+		if (userIds.size() != 0) {
+			lastCriteria.createAlias("user", "u");
+			lastCriteria.add(Restrictions.in("u.id", userIds));
+		} else {
+			lastCriteria.add(Restrictions.isNull("user"));
+		}
+		Criteria criteria2 = lastCriteria.getExecutableCriteria(sessionFactory
+				.getCurrentSession());
+		criteria2.add(Restrictions.eq("quarter",quarters.get(0)));	//季度
+		criteria1.add(Restrictions.eq("reportYear", startDate-1));	//相对去年
+
+		List<TourCommon> lastList = criteria2.list();
+		
+		for (FactoryType factoryType : typeList) {
+			SameCompareChartModel nowModel = new SameCompareChartModel();
+			SameCompareChartModel lastModel = new SameCompareChartModel();
+			nowModel.setYearType("今年");
+			lastModel.setYearType("去年");
+			nowModel.setType(factoryType.getName());
+			lastModel.setType(factoryType.getName());
+
+			Long nowPersonNumValues = 0l;
+			Double nowMoneyValues = 0d;
+			Long lastPersonNumValues = 0l;
+			Double lastMoneyValues = 0d;
+
+			// 本年的
+			for (TourCommon tourCommon : nowList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					nowPersonNumValues += tourCommon.getTotalPersonNum();
+					nowMoneyValues += tourCommon.getTotalIncome();
+				}
+			}
+			// 去年
+			for (TourCommon tourCommon : lastList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					lastPersonNumValues += tourCommon.getTotalPersonNum();
+					lastMoneyValues += tourCommon.getTotalIncome();
+				}
+			}
+
+			nowModel.setMoneyValues(nowMoneyValues);
+			nowModel.setPersonNumValues(nowPersonNumValues);
+			lastModel.setMoneyValues(lastMoneyValues);
+			lastModel.setPersonNumValues(lastPersonNumValues);
+
+			list.add(nowModel);
+			list.add(lastModel);
+
+		}
+		
+		
+		return list;
+	}
 }

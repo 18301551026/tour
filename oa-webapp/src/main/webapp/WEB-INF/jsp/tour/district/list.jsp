@@ -67,11 +67,10 @@
 			<thead>
 				<tr>
 					<th>类型</th>
+					<th>时间</th>
 					<th>部门</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
-					<th>时间</th>
-					
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -79,10 +78,10 @@
 				<s:iterator value="#page.result">
 					<tr>
 						<td>${type}</td>
+						<td>${reportYear }年${reportMonth }月</td>
 						<Td>${user.dept.text }</Td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td>${reportYear }年${reportMonth }月</td>
 						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
 					</tr>
 				</s:iterator>

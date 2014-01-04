@@ -16,25 +16,35 @@
 
 </head>
 <script type="text/javascript">
-	$(function(){
-		$("#reprotYearAndMonth").blur(function(){
-			var reprotYearAndMonth=$(this).val();
-			if(reprotYearAndMonth){
-				$.ajax({
-					   type: "POST",
-					   url: ctx+"/tour/noReported!checkUserIsReportThisMonth.action",
-					   data: "reprotYearAndMonth="+reprotYearAndMonth,
-					   success: function(msg){
-					     if(msg=='已经申报'){
-					    	 alert("您"+reprotYearAndMonth+"已经申报了，不能再申报了");
-					    	 $("#reprotYearAndMonth").val('');
-					    	 
-					     }
-					   }
-				});	
-			}
-		});
-	})
+	$(
+			function() {
+				$("#reprotYearAndMonth")
+						.blur(
+								function() {
+									var reprotYearAndMonth = $(this).val();
+									if (reprotYearAndMonth) {
+										$
+												.ajax({
+													type : "POST",
+													url : ctx
+															+ "/tour/noReported!checkUserIsReportThisMonth.action",
+													data : "reprotYearAndMonth="
+															+ reprotYearAndMonth,
+													success : function(msg) {
+														if (msg == '已经申报') {
+															alert("您"
+																	+ reprotYearAndMonth
+																	+ "已经申报了，不能再申报了");
+															$(
+																	"#reprotYearAndMonth")
+																	.val('');
+
+														}
+													}
+												});
+									}
+								});
+			})
 </script>
 <style type="text/css">
 .formTable .control-label {
@@ -43,7 +53,7 @@
 	line-height: 34px;
 	padding: 0;
 	text-align: right;
-	width: 16%;
+	width: 18%;
 }
 
 .form-control {
@@ -67,6 +77,7 @@ font {
 	color: green;
 	width: 20px;
 	display: inline;
+	line-height: 27px;
 }
 </style>
 <body class="editBody">
@@ -96,178 +107,43 @@ font {
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
-				<Td class="control-label" style="width: 3%"><label for="totalPersonNum">接待人次：</label>
-				<Td class="query_input" colspan="4"><s:textfield name="totalPersonNum"
-						placeholder="请输入接待人次" cssClass="form-control validate[required]"
-						id="totalPersonNum" cssStyle="width:94%"></s:textfield> <font>(人次)</font></Td>
-				<%-- <Td class="control-label"><label for="totalIncome">总收入：</label>
-				<Td class="query_input"><s:textfield name="totalIncome"
-						placeholder="请输入总收入" cssClass="form-control validate[required]"
-						id="totalIncome"></s:textfield> <font>(万元)</font></Td> --%>
+				<Td class="control-label" style="width: 3%"><label
+					for="totalPersonNum">接待人次：</label>
+				<Td class="query_input" colspan="3"><s:textfield
+						name="totalPersonNum" placeholder="请输入接待人次"
+						cssClass="form-control validate[required]" id="totalPersonNum"
+						cssStyle="width:94%"></s:textfield> <font>(人次)</font></Td>
 			</tr>
-			<c:if test="${deptType=='观光园' }">
-				<tr>
-					<Td class="control-label"><label for="visitTicket">门票收入：</label>
-						<input type="hidden" name="labelTexts" value="门票收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入门票收入" cssClass="form-control validate[required]"
-							id="visitTicket"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitPlant">纯种植、养殖园收入：</label>
-						<input type="hidden" name="labelTexts" value="纯种植、养殖园收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入纯种植、养殖园收入"
-							cssClass="form-control validate[required]" id="visitPlant"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="visitPick">采摘收入：</label>
-						<input type="hidden" name="labelTexts" value="采摘收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入采摘收入" cssClass="form-control validate[required]"
-							id="visitPick"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitPick">设施地采摘收入：</label>
-						<input type="hidden" name="labelTexts" value="设施地采摘收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入设施地采摘收入"
-							cssClass="form-control validate[required]" id="visitPick"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="visitSellProduce">出售农产品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售农产品收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售农产品收入"
-							cssClass="form-control validate[required]" id="visitSellProduce"></s:textfield>
-						<font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitSellOther">出售其他商品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售其他商品收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售其他商品收入"
-							cssClass="form-control validate[required]" id="visitSellOther"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="visitAsusement">健身娱乐收入：</label>
-						<input type="hidden" name="labelTexts" value="健身娱乐收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入健身娱乐收入"
-							cssClass="form-control validate[required]" id="visitAsusement"></s:textfield>
-						<font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitFishing">垂钓收入：</label>
-						<input type="hidden" name="labelTexts" value="垂钓收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入垂钓收入" cssClass="form-control validate[required]"
-							id="visitFishing"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="visitRepast">餐饮收入：</label>
-						<input type="hidden" name="labelTexts" value="餐饮收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入餐饮收入" cssClass="form-control validate[required]"
-							id="visitRepast"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="visitLive">住宿收入：</label>
-						<input type="hidden" name="labelTexts" value="住宿收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入住宿收入" cssClass="form-control validate[required]"
-							id="visitLive"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label" width="3%"><label for="visitOther">其它收入：</label>
-						<input type="hidden" name="labelTexts" value="其它收入" /></Td>
-					<Td class="query_input" colspan="3"><s:textfield
-							name="inputMoneys" placeholder="请输入其它收入"
-							cssClass="form-control validate[required]" id="visitOther"
-							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-			</c:if>
-			<!-- 民俗 -->
-			<c:if test="${deptType=='民俗旅游' }">
-				<tr>
-					<Td class="control-label"><label for="customSellAndProcess">出售和农产品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售和加工自农产品收入" /></Td>
-					<Td class="query_input" colspan="3"><s:textfield
-							name="inputMoneys" placeholder="请输入出售和加工自农产品收入"
-							cssClass="form-control validate[required]"
-							id="customSellAndProcess" cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="customRepast">餐饮收入：</label>
-						<input type="hidden" name="labelTexts" value="餐饮收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入餐饮收入" cssClass="form-control validate[required]"
-							id="customRepast"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="customLive">住宿收入：</label>
-						<input type="hidden" name="labelTexts" value="住宿收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入住宿收入" cssClass="form-control validate[required]"
-							id="customLive"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-			</c:if>
-			<!-- 旅游景区 -->
-			<c:if test="${deptType=='旅游风景' }">
-				<tr>
+			<c:set value="${fn:length(factoryOptions)}" var="detailNum"></c:set>
+			<c:forEach items="${factoryOptions}" var="o" varStatus="sta">
+				<input type="hidden" name="labelTexts" value="${o.name }" />
+				</Td>
+				<c:if test="${sta.index%2==0 }">
+					<tr>
+				</c:if>
+				<c:if test="${sta.index%2==0 }">
+					<Td class="control-label"><label for="voteOptions">${o.name}：</label></Td>
+					<Td class="query_input"
+						<c:if test="${sta.index==(detailNum-1) }"> colspan="3"</c:if>>
+						<input name="inputMoneys" placeholder="请输入${o.name }" type="text"
+						class="form-control validate[required] pull-left"
+						<c:if test="${sta.index==(detailNum-1) }">
+							 style="margin-bottom: 2px;width: 94%"
+						</c:if>>
+						<font>(万元)</font>
 					</Td>
-					<Td class="control-label"><label for="jingQuTicket">门票收入：</label>
-						<input type="hidden" name="labelTexts" value="门票收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入门票收入" cssClass="form-control validate[required]"
-							id="jingQuTicket"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="jingQuSellOther">出售其他商品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售其他商品收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售其他商品收入"
-							cssClass="form-control validate[required]" id="jingQuSellOther"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label"><label for="jingQuRepast">餐饮收入：</label>
-						<input type="hidden" name="labelTexts" value="餐饮收入" /></Td>
-					<Td class="query_input" colspan="3"><s:textfield
-							name="inputMoneys" placeholder="请输入餐饮收入"
-							cssClass="form-control validate[required]" id="jingQuRepast"
-							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-			</c:if>
-			<!-- 旅游住宿 -->
-			<c:if test="${deptType=='旅游住宿' }">
-				<tr>
-					<Td class="control-label"><label for="liveHouseCost">房费：</label>
-						<input type="hidden" name="labelTexts" value="房费" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入房费" cssClass="form-control validate[required]"
-							id="liveHouseCost"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="liveSellOther">出售其他商品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售其他商品收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售商品收入"
-							cssClass="form-control validate[required]" id="liveSellOther"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-				<tr>
-					<Td class="control-label" width="3%"><label for="liveRepast">餐饮收入：</label>
-						<input type="hidden" name="labelTexts" value="餐饮收入" /></Td>
-					<Td class="query_input" colspan="3"><s:textfield
-							name="inputMoneys" placeholder="请输入餐饮收入"
-							cssClass="form-control validate[required]" id="liveRepast"
-							cssStyle="width:94%"></s:textfield> <font>(万元)</font></Td>
-				</tr>
-			</c:if>
-			<!-- 工业旅游 -->
-			<c:if test="${deptType=='工业旅游' }">
-				<tr>
-					<Td class="control-label"><label for="factoryTicket">门票收入：</label>
-						<input type="hidden" name="labelTexts" value="门票收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入门票收入" cssClass="form-control validate[required]"
-							id="factoryTicket"></s:textfield> <font>(万元)</font></Td>
-					<Td class="control-label"><label for="factorySellOther">出售其它商品收入：</label>
-						<input type="hidden" name="labelTexts" value="出售其它商品收入" /></Td>
-					<Td class="query_input"><s:textfield name="inputMoneys"
-							placeholder="请输入出售其它商品收入"
-							cssClass="form-control validate[required]" id="factorySellOther"></s:textfield>
-						<font>(万元)</font></Td>
-				</tr>
-			</c:if>
+				</c:if>
+				<c:if test="${sta.index%2!=0 }">
+					<Td class="control-label"><label for="voteOptions">${o.name }：</label></Td>
+					<Td class="query_input"><input name="inputMoneys"
+						placeholder="请输入${o.name }" type="text"
+						class="form-control validate[required] pull-left"
+						style="margin-bottom: 2px;"> <font>(万元)</font></Td>
+				</c:if>
+				<c:if test="${sta.index%2!=0 }">
+					</tr>
+				</c:if>
+			</c:forEach>
 			<tr>
 				<Td class="control-label"><label for="desc">备注：</label>
 				<Td class="query_input" colspan="3"><s:textarea name="desc"

@@ -15,6 +15,7 @@ import com.lxs.core.dao.IBaseDao;
 import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.domain.TourCommon;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
+import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.oa.tour.service.ITourServiceWs;
@@ -34,10 +35,9 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 		return tourDao.findStatistic(criteria, userId, deptList);
 	}
 
-	public PageResult findSameCompare(DetachedCriteria nowCriteria,
-			DetachedCriteria lastCriteria, String startDate, String endDate,
+	public PageResult findSameCompare(List<Long> userIds, String startDate, String endDate,
 			Integer currentMonth, Integer pageMonthNum) {
-		return tourDao.findSameCompare(nowCriteria, lastCriteria, startDate,
+		return tourDao.findSameCompare(userIds, startDate,
 				endDate, currentMonth, pageMonthNum);
 	}
 
@@ -53,7 +53,6 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 				currentMonth, pageMonthNum);
 	}
 
-	@Override
 	public String findWs(String userId, String status, String start,
 			String pageSize) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
@@ -68,6 +67,13 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(TourCommon.class, "id", "totalPersonNum", "totalIncome", "reportMonth", "reportYear");
 		return JSON.toJSONString(page, filter);
 	}
-
 	
+	public List<SameCompareModel> getQuarterSameCompareModels(
+			List<Long> userIds, int startDate, int endDate,
+			List<Integer> quarters) {
+		return tourDao.getQuarterSameCompareModels(userIds, startDate, endDate, quarters);
+	}
+	public List<SameCompareChartModel> getQuarterCharts(List<Long> userIds,int startDate,int endDate,List<Integer> quarters){
+		return tourDao.getQuarterCharts(userIds, startDate, endDate, quarters);
+	}
 }

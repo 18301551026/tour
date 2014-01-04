@@ -38,4 +38,7 @@ public class PageAction extends AbstractAction {
 		this.pageSize = pageSize;
 	}
 	
+//	protected Integer currentQuarter;
+//	protected Integer currentYear;
+	
 }
