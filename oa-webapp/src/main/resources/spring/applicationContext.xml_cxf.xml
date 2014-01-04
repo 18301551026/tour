@@ -14,7 +14,7 @@
 	
 	<!-- 第二种发布方式：带有接口的发布方式 -->
 	<!-- id:唯一标示 address:请求url serviceClass:接口类型 -->
-	<jaxws:server id="userWebService" address="/userService" serviceClass="com.lxs.security.service.IUserServiceWs">
+	<jaxws:server id="userServiceWs" address="/userService" serviceClass="com.lxs.security.service.IUserServiceWs">
 		<jaxws:serviceBean>
 			<!-- 提供服务的类 -->
 			<bean class="com.lxs.security.service.impl.UserServiceImpl"></bean>
@@ -27,6 +27,19 @@
 			<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean>
 		</jaxws:outInterceptors>
 	</jaxws:server>
+	
+	<jaxws:server id="tourServiceWs" address="/tourService" serviceClass="com.lxs.oa.tour.service.ITourServiceWs">
+		<jaxws:serviceBean>
+			<bean class="com.lxs.oa.tour.service.impl.TourServiceImpl"></bean>
+		</jaxws:serviceBean>
+		<jaxws:inInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean>
+		</jaxws:inInterceptors>
+		<jaxws:outInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean>
+		</jaxws:outInterceptors>
+	</jaxws:server>
+	
 	
 		
 </beans>

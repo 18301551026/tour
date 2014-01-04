@@ -22,11 +22,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
 import com.lxs.security.domain.Job;
 import com.lxs.security.domain.User;
 
 @Entity
 @Table(name = "tour_common_")
+@JSONType(ignores = "hibernateLazyInitializer")
 public class TourCommon implements Serializable {
 	private Long id;
 	private Integer totalPersonNum;// 接待人次
@@ -129,10 +132,12 @@ public class TourCommon implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id_")
+	@JSONField(serialize = false)
 	public User getUser() {
 		return user;
 	}
 
+	@JSONField(deserialize = false)
 	public void setUser(User user) {
 		this.user = user;
 	}
