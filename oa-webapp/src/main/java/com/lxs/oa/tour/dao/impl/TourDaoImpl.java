@@ -1,9 +1,5 @@
 package com.lxs.oa.tour.dao.impl;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -15,10 +11,10 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 
 import com.lxs.core.common.TimeUtil;
@@ -94,176 +90,54 @@ public class TourDaoImpl implements ITourDao {
 		return page;
 	}
 
-	public PageResult findSameCompare(List<Long> userIds, String startDate,
-			String endDate, Integer currentMonth, Integer pageMonthNum) {
-		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
-				.createCriteria(FactoryType.class);
-		List<FactoryType> typeList = factoryTypeCriteria.list();
-
-		PageResult page = new PageResult();
-		List<SameCompareModel> tempList = new ArrayList<SameCompareModel>();
-		Integer year = 0;
-		Integer month = 0;
-		// 第一种情况默认查询上个月的
-		if (((null == startDate || startDate.trim().length() == 0) && (endDate == null || endDate
-				.trim().length() == 0))// 默认
-				|| (null != startDate && startDate.trim().length() != 0 && (null == endDate || endDate
-						.trim().length() == 0))// 有开始时间
-				|| ((null == startDate || startDate.trim().length() == 0) && (endDate != null && endDate
-						.trim().length() != 0))) {
-
-			Calendar tempCalendar = Calendar.getInstance();
-			year = tempCalendar.get(tempCalendar.YEAR);
-			month = tempCalendar.get(tempCalendar.MONTH);
-
-			// 有开始时间
-			if (null != startDate && startDate.trim().length() != 0) {
-				year = Integer.parseInt(startDate.trim().substring(0, 4));
-				month = Integer.parseInt(startDate.trim().substring(5, 7));
-			}
-			// 有结束时间
-			if (null != endDate && endDate.trim().length() != 0) {
-				year = Integer.parseInt(endDate.trim().substring(0, 4));
-				month = Integer.parseInt(endDate.trim().substring(5, 7));
-			}
-
-			Calendar calendar = Calendar.getInstance(); // 开始
-			calendar.set(calendar.YEAR, year);
-			calendar.set(calendar.MONTH, month);
-			calendar.add(calendar.MONTH, currentMonth);// 加月差以实现分页效果
-
-			Calendar calendar1 = Calendar.getInstance(); // 结束
-			calendar1.set(calendar1.YEAR, calendar.get(calendar.YEAR));
-			calendar1.set(calendar1.MONTH, calendar.get(calendar.MONTH));
-			calendar1.add(calendar1.MONTH, pageMonthNum);
-
-			calendar.add(calendar.MONTH, -1);// 将月数减1
-
-			int tempYear = calendar.get(calendar.YEAR);
-			int tempMonth = calendar.get(calendar.MONTH) + 1;
-
-			DetachedCriteria nowCriteria = DetachedCriteria
-					.forClass(TourCommon.class);
-			nowCriteria.add(Restrictions.eq("status",
-					StatusEnum.reported.getValue()));
-			if (userIds.size() != 0) {
-				nowCriteria.createAlias("user", "u");
-				nowCriteria.add(Restrictions.in("u.id", userIds));
-			} else {
-				nowCriteria.add(Restrictions.isNull("user"));
-			}
-			Criteria criteria1 = nowCriteria
-					.getExecutableCriteria(sessionFactory.getCurrentSession());
-
-			DetachedCriteria lastCriteria = DetachedCriteria
-					.forClass(TourCommon.class);
-			lastCriteria.add(Restrictions.eq("status",
-					StatusEnum.reported.getValue()));
-			if (userIds.size() != 0) {
-				lastCriteria.createAlias("user", "u");
-				lastCriteria.add(Restrictions.in("u.id", userIds));
-			} else {
-				lastCriteria.add(Restrictions.isNull("user"));
-			}
-			Criteria criteria2 = lastCriteria
-					.getExecutableCriteria(sessionFactory.getCurrentSession());
-
-			criteria1.add(Restrictions.eq("reportYear", tempYear));
-			criteria1.add(Restrictions.eq("reportMonth", tempMonth));
-
-			List<TourCommon> nowList = criteria1.list();
-
-			int lastYear = tempYear - 1;
-			criteria2.add(Restrictions.eq("reportYear", lastYear));
-			criteria2.add(Restrictions.eq("reportMonth", tempMonth));
-
-			List<TourCommon> lastList = criteria2.list();
-			for (FactoryType factoryType : typeList) {
-				SameCompareModel model = new SameCompareModel();
-				Long nowTotalCount = 0l;// 本年相应月份总个数
-				Long lastTotalCount = 0l;// 去年相应月份总个数
-				Long nowTotalPersonNum = 0l;// 本年相应月份接待总人数
-				Long lastTotalPersonNum = 0l;// 去年相应月份接待总人数
-				Double nowTotalIncome = 0d;// 本年相应月份总收入
-				Double lastTotalIncome = 0d;// 去年相应月份总收入
-				String nowIds = "";
-				String lastIds = "";
-
-				// 本年的
-				for (TourCommon tourCommon : nowList) {
-					if (tourCommon.getType().equals(factoryType.getName())) {
-						nowTotalCount += 1;
-						nowTotalIncome += tourCommon.getTotalIncome();
-						nowTotalPersonNum += tourCommon.getTotalPersonNum();
-						nowIds += tourCommon.getId() + ",";
+	public List<SameCompareModel> findSameCompare(List<Long> userIds, String startDate,
+			String endDate) {
+		List<SameCompareModel> list=new ArrayList<SameCompareModel>();
+		int endYear=0;
+		int endMonth;
+		int startYear=0;
+		int startMonth=0;
+		if (null!=endDate&&endDate.trim().length()!=0) {
+			endYear=Integer.parseInt(endDate.substring(0,4));
+			endMonth=Integer.parseInt(endDate.substring(5,7));
+		} else{
+			Calendar calendar=Calendar.getInstance();
+			endYear=calendar.get(calendar.YEAR);
+			endMonth=calendar.get(calendar.MONTH);//上个月
+		}
+		if (null!=startDate&&startDate.trim().length()!=0) {
+			startYear=Integer.parseInt(startDate.substring(0,4));
+			startMonth=Integer.parseInt(startDate.substring(5,7));
+		}else{
+				String sql = "select min(report_year_) from tour_common_";
+				SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
+						sql);
+				List objList = query.list();
+				if (null!=objList&&objList.size()!=0) {
+					startYear=Integer.parseInt(objList.get(0).toString());
+				}
+				sql="select min(report_month_) from tour_common_ as com where report_year_="+startYear;
+				query=sessionFactory.getCurrentSession().createSQLQuery(sql);
+				objList=query.list();
+				if (null!=objList&&objList.size()!=0) {
+					startMonth=Integer.parseInt(objList.get(0).toString());
+				}
+				
+		}
+		for(int year=endYear;year>=startYear;year--){//年
+			for(int mon=12;mon>=1;mon--){
+				if (year==endYear) {
+					if (endMonth<mon) {//由结束年月开始
+						continue;
 					}
 				}
-				// 去年
-				for (TourCommon tourCommon : lastList) {
-					if (tourCommon.getType().equals(factoryType.getName())) {
-						lastTotalCount += 1;
-						lastTotalIncome += tourCommon.getTotalIncome();
-						lastTotalPersonNum += tourCommon.getTotalPersonNum();
-						lastIds += tourCommon.getId() + ",";
+				if (year==startYear) {
+					if (mon<startMonth) {
+						break;//小于开始年月时结束
 					}
 				}
-				model.setType(factoryType.getName());
-				model.setYear(tempYear);
-				model.setMonth(tempMonth);
-				model.setNowTotalIncome(nowTotalIncome);
-				model.setLastTotalIncome(lastTotalIncome);
-				model.setNowTotalPersonNum(nowTotalPersonNum);
-				model.setLastTotalPersonNum(lastTotalPersonNum);
-				Double d = 0d;
-				d = getPercent(nowTotalIncome, lastTotalIncome);
-				model.setIncomePercent(d);
-				Double d1 = 0d;
-				d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
-						Double.parseDouble(lastTotalPersonNum + ""));
-				model.setPersonNumPercent(d1);
-				if (nowIds.trim().length() != 0) {
-					model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
-				}
-				if (lastIds.trim().length() != 0) {
-					model.setLastIds(lastIds.substring(0, lastIds.length() - 1));
-				}
-
-				tempList.add(model);
-			}
-
-			page.setRowCount(1);
-		} else if (null != startDate && startDate.trim().length() != 0
-				&& endDate != null && endDate.trim().length() != 0) {// 有开始时间和结束时间
-			year = Integer.parseInt(startDate.trim().substring(0, 4));
-			Integer endYear = Integer.parseInt(endDate.trim().substring(0, 4));
-			month = Integer.parseInt(startDate.trim().substring(5, 7));
-			Integer endMonth = Integer.parseInt(endDate.trim().substring(5, 7));
-
-			Integer totalMonthCount = 0; // 总月数
-			if (year != endYear) {
-				totalMonthCount += 12 * (endYear - year);// 一年相差12个月
-			}
-			totalMonthCount += (endMonth - month + 1);
-
-			page.setRowCount(Long.parseLong(totalMonthCount + ""));
-
-			Calendar calendar = Calendar.getInstance(); // 开始
-			calendar.set(calendar.YEAR, year);
-			calendar.set(calendar.MONTH, month);
-			calendar.add(calendar.MONTH, currentMonth);// 加月差以实现分页效果
-
-			Calendar calendar1 = Calendar.getInstance(); // 结束
-			calendar1.set(calendar1.YEAR, calendar.get(calendar.YEAR));
-			calendar1.set(calendar1.MONTH, calendar.get(calendar.MONTH));
-			calendar1.add(calendar1.MONTH, pageMonthNum);
-
-			calendar.add(calendar.MONTH, -1);// 将月数减1
-			for (int i = 0; i < pageMonthNum && i < totalMonthCount
-					&& i < (totalMonthCount - currentMonth); i++) {
-
-				int tempYear = calendar.get(calendar.YEAR);
-				int tempMonth = calendar.get(calendar.MONTH) + 1;
-
+				
+				
 				DetachedCriteria nowCriteria = DetachedCriteria
 						.forClass(TourCommon.class);
 				nowCriteria.add(Restrictions.eq("status",
@@ -277,12 +151,13 @@ public class TourDaoImpl implements ITourDao {
 				Criteria criteria1 = nowCriteria
 						.getExecutableCriteria(sessionFactory
 								.getCurrentSession());
-				criteria1.add(Restrictions.eq("reportYear", tempYear));
-				criteria1.add(Restrictions.eq("reportMonth", tempMonth));
+				criteria1.add(Restrictions.eq("reportMonth", mon));
+				criteria1.add(Restrictions.eq("reportYear", year));
 
 				List<TourCommon> nowList = criteria1.list();
 
-				int lastYear = tempYear - 1;
+				
+				
 				DetachedCriteria lastCriteria = DetachedCriteria
 						.forClass(TourCommon.class);
 				lastCriteria.add(Restrictions.eq("status",
@@ -296,82 +171,24 @@ public class TourDaoImpl implements ITourDao {
 				Criteria criteria2 = lastCriteria
 						.getExecutableCriteria(sessionFactory
 								.getCurrentSession());
-				criteria2.add(Restrictions.eq("reportYear", lastYear));
-				criteria2.add(Restrictions.eq("reportMonth", tempMonth));
+				criteria2.add(Restrictions.eq("reportYear",year-1));
+				criteria2.add(Restrictions.eq("reportMonth",mon));
+
 				List<TourCommon> lastList = criteria2.list();
-				for (FactoryType factoryType : typeList) {
-					SameCompareModel model = new SameCompareModel();
-					Long nowTotalCount = 0l;// 本年相应月份总个数
-					Long lastTotalCount = 0l;// 去年相应月份总个数
-					Long nowTotalPersonNum = 0l;// 本年相应月份接待总人数
-					Long lastTotalPersonNum = 0l;// 去年相应月份接待总人数
-					Double nowTotalIncome = 0d;// 本年相应月份总收入
-					Double lastTotalIncome = 0d;// 去年相应月份总收入
-					String nowIds = "";
-					String lastIds = "";
 
-					// 本年的
-					for (TourCommon tourCommon : nowList) {
-						if (tourCommon.getType().equals(factoryType.getName())) {
-							nowTotalCount += 1;
-							nowTotalIncome += tourCommon.getTotalIncome();
-							nowTotalPersonNum += tourCommon.getTotalPersonNum();
-							nowIds += tourCommon.getId() + ",";
-						}
-					}
-					// 去年
-					for (TourCommon tourCommon : lastList) {
-						if (tourCommon.getType().equals(factoryType.getName())) {
-							lastTotalCount += 1;
-							lastTotalIncome += tourCommon.getTotalIncome();
-							lastTotalPersonNum += tourCommon
-									.getTotalPersonNum();
-							lastIds += tourCommon.getId() + ",";
-						}
-					}
-					model.setType(factoryType.getName());
-					model.setYear(tempYear);
-					model.setMonth(tempMonth);
-					model.setNowTotalIncome(nowTotalIncome);
-					model.setLastTotalIncome(lastTotalIncome);
-					model.setNowTotalPersonNum(nowTotalPersonNum);
-					model.setLastTotalPersonNum(lastTotalPersonNum);
-					Double d = 0d;
-					d = getPercent(nowTotalIncome, lastTotalIncome);
-					model.setIncomePercent(d);
-					Double d1 = 0d;
-					d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
-							Double.parseDouble(lastTotalPersonNum + ""));
-					model.setPersonNumPercent(d1);
-					if (nowIds.trim().length() != 0) {
-						model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
-					}
-					if (lastIds.trim().length() != 0) {
-						model.setLastIds(lastIds.substring(0,
-								lastIds.length() - 1));
-					}
-
-					tempList.add(model);
-				}
-				Calendar tempCalendar = Calendar.getInstance();
-				tempCalendar.set(tempCalendar.YEAR, endYear);
-				tempCalendar.set(tempCalendar.MONTH, endMonth);
-				calendar.add(calendar.MONTH, 1);
-
+				list.addAll(getSameCompareModelList(year, mon, nowList, lastList));
 			}
-
 		}
-
-		page.setResult(tempList);
-		return page;
+		
+		return list;
 	}
 
 	public static Double getPercent(Double now, Double last) {
 		Double percent = 0d;
-		if (last == 0d && now == 0d) {
+		if (last == 0d && now == 0d) {//两个都等于0
 			return 0d;
-		} else if (last == 0d && now != 0d) {
-			last = 1d;
+		} else if (last == 0d && now != 0d) {//去年为0
+			return 100d;
 		}
 		percent = (now - last) / last;
 		if (percent.toString().equals("NaN")) {
@@ -781,7 +598,7 @@ public class TourDaoImpl implements ITourDao {
 					Criteria criteria2 = lastCriteria
 							.getExecutableCriteria(sessionFactory
 									.getCurrentSession());
-					criteria1.add(Restrictions.eq("reportYear", i-1));
+					criteria2.add(Restrictions.eq("reportYear", i-1));
 					criteria2.add(Restrictions.eq("quarter", j));
 
 					List<TourCommon> lastList = criteria2.list();
@@ -790,6 +607,66 @@ public class TourDaoImpl implements ITourDao {
 							lastList));
 				}
 			}
+		}
+		return list;
+	}
+	public List<SameCompareModel> getSameCompareModelList(Integer year,
+			int mon, List<TourCommon> nowList, List<TourCommon> lastList) {
+		List<SameCompareModel> list = new ArrayList<SameCompareModel>();
+		Criteria factoryTypeCriteria = sessionFactory.getCurrentSession()
+				.createCriteria(FactoryType.class);
+		List<FactoryType> typeList = factoryTypeCriteria.list();
+		for (FactoryType factoryType : typeList) {
+			SameCompareModel model = new SameCompareModel();
+			Long nowTotalCount = 0l;// 本年相应月份总个数
+			Long lastTotalCount = 0l;// 去年相应月份总个数
+			Long nowTotalPersonNum = 0l;// 本年相应月份接待总人数
+			Long lastTotalPersonNum = 0l;// 去年相应月份接待总人数
+			Double nowTotalIncome = 0d;// 本年相应月份总收入
+			Double lastTotalIncome = 0d;// 去年相应月份总收入
+			String nowIds = "";
+			String lastIds = "";
+
+			// 本年的
+			for (TourCommon tourCommon : nowList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					nowTotalCount += 1;
+					nowTotalIncome += tourCommon.getTotalIncome();
+					nowTotalPersonNum += tourCommon.getTotalPersonNum();
+					nowIds += tourCommon.getId() + ",";
+				}
+			}
+			// 去年
+			for (TourCommon tourCommon : lastList) {
+				if (tourCommon.getType().equals(factoryType.getName())) {
+					lastTotalCount += 1;
+					lastTotalIncome += tourCommon.getTotalIncome();
+					lastTotalPersonNum += tourCommon.getTotalPersonNum();
+					lastIds += tourCommon.getId() + ",";
+				}
+			}
+			model.setType(factoryType.getName());
+			model.setYear(year);
+			model.setMonth(mon);
+			model.setNowTotalIncome(nowTotalIncome);
+			model.setLastTotalIncome(lastTotalIncome);
+			model.setNowTotalPersonNum(nowTotalPersonNum);
+			model.setLastTotalPersonNum(lastTotalPersonNum);
+			Double d = 0d;
+			d = getPercent(nowTotalIncome, lastTotalIncome);
+			model.setIncomePercent(d);
+			Double d1 = 0d;
+			d1 = getPercent(Double.parseDouble(nowTotalPersonNum + ""),
+					Double.parseDouble(lastTotalPersonNum + ""));
+			model.setPersonNumPercent(d1);
+			if (nowIds.trim().length() != 0) {
+				model.setNowIds(nowIds.substring(0, nowIds.length() - 1));
+			}
+			if (lastIds.trim().length() != 0) {
+				model.setLastIds(lastIds.substring(0, lastIds.length() - 1));
+			}
+
+			list.add(model);
 		}
 		return list;
 	}

@@ -16,35 +16,28 @@
 
 </head>
 <script type="text/javascript">
-	$(
-			function() {
-				$("#reprotYearAndMonth")
-						.blur(
-								function() {
-									var reprotYearAndMonth = $(this).val();
-									if (reprotYearAndMonth) {
-										$
-												.ajax({
-													type : "POST",
-													url : ctx
-															+ "/tour/noReported!checkUserIsReportThisMonth.action",
-													data : "reprotYearAndMonth="
-															+ reprotYearAndMonth,
-													success : function(msg) {
-														if (msg == '已经申报') {
-															alert("您"
-																	+ reprotYearAndMonth
-																	+ "已经申报了，不能再申报了");
-															$(
-																	"#reprotYearAndMonth")
-																	.val('');
-
-														}
-													}
-												});
-									}
-								});
-			})
+	function checkDate(field, rules, i, options){
+		var reprotYearAndMonth = field.val();
+		var result;
+		if (reprotYearAndMonth) {
+			$.ajax({
+					type : "POST",
+					async: false,
+					url : ctx
+							+ "/tour/noReported!checkUserIsReportThisMonth.action",
+					data : "reprotYearAndMonth="
+							+ reprotYearAndMonth,
+					success : function(msg) {
+						if (msg == '已经申报') {
+							options.allrules.validate2fields.alertText="您"+ reprotYearAndMonth+ "已经申报了，不能再申报了"
+							$("#reprotYearAndMonth").val('');
+							result= options.allrules.validate2fields.alertText;
+						}
+				}
+					});
+		}
+		return result;
+	}
 </script>
 <style type="text/css">
 .formTable .control-label {
@@ -103,7 +96,7 @@ font {
 				<Td class="query_input" colspan="3"><s:textfield
 						name="reprotYearAndMonth" readonly="true" cssStyle="width:100%"
 						onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'%y-%M'})"
-						placeholder="请选择时间" cssClass="form-control validate[required]"
+						placeholder="请选择时间" cssClass="form-control validate[required,funcCall[checkDate]]"
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
@@ -111,7 +104,7 @@ font {
 					for="totalPersonNum">接待人次：</label>
 				<Td class="query_input" colspan="3"><s:textfield
 						name="totalPersonNum" placeholder="请输入接待人次"
-						cssClass="form-control validate[required]" id="totalPersonNum"
+						cssClass="form-control validate[required,custom[integer],min[0]]" id="totalPersonNum"
 						cssStyle="width:94%"></s:textfield> <font>(人次)</font></Td>
 			</tr>
 			<c:set value="${fn:length(factoryOptions)}" var="detailNum"></c:set>
@@ -126,7 +119,7 @@ font {
 					<Td class="query_input"
 						<c:if test="${sta.index==(detailNum-1) }"> colspan="3"</c:if>>
 						<input name="inputMoneys" placeholder="请输入${o.name }" type="text"
-						class="form-control validate[required] pull-left"
+						class="form-control validate[required,custom[number],min[0]]  pull-left"
 						<c:if test="${sta.index==(detailNum-1) }">
 							 style="margin-bottom: 2px;width: 94%"
 						</c:if>>
@@ -137,7 +130,7 @@ font {
 					<Td class="control-label"><label for="voteOptions">${o.name }：</label></Td>
 					<Td class="query_input"><input name="inputMoneys"
 						placeholder="请输入${o.name }" type="text"
-						class="form-control validate[required] pull-left"
+						class="form-control validate[required,custom[number],min[0]] pull-left"
 						style="margin-bottom: 2px;"> <font>(万元)</font></Td>
 				</c:if>
 				<c:if test="${sta.index%2!=0 }">

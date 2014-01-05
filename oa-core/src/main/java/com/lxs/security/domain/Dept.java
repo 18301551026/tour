@@ -156,6 +156,7 @@ public class Dept implements Serializable {
 	public void setTempLevel(Integer tempLevel) {
 		this.tempLevel = tempLevel;
 	}
+	@JSONField(serialize = false)
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="factory_type_id_")
 	public FactoryType getFactoryType() {

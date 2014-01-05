@@ -117,9 +117,13 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	// 保存季度(查询)
 	private Integer quarters[] = { 1, 2, 3, 4 };
-	private Integer startYear = 0;
-	private Integer endYear = 0;
-
+	private Integer startYear;
+	private Integer endYear;
+	
+	private Integer firstStatus=0;//等于0的时候查询上个月的
+	
+	private Long factoryTypeId;
+	
 	/**
 	 * 图表
 	 */
@@ -128,7 +132,12 @@ public class TourAction extends BaseAction<TourCommon> {
 		startYear=Calendar.getInstance().get(Calendar.YEAR);
 		return "toSelectChart";
 	}
-
+	public void sameCompareDetailToWord(){
+		
+	}
+	public String sameCompareDetailToHtml(){
+		return "html";
+	}
 	public void townWordChart() throws Exception {
 		DetachedCriteria nowCriteria = DetachedCriteria
 				.forClass(TourCommon.class);
@@ -832,7 +841,7 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	@Override
 	public void afterToUpdate(TourCommon e) {
-		reprotYearAndMonth = e.getReportYear() + "年" + e.getReportMonth() + "月";
+		reprotYearAndMonth =new SimpleDateFormat("yyyy年MM月").format(e.getTime());
 		beans = e.getDetails();
 		ActionContext.getContext().put("detailNum", e.getDetails().size());
 	}
@@ -875,8 +884,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		townAddCondition(criteria);
 		addDataCondition(criteria);
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
+		if (firstStatus==0) {
+			firstStatus+=1;
 			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
 					.getTimeInMillis("默认是上月"));
 			startDate = strDate;
@@ -934,8 +943,8 @@ public class TourAction extends BaseAction<TourCommon> {
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		districtAddCondition(criteria);
 		addDataCondition(criteria);
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
+		if (firstStatus==0) {
+			firstStatus+=1;
 			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
 					.getTimeInMillis("默认是上月"));
 			startDate = strDate;
@@ -986,7 +995,14 @@ public class TourAction extends BaseAction<TourCommon> {
 	 * @return
 	 */
 	public String townSameCompare() {
-
+		if (pageSize == 10) {
+			pageSize = 1;
+		}
+		List<FactoryType> types = baseService.find(DetachedCriteria
+				.forClass(FactoryType.class));
+		ActionContext.getContext().put("typeNums", types.size());
+		
+		
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		List<Long> userIds = new ArrayList<Long>();
@@ -997,19 +1013,23 @@ public class TourAction extends BaseAction<TourCommon> {
 				userIds.add(tempU.getId());
 			}
 		}
-		PageResult page = tourService.findSameCompare(userIds, startDate,
-				endDate, currentMonth, pageMonthNum);
-		ActionContext.getContext().put(PAGE, page);
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
-			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
-					.getTimeInMillis("默认是上月"));
-			startDate = strDate;
-			endDate = strDate;
-
+		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
+		List<SameCompareModel> resultList=new ArrayList<SameCompareModel>();
+		
+		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+				.size())); i++) {
+			if (i>(modelList.size()-1)) {
+				break;
+			}
+			resultList.add(modelList.get(i));
 		}
+		PageResult page=new PageResult();
+		page.setRowCount(modelList.size()/types.size());
+		page.setResult(resultList);
+		ActionContext.getContext().put(PAGE, page);
+		
 		return LIST;
-	}
+}
 
 	/**
 	 * 区同比
@@ -1018,6 +1038,14 @@ public class TourAction extends BaseAction<TourCommon> {
 	 */
 	public String districtSameCompare() {
 
+		if (pageSize == 10) {
+			pageSize = 1;
+		}
+		List<FactoryType> types = baseService.find(DetachedCriteria
+				.forClass(FactoryType.class));
+		ActionContext.getContext().put("typeNums", types.size());
+		
+		
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		List<Long> userIds = new ArrayList<Long>();
@@ -1032,22 +1060,30 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 
 		}
-		PageResult page = tourService.findSameCompare(userIds, startDate,
-				endDate, currentMonth, pageMonthNum);
-		ActionContext.getContext().put(PAGE, page);
-		if ((null == startDate || startDate.trim().length() == 0)
-				&& null == endDate || endDate.trim().length() == 0) {
-			String strDate = new SimpleDateFormat("yyyy年MM月").format(TimeUtil
-					.getTimeInMillis("默认是上月"));
-			startDate = strDate;
-			endDate = strDate;
-
+		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
+		List<SameCompareModel> resultList=new ArrayList<SameCompareModel>();
+		
+		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+				.size())); i++) {
+			if (i>(modelList.size()-1)) {
+				break;
+			}
+			resultList.add(modelList.get(i));
 		}
+		PageResult page=new PageResult();
+		page.setRowCount(modelList.size()/types.size());
+		page.setResult(resultList);
+		ActionContext.getContext().put(PAGE, page);
 		return LIST;
 	}
 
 	public static Double getPercent(Double now, Double last) {
 		Double percent = 0d;
+		if (last == 0d && now == 0d) {//两个都等于0
+			return 0d;
+		} else if (last == 0d && now != 0d) {//去年为0
+			return 100d;
+		}
 		percent = (now - last) / last;
 		if (percent.toString().equals("NaN")) {
 			return 0d;
@@ -1303,12 +1339,23 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
 		List<SameCompareModel> modelList = tourService
-				.getQuarterSameCompareModels(userIds, startYear, endYear, qu);// 全部数据
+				.getQuarterSameCompareModels(userIds, tempStartYear, tempEndYear, qu);// 全部数据
 		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
 
 		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
 				.size())); i++) {
+			if (i>(modelList.size()-1)) {
+				break;
+			}
 			resultList.add(modelList.get(i));
 		}
 		PageResult page = new PageResult();
@@ -1346,12 +1393,23 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
 		List<SameCompareModel> modelList = tourService
-				.getQuarterSameCompareModels(userIds, startYear, endYear, qu);// 全部数据
+				.getQuarterSameCompareModels(userIds, tempStartYear, tempEndYear, qu);// 全部数据
 		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
 
 		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
 				.size())); i++) {
+			if (i>(modelList.size()-1)) {
+				break;
+			}
 			resultList.add(modelList.get(i));
 		}
 		PageResult page = new PageResult();
@@ -1395,30 +1453,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 
 	public static void main(String[] args) {
-		Calendar calendar = Calendar.getInstance();
-		int date = Integer.parseInt("-" + calendar.get(calendar.DATE));
-		int hour = Integer.parseInt("-" + calendar.get(calendar.HOUR));
-		int minute = Integer.parseInt("-" + calendar.get(calendar.MINUTE));
-		int second = Integer.parseInt("-" + calendar.get(calendar.SECOND));
-		int mi = Integer.parseInt("-" + calendar.get(calendar.MILLISECOND));
-
-		calendar.add(calendar.MILLISECOND, mi);
-		calendar.add(calendar.SECOND, second);
-		calendar.add(calendar.MINUTE, minute);
-		calendar.add(calendar.HOUR, hour);
-		calendar.add(calendar.DATE, date);
-
-		System.out.println(calendar.get(calendar.DATE));
-		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-				.format(calendar.getTime());
-		System.out.println(strDate);
-		System.out.println("---------------------");
-
-		Long l1 = TimeUtil.getTimeInMillis("2013年11月");
-		String strDate1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-				.format(l1);
-		System.out.println(1l);
-		System.out.println(strDate1);
+		System.out.println(TimeUtil.getTimeInMillis("2013年11月"));
 
 	}
 
@@ -1556,6 +1591,20 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public void setEndYear(Integer endYear) {
 		this.endYear = endYear;
+	}
+
+	public Integer getFirstStatus() {
+		return firstStatus;
+	}
+
+	public void setFirstStatus(Integer firstStatus) {
+		this.firstStatus = firstStatus;
+	}
+	public Long getFactoryTypeId() {
+		return factoryTypeId;
+	}
+	public void setFactoryTypeId(Long factoryTypeId) {
+		this.factoryTypeId = factoryTypeId;
 	}
 
 }

@@ -11,9 +11,17 @@
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <body class="editBody">
-	<button class="btn btn-info btn-sm pull-left" id="backButton">
-		<span class="glyphicon glyphicon-backward"></span> 返回列表
-	</button>
+	<div class="btn-group btn-group-sm">
+		<button class="btn btn-info btn-sm pull-left" id="backButton">
+			<span class="glyphicon glyphicon-backward"></span> 返回列表
+		</button>
+		<button id="reportHtmlButton" class="btn btn-info">
+			<span class="glyphicon glyphicon-print"></span> html查看
+		</button>
+		<button id="exportWordButton" class="btn btn-info">
+			<span class="glyphicon glyphicon-print"></span> 导出word
+		</button>
+	</div>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
 	<form method="post" id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
