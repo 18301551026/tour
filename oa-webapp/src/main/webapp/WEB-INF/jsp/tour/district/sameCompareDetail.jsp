@@ -10,6 +10,18 @@
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
+<script type="text/javascript">
+	$(function(){
+		$("#reportHtmlButton").click(function(){
+			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/detailChart!sameCompareDetailToHtml.action");
+			$("#sameCompareDetailChartForm").submit();
+		})
+		$("#exportWordButton").click(function(){
+			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/detailChart!sameCompareDetailToWord.action");
+			$("#sameCompareDetailChartForm").submit();
+		})
+	})
+</script>
 <body class="editBody">
 	<div class="btn-group btn-group-sm">
 		<button class="btn btn-info btn-sm pull-left" id="backButton">
@@ -22,6 +34,11 @@
 			<span class="glyphicon glyphicon-print"></span> 导出word
 		</button>
 	</div>
+	<s:form action="" method="post" id="sameCompareDetailChartForm" target="_blank">
+		<s:hidden name="nowIds"></s:hidden>
+		<s:hidden name="lastIds"></s:hidden>
+		<s:hidden name="tempReportDate"></s:hidden>
+	</s:form>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
 	<form method="post" id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">

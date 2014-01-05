@@ -13,11 +13,11 @@
 <script type="text/javascript">
 	$(function(){
 		$("#reportHtmlButton").click(function(){
-			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/chart!sameCompareDetailToHtml.action");
+			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/detailChart!sameCompareDetailToHtml.action");
 			$("#sameCompareDetailChartForm").submit();
 		})
 		$("#exportWordButton").click(function(){
-			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/chart!sameCompareDetailToWord.action");
+			$("#sameCompareDetailChartForm").attr("action",ctx+"/tour/detailChart!sameCompareDetailToWord.action");
 			$("#sameCompareDetailChartForm").submit();
 		})
 	})
@@ -37,6 +37,7 @@
 	<s:form action="" method="post" id="sameCompareDetailChartForm" target="_blank">
 		<s:hidden name="nowIds"></s:hidden>
 		<s:hidden name="lastIds"></s:hidden>
+		<s:hidden name="tempReportDate"></s:hidden>
 	</s:form>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
 	<form method="post" id="deleteForm" >

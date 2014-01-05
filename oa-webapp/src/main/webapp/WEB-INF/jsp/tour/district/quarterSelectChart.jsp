@@ -39,7 +39,7 @@
 	<form action="" target="_blank" id="chartForm" method="post" style="padding: 10px;margin-top: 10px;margin-left: 10px;">
 		年份：<s:textfield name="startYear" 
 			cssStyle="width:230px;"
-			onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy'})"
+			onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy',maxDate:'%y-%M'})"
 			placeholder="请选择时间" cssClass="form-control validate[required]"
 			>
 		</s:textfield><br/>

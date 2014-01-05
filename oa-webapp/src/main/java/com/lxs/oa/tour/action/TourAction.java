@@ -124,6 +124,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	
 	private Long factoryTypeId;
 	
+	private String tempReportDate;
 	/**
 	 * 图表
 	 */
@@ -132,10 +133,174 @@ public class TourAction extends BaseAction<TourCommon> {
 		startYear=Calendar.getInstance().get(Calendar.YEAR);
 		return "toSelectChart";
 	}
-	public void sameCompareDetailToWord(){
+	public void sameCompareDetailToWord() throws Exception{
+		parameters.put("reportDate", tempReportDate);
+		List<TourCommon> nowList = new ArrayList<TourCommon>();
+		List<TourCommon> lastList = new ArrayList<TourCommon>();
+		if (null != nowIds && nowIds.trim().length() != 0) {
+			String nowTempIds[] = nowIds.split(",");
+			for (String str : nowTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					nowList.add(common);
+				}
+			}
+		}
+		if (null != lastIds && lastIds.trim().length() != 0) {
+			String lastTempIds[] = lastIds.split(",");
+			for (String str : lastTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					lastList.add(common);
+				}
+			}
+		}
+		List<String> detailNames = new ArrayList<String>();
+		if (null != nowList && nowList.size() != 0) {
+			for (TourDetail d : nowList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		if (detailNames.size() == 0 && null != lastList && lastList.size() != 0) {
+			for (TourDetail d : lastList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		List<SameCompareChartModel> list=new ArrayList<SameCompareChartModel>();
+		for(String n:detailNames){
+			SameCompareChartModel nowModel = new SameCompareChartModel();
+			SameCompareChartModel lastModel = new SameCompareChartModel();
+			nowModel.setYearType("今年");
+			lastModel.setYearType("去年");
+			nowModel.setType(n);
+			lastModel.setType(n);
+			Double nowMoneyValues = 0d;
+			Double lastMoneyValues = 0d;
+
+			// 本年的
+			for (TourCommon tourCommon : nowList) {
+				for(TourDetail d:tourCommon.getDetails()){
+					if (d.getName().equals(n)) {
+						nowMoneyValues+=d.getMoney();
+					}
+				}
+			}
+			// 去年
+			for (TourCommon tourCommon : lastList) {
+				for(TourDetail d:tourCommon.getDetails()){
+					if (d.getName().equals(n)) {
+						lastMoneyValues+=d.getMoney();
+					}
+				}
+			}
+			nowModel.setMoneyValues(nowMoneyValues);
+			lastModel.setMoneyValues(lastMoneyValues);
+			list.add(nowModel);
+			list.add(lastModel);
+		}
 		
+		
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
+		JRBeanCollectionDataSource dataSource = null;
+		dataSource = new JRBeanCollectionDataSource(list);
+		JRDocxExporter exporter = new JRDocxExporter(
+				DefaultJasperReportsContext.getInstance());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(path
+				+ "sameCompareDetail_tour_report.jasper", parameters, dataSource);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+		exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, fbos);
+		exporter.exportReport();
+		fbos.close();
+		String fileName = new String("明细同比展示.docx".getBytes("GBK"),
+				"ISO8859_1");
+		response.setCharacterEncoding("UTF-8");
+		;
+		response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		response.setHeader("Content-Disposition", "attachment; filename="
+				+ fileName);
+		response.setContentLength(fbos.size());
+		ServletOutputStream ouputStream = response.getOutputStream();
+
+		fbos.writeData(ouputStream);
+		fbos.dispose();
+		ouputStream.flush();
+
+		ouputStream.close();
+		fbos.close();
+		fbos.dispose();
 	}
 	public String sameCompareDetailToHtml(){
+		parameters.put("reportDate", tempReportDate);
+		List<TourCommon> nowList = new ArrayList<TourCommon>();
+		List<TourCommon> lastList = new ArrayList<TourCommon>();
+		if (null != nowIds && nowIds.trim().length() != 0) {
+			String nowTempIds[] = nowIds.split(",");
+			for (String str : nowTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					nowList.add(common);
+				}
+			}
+		}
+		if (null != lastIds && lastIds.trim().length() != 0) {
+			String lastTempIds[] = lastIds.split(",");
+			for (String str : lastTempIds) {
+				if (null != str) {
+					TourCommon common = baseService.get(TourCommon.class,
+							Long.parseLong(str));
+					lastList.add(common);
+				}
+			}
+		}
+		List<String> detailNames = new ArrayList<String>();
+		if (null != nowList && nowList.size() != 0) {
+			for (TourDetail d : nowList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		if (detailNames.size() == 0 && null != lastList && lastList.size() != 0) {
+			for (TourDetail d : lastList.get(0).getDetails()) {
+				detailNames.add(d.getName());
+			}
+		}
+		List<SameCompareChartModel> list=new ArrayList<SameCompareChartModel>();
+		for(String n:detailNames){
+			SameCompareChartModel nowModel = new SameCompareChartModel();
+			SameCompareChartModel lastModel = new SameCompareChartModel();
+			nowModel.setYearType("今年");
+			lastModel.setYearType("去年");
+			nowModel.setType(n);
+			lastModel.setType(n);
+			Double nowMoneyValues = 0d;
+			Double lastMoneyValues = 0d;
+
+			// 本年的
+			for (TourCommon tourCommon : nowList) {
+				for(TourDetail d:tourCommon.getDetails()){
+					if (d.getName().equals(n)) {
+						nowMoneyValues+=d.getMoney();
+					}
+				}
+			}
+			// 去年
+			for (TourCommon tourCommon : lastList) {
+				for(TourDetail d:tourCommon.getDetails()){
+					if (d.getName().equals(n)) {
+						lastMoneyValues+=d.getMoney();
+					}
+				}
+			}
+			nowModel.setMoneyValues(nowMoneyValues);
+			lastModel.setMoneyValues(lastMoneyValues);
+			list.add(nowModel);
+			list.add(lastModel);
+		}
+		ActionContext.getContext().put("myList", list);
 		return "html";
 	}
 	public void townWordChart() throws Exception {
@@ -254,8 +419,15 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
-		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
-				userIds, startYear, endYear, qu);
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
+		List<SameCompareChartModel> modelList=tourService.getQuarterCharts(userIds, tempStartYear, tempEndYear, qu);
 
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
@@ -331,9 +503,15 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
-		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
-				userIds, startYear, endYear, qu);
-
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
+		List<SameCompareChartModel> modelList=tourService.getQuarterCharts(userIds, tempStartYear, tempEndYear, qu);
 		ActionContext.getContext().put("myList", modelList);
 
 		return "html";
@@ -379,8 +557,15 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
-		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
-				userIds, startYear, endYear, qu);
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
+		List<SameCompareChartModel> modelList=tourService.getQuarterCharts(userIds, tempStartYear, tempEndYear, qu);
 
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
@@ -452,8 +637,15 @@ public class TourAction extends BaseAction<TourCommon> {
 				qu.add(i);
 			}
 		}
-		List<SameCompareChartModel> modelList = tourService.getQuarterCharts(
-				userIds, startYear, endYear, qu);
+		int tempStartYear=0;
+		int tempEndYear=0;
+		if (null!=startYear) {
+			tempStartYear=startYear;
+		}
+		if (null!=endYear) {
+			tempEndYear=endYear;
+		}
+		List<SameCompareChartModel> modelList=tourService.getQuarterCharts(userIds, tempStartYear, tempEndYear, qu);
 		ActionContext.getContext().put("myList", modelList);
 
 		return "html";
@@ -472,6 +664,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		lastCriteria.add(Restrictions.eq("status",
 				StatusEnum.reported.getValue()));
 		addParameters();
+		
 		List<SameCompareChartModel> modelList = tourService.getCharts(
 				nowCriteria, lastCriteria, startDate, null, currentMonth,
 				pageMonthNum);
@@ -814,8 +1007,9 @@ public class TourAction extends BaseAction<TourCommon> {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.createAlias("user", "u");
 		criteria.add(Restrictions.eq("u.id", u.getId()));
+		 Long time=TimeUtil.getTimeInMillis(reprotYearAndMonth);
 		criteria.add(Restrictions.eq("time",
-				TimeUtil.getTimeInMillis(reprotYearAndMonth)));
+				time));
 		List<TourCommon> list = baseService.find(criteria);
 		if (null != list && list.size() != 0) {
 			getOut().print("已经申报");
@@ -1109,13 +1303,12 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 		return percent;
 	}
-
 	/**
 	 * 同比详情
 	 * 
 	 * @return
 	 */
-	public String sameCompareToDetail() {
+	public String sameCompareToDetail() throws Exception {
 		List<TourCommon> nowList = new ArrayList<TourCommon>();
 		List<TourCommon> lastList = new ArrayList<TourCommon>();
 		if (null != nowIds && nowIds.trim().length() != 0) {
@@ -1149,19 +1342,16 @@ public class TourAction extends BaseAction<TourCommon> {
 				detailNames.add(d.getName());
 			}
 		}
+		tempReportDate=new String(tempReportDate.getBytes("ISO-8859-1"),"UTF-8");
 		List<SameCompareDetailModel> modelDetails = new ArrayList<SameCompareDetailModel>();
 		for (String str : detailNames) {
 			SameCompareDetailModel tempDetail = new SameCompareDetailModel();
 			Double nowMoney = 0d;
 			Double lastMoney = 0d;
-			String time = null;
+			String time = tempReportDate;
 			for (TourCommon comm : nowList) {
 				for (TourDetail d : comm.getDetails()) {
 					if (str.equals(d.getName())) {
-						if (null == time) {
-							time = comm.getReportYear() + "年"
-									+ comm.getReportMonth() + "月";
-						}
 						nowMoney += d.getMoney();
 					}
 				}
@@ -1169,10 +1359,6 @@ public class TourAction extends BaseAction<TourCommon> {
 			for (TourCommon comm : lastList) {
 				for (TourDetail d : comm.getDetails()) {
 					if (str.equals(d.getName())) {
-						if (null == time) {
-							time = (comm.getReportYear() + 1) + "年"
-									+ comm.getReportMonth() + "月";
-						}
 						lastMoney += d.getMoney();
 					}
 				}
@@ -1454,7 +1640,10 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	public static void main(String[] args) {
 		System.out.println(TimeUtil.getTimeInMillis("2013年11月"));
-
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(new Long("1385870400000")));
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(new Long("1383235200000")));
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(new Long("1383278400000")));
+		
 	}
 
 	public Long getDetailId() {
@@ -1606,5 +1795,10 @@ public class TourAction extends BaseAction<TourCommon> {
 	public void setFactoryTypeId(Long factoryTypeId) {
 		this.factoryTypeId = factoryTypeId;
 	}
-
+	public String getTempReportDate() {
+		return tempReportDate;
+	}
+	public void setTempReportDate(String tempReportDate) {
+		this.tempReportDate = tempReportDate;
+	}
 }
