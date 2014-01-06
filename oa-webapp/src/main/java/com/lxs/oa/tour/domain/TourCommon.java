@@ -138,7 +138,6 @@ public class TourCommon implements Serializable {
 		return user;
 	}
 
-	@JSONField(deserialize = false)
 	public void setUser(User user) {
 		this.user = user;
 	}

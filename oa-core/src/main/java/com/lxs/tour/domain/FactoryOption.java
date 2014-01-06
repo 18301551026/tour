@@ -11,8 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
+
 @Entity
 @Table(name="factory_option_")
+@JSONType(ignores = "hibernateLazyInitializer")
 public class FactoryOption implements Serializable {
 	private Long id;
 	private String name;
@@ -33,11 +37,15 @@ public class FactoryOption implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="type_id_")
+	@JSONField(serialize = false)
 	public FactoryType getType() {
 		return type;
 	}
+	
+	@JSONField(deserialize = false)
 	public void setType(FactoryType type) {
 		this.type = type;
 	}

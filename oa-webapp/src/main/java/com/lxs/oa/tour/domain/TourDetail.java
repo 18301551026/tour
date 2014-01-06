@@ -11,8 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.annotation.JSONType;
+
 @Entity
 @Table(name = "tour_detail_")
+@JSONType(ignores = "hibernateLazyInitializer")
 public class TourDetail implements Serializable {
 	private Long id;
 	private TourCommon common;

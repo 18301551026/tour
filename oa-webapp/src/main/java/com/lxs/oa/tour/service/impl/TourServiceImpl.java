@@ -12,14 +12,17 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.lxs.core.common.page.PageResult;
 import com.lxs.core.dao.IBaseDao;
+import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.dao.ITourDao;
 import com.lxs.oa.tour.domain.TourCommon;
+import com.lxs.oa.tour.domain.TourDetail;
 import com.lxs.oa.tour.pageModel.SameCompareChartModel;
 import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
 import com.lxs.oa.tour.service.ITourServiceWs;
 import com.lxs.security.domain.Dept;
+import com.lxs.tour.domain.FactoryOption;
 
 @Service
 public class TourServiceImpl implements ITourService, ITourServiceWs {
@@ -75,5 +78,60 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 	}
 	public List<SameCompareChartModel> getQuarterCharts(List<Long> userIds,int startDate,int endDate,List<Integer> quarters){
 		return tourDao.getQuarterCharts(userIds, startDate, endDate, quarters);
+	}
+
+	@Override
+	public String findOptionWs(String deptId) {
+		DetachedCriteria criteria = DetachedCriteria.forClass(FactoryOption.class);
+		criteria.createAlias("type", "t");
+		criteria.createAlias("t.depts", "d");
+		criteria.add(Restrictions.eq("d.id", Long.parseLong(deptId)));
+		List<Dept> list = baseDao.find(criteria);
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter("name");
+		return JSON.toJSONString(list, filter);
+	}
+
+	@Override
+	public String deleteTourWs(String id) {
+		TourCommon tourCommon = baseDao.get(TourCommon.class, Long.parseLong(id));
+		baseDao.delete(tourCommon);
+		return "true";
+	}
+
+	@Override
+	public String doConfirmTourWs(String id) {
+		TourCommon tourCommon = baseDao.get(TourCommon.class, Long.parseLong(id));
+		tourCommon.setStatus(StatusEnum.reported.getValue());
+		baseDao.update(tourCommon);
+		return "true";
+	}
+
+	@Override
+	public String addTourWs(String json) {
+		TourCommon c = JSON.parseObject(json, TourCommon.class);
+		c.setStatus(StatusEnum.notReport.getValue());
+		Double totalMoney = 0d;
+		for (TourDetail d : c.getDetails()) {
+			totalMoney = totalMoney + d.getMoney();
+		}		
+		c.setTotalIncome(totalMoney);
+		//FIXME 添加之前的数据处理
+		baseDao.add(c);
+		
+		for (TourDetail d : c.getDetails()) {
+			d.setCommon(c);
+			baseDao.add(d);
+		}
+		
+		return "true";
+	}
+
+	@Override
+	public String getTourWs(String id) {
+		TourCommon c = baseDao.get(TourCommon.class, Long.parseLong(id));
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(
+				"id", "totalPersonNum", "totalIncome", "reportMonth", 
+				"reportYear", "details", "name", "money");
+		return JSON.toJSONString(c, filter);		
 	}
 }
