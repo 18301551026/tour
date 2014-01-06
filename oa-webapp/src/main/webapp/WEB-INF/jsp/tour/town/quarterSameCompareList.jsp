@@ -151,8 +151,8 @@
 								<font color="green">${incomePercent }%</font>
 							</c:if>
 						</td>
-						<td><a
-							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}">详情</a></td>
+						<td><a 
+							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}&tempReportDate=${year}年${quarter}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>
@@ -255,7 +255,7 @@
 
 <div class="pagination pull-right">
 	<ul class="pagination-sm">
-		<li class="disabled"><a>共<span id="rowCount">${page.rowCount}</span>行<span
+		<li class="disabled"><a>共<span id="rowCount">${page.rowCount}</span>季度<span
 				id="pageCount">${pageCount }</span>页
 		</a></li>
 		<li id="first"><a href="javascript:void(0)">首页</a></li>

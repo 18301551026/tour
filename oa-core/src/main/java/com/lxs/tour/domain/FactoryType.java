@@ -55,6 +55,8 @@ public class FactoryType implements Serializable {
 	public void setOptions(List<FactoryOption> options) {
 		this.options = options;
 	}
+
+
 	@OneToMany(fetch=FetchType.LAZY, mappedBy = "factoryType")
 	public List<Dept> getDepts() {
 		return depts;

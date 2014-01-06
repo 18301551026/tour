@@ -38,10 +38,9 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 		return tourDao.findStatistic(criteria, userId, deptList);
 	}
 
-	public PageResult findSameCompare(List<Long> userIds, String startDate, String endDate,
-			Integer currentMonth, Integer pageMonthNum) {
+	public List<SameCompareModel> findSameCompare(List<Long> userIds, String startDate, String endDate) {
 		return tourDao.findSameCompare(userIds, startDate,
-				endDate, currentMonth, pageMonthNum);
+				endDate);
 	}
 
 	public List<StatisticReportModel> getReportList(String startDate,

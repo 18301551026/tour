@@ -62,9 +62,37 @@ font {
 			});
 		});
 	})
+	function checkDate(field, rules, i, options){
+		var reprotYearAndMonth = field.val();
+		var tempReprotYearAndMonth=$("#tempReprotYearAndMonth").val();
+		if(reprotYearAndMonth==tempReprotYearAndMonth){
+			return ;
+		}
+		var result;
+		if (reprotYearAndMonth) {
+			$.ajax({
+					type : "POST",
+					async: false,
+					url : ctx
+							+ "/tour/noReported!checkUserIsReportThisMonth.action",
+					data : "reprotYearAndMonth="
+							+ reprotYearAndMonth,
+					success : function(msg) {
+						if (msg == '已经申报') {
+							options.allrules.validate2fields.alertText="您"+ reprotYearAndMonth+ "已经申报了，不能再申报了"
+							$("#reprotYearAndMonth").val('');
+							result= options.allrules.validate2fields.alertText;
+						}
+				}
+					});
+		}
+		return result;
+	}
+</script>
 </script>
 </head>
 <body class="editBody">
+	<s:hidden name="reprotYearAndMonth" id="tempReprotYearAndMonth"></s:hidden>
 	<button class="btn btn-info btn-sm pull-left" id="backButton">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
@@ -86,31 +114,17 @@ font {
 				<Td class="control-label"><label for="reprotYearAndMonth">时间：</label>
 				<Td class="query_input" colspan="3"><s:textfield
 						name="reprotYearAndMonth" readonly="true" cssStyle="width:100%"
-						onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})"
-						placeholder="请选择时间" cssClass="form-control validate[required]"
+						onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'%y-%M'})"
+						placeholder="请选择时间" cssClass="form-control validate[required,funcCall[checkDate]]"
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
 				<Td class="control-label" style="width: 3%;"><label for="totalPersonNum">接待人次：</label>
 				<Td class="query_input" colspan="3"><s:textfield name="totalPersonNum"
-						placeholder="请输入接待人次" cssStyle="width:94%" cssClass="form-control validate[required]"
+						placeholder="请输入接待人次" cssStyle="width:94%" cssClass="form-control  validate[required,custom[integer],min[0]]"
 						id="totalPersonNum"></s:textfield> <font>(人次)</font></Td>
-				<%-- <Td class="control-label"><label for="totalIncome">总收入：</label>
-				<Td class="query_input"><s:textfield name="totalIncome"
-						placeholder="请输入总收入" cssClass="form-control validate[required]"
-						id="totalIncome"></s:textfield> <font>(万元)</font></Td> --%>
+				
 			</tr>
-			<%-- <c:forEach items="${beans }" var="d" >
-				<Tr>
-					<Td class="control-label"><label for="voteOptions">${d.name }：</label></Td>
-					<Td class="query_input" colspan="3"><input
-						placeholder="请输入${d.name }" type="text"
-						class="form-control validate[required] pull-left" 
-						value="${d.money }" style="margin-bottom: 2px;width: 92%"> <font >(万元)</font>
-						<input class="btn btn-info btn-xs pull-right updateDetail" actionId="${d.id }"
-						value="修改" style="margin-top: 2px;" type="button" /></Td>
-				</Tr>
-			</c:forEach> --%>
 			<c:forEach begin="0" end="${detailNum-1 }" step="1" var="i">
 				<c:if test="${i%2==0 }">
 					<tr>
@@ -123,7 +137,7 @@ font {
 						type="hidden" name="beans[${i }].id" value="${beans[i].id }">
 						<input name="beans[${i }].money"
 						placeholder="请输入${beans[i].name }" type="text"
-						class="form-control validate[required] pull-left"
+						class="form-control validate[required,custom[number],min[0]] pull-left"
 						value="${beans[i].money }"
 						<c:if test="${i==(detailNum-1) }">
 							 style="margin-bottom: 2px;width: 94%"
@@ -135,7 +149,7 @@ font {
 					<Td class="query_input"><input type="hidden"
 						name="beans[${i }].id" value="${beans[i].id }"> <input
 						name="beans[${i }].money" placeholder="请输入${beans[i].name }"
-						type="text" class="form-control validate[required] pull-left"
+						type="text" class="form-control validate[required,custom[number],min[0]] pull-left"
 						value="${beans[i].money }" style="margin-bottom: 2px;"> <font>(万元)</font></Td>
 				</c:if>
 				<c:if test="${i%2!=0 }">

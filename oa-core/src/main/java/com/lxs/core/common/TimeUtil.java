@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.junit.Test;
+
 /**
  * @since 获得关于日期【常用】
  * */
@@ -63,48 +65,48 @@ public class TimeUtil {
 	 */
 	public static Long getTimeInMillis(String date){
 		Long time=0l;
+		int year=0;
+		int month=0;
 		try {
-			Calendar calendar=Calendar.getInstance();
-			Integer tempYear=Integer.parseInt(date.substring(
-					0, 4).trim());
-			Integer tempMonth=Integer.parseInt(date.substring(
-					5, 7).trim());
-			calendar.set(calendar.YEAR,tempYear);
-			calendar.set(calendar.MONTH,tempMonth);
-			
-			int date1=Integer.parseInt("-"+calendar.get(calendar.DATE));
-			int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
-			int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
-			int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
-			int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
-			
-			calendar.add(calendar.MILLISECOND, mi);
-			calendar.add(calendar.SECOND, second);
-			calendar.add(calendar.MINUTE,minute);
-			calendar.add(calendar.HOUR, hour);
-			calendar.add(calendar.DATE, date1);
-			
-			time=calendar.getTimeInMillis();;
+			year=Integer.parseInt(date.substring(0,4));
+			month=Integer.parseInt(date.substring(5, 7))-1;
 		} catch (Exception e) {
 			Calendar calendar=Calendar.getInstance();
-			int date1=Integer.parseInt("-"+calendar.get(calendar.DATE));
-			int hour=Integer.parseInt("-"+calendar.get(calendar.HOUR));
-			int minute=Integer.parseInt("-"+calendar.get(calendar.MINUTE));
-			int second=Integer.parseInt("-"+calendar.get(calendar.SECOND));
-			int mi=Integer.parseInt("-"+calendar.get(calendar.MILLISECOND));
-			
-			
-			calendar.add(calendar.MILLISECOND, mi);
-			calendar.add(calendar.SECOND, second);
-			calendar.add(calendar.MINUTE,minute);
-			calendar.add(calendar.HOUR, hour);
-			calendar.add(calendar.DATE, date1);
-			time= calendar.getTimeInMillis();
-		}finally{
-			return time;
+			year=calendar.get(calendar.YEAR);
+			month=calendar.get(calendar.MONTH)-1;//上个月的
 		}
+		Calendar calendar=Calendar.getInstance();
+		calendar.set(calendar.YEAR, year);
+		calendar.set(calendar.MONTH, month);
+		calendar.set(calendar.DATE, 1);
+		calendar.set(calendar.HOUR, 0);
+		calendar.set(calendar.MINUTE, 0);
+		calendar.set(calendar.SECOND, 0);
+		calendar.set(calendar.MILLISECOND, 0);
+		time=calendar.getTimeInMillis();
+		return time;
 	}
-	
+	@Test
+	public void test(){
+//		int year=2013;
+//		int month=12;
+//		Calendar calendar=Calendar.getInstance();
+//		calendar.set(calendar.YEAR, year);
+//		calendar.set(calendar.MONTH, month-1);
+//		calendar.set(calendar.DATE, 1);
+//		calendar.set(calendar.HOUR, 0);
+//		calendar.set(calendar.MINUTE, 0);
+//		calendar.set(calendar.SECOND, 0);
+//		calendar.set(calendar.MILLISECOND, 0);
+//		
+//		String strDate=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(calendar.getTime());
+//		System.out.println(strDate);
+//		Long longDate=calendar.getTimeInMillis();
+//		System.out.println(longDate);
+		
+		Long longTime=TimeUtil.getTimeInMillis("2014年01月");
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(longTime));
+	}
 	/**
 	 * 
 	 * @param year

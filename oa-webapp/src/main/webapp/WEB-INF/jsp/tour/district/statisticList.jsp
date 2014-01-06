@@ -39,7 +39,7 @@
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
 				<button id="reportHtmlButton" class="btn btn-info">
-					<span class="glyphicon glyphicon-print"></span> 报表html
+					<span class="glyphicon glyphicon-print"></span> html查看
 				</button>
 				<button id="exportExcelButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-print"></span> 导出excel
@@ -62,8 +62,7 @@
 				action="${ctx}/tour/districtStatistic!districtStatisticList.action"
 				method="post">
 				<s:hidden name="reprotType" id="reprotType"></s:hidden>
-				<%-- <s:hidden name="status"></s:hidden>
-				<s:hidden name="statisticType"></s:hidden> --%>
+				<s:hidden name="firstStatus"></s:hidden>
 				<table class="formTable">
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
@@ -108,7 +107,6 @@
 			</tbody>
 		</table>
 	</form>
-	<tags:pagination page="${page }"></tags:pagination>
 
 </body>
 </html>

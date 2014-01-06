@@ -43,6 +43,17 @@
 				<param name="reportParameters">parameters</param>
 			</result>
 		</action>
+		<action name="detailChart" class="tourAction">
+			<result name="html" type="jasper">
+				<param name="location">/reports/sameCompareDetail_tour_report.jasper</param>
+				<param name="dataSource">myList</param>
+				<param name="format">HTML</param>
+				<param name="imageServletUrl">  
+			        <![CDATA[/servlets/image?image=]]>
+				</param>
+				<param name="reportParameters">parameters</param>
+			</result>
+		</action>
 	</package>
 
 

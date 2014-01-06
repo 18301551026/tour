@@ -38,7 +38,7 @@
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
 				<button id="reportHtmlButton" class="btn btn-info">
-					<span class="glyphicon glyphicon-print"></span> 报表html
+					<span class="glyphicon glyphicon-print"></span> html查看
 				</button>
 				<button id="exportExcelButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-print"></span> 导出excel
@@ -62,6 +62,7 @@
 				method="post">
 				<s:hidden name="reprotType" id="reprotType"></s:hidden>
 				<table class="formTable">
+				<s:hidden name="firstStatus"></s:hidden>
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
 						<Td class="query_input" colspan="3"><input id="d4311"
