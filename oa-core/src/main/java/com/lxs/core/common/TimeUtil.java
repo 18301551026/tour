@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.junit.Test;
-
 /**
  * @since 获得关于日期【常用】
  * */
@@ -86,7 +84,6 @@ public class TimeUtil {
 		time=calendar.getTimeInMillis();
 		return time;
 	}
-	@Test
 	public void test(){
 //		int year=2013;
 //		int month=12;
