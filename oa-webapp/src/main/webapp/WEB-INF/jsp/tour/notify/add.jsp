@@ -9,8 +9,9 @@
 <%@ include file="/common/include-jquery-easyui.jsp"%>
 <%@ include file="/common/include-bootstap.jsp"%>
 <%@ include file="/common/include-jquery-validation.jsp"%>
-<%@ include file="/common/include-jquery-kindeditor.jsp"%>
-<script type="text/javascript" src="${ctx }/js/edit2Editor.js"></script>
+<%-- <%@ include file="/common/include-jquery-kindeditor.jsp"%>
+<script type="text/javascript" src="${ctx }/js/edit2Editor.js"></script> --%>
+<script type="text/javascript" src="${ctx }/js/edit.js"></script> 
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <body class="editBody">
@@ -91,7 +92,7 @@ $(function() {
 			</tr>
 			<tr>
 				<Td class="control-label"><label for="desc">描述：</label></Td>
-				<Td class="query_input" colspan="3"><s:textarea name="desc"></s:textarea>
+				<Td class="query_input" colspan="3"><s:textarea cssClass="readyonlyTextarea" name="content"></s:textarea>
 				</Td>
 			</tr>
 		</table>

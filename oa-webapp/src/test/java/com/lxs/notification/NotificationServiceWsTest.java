@@ -18,14 +18,14 @@ public class NotificationServiceWsTest {
 	@Resource
 	private INotificationServiceWs notificationService;
 
-	@Test
 	public void testSendBroadcast() {
 //		notificationService.sendBroadcast("aa", "bb", "http://www.163.com");
 	}
 	
-	
+
+	@Test
 	public void testSendBroadcast2User() {
-//		notificationService.sendNotifcationToUsers("6d39ff1d7d4a480db9d623e8394227b3, aaaa", "aa", "bb", "http://www.163.com");
+		notificationService.sendNotifcationToUsers("0365fb08c5ba45499e50750d9c8a0a95, ", "aa", "bb", "http://www.163.com");
 	}	
 
 }

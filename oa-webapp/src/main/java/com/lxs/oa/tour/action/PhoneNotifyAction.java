@@ -90,16 +90,12 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 	}
 	@Override
 	public void beforeSave(PhoneNotify model) {
-		Set<ApnUser> list=new HashSet<ApnUser>();
 		
 		if (receiveIds.equals("0")) {
-			DetachedCriteria detachedCriteria=DetachedCriteria.forClass(ApnUser.class);
-			detachedCriteria.createAlias("user", "u");
-			detachedCriteria.createAlias("u.dept", "d");
-			detachedCriteria.add(Restrictions.eq("d.deptLevel", "企业"));
-			List<ApnUser> tempUsers=baseService.find(detachedCriteria);
-			list.addAll(tempUsers);
+			notificationService.sendBroadcast(model.getTitle(), model.getContent(), "");
 		}else{
+			Set<ApnUser> list=new HashSet<ApnUser>();
+			
 			String tempIds[]=receiveIds.split(",");
 			for (String s: tempIds) {
 				if (null!=s&&s.indexOf("t")!=-1) {//镇
@@ -114,23 +110,22 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 					DetachedCriteria detachedCriteria=DetachedCriteria.forClass(ApnUser.class);
 					detachedCriteria.createAlias("user", "u");
 					detachedCriteria.createAlias("u.dept", "d");
-					detachedCriteria.add(Restrictions.eq("d.id",Long.parseLong( s.substring(1,s.length()))));
+					detachedCriteria.add(Restrictions.eq("d.id",Long.parseLong(s)));
 					List<ApnUser> tempUsers=baseService.find(detachedCriteria);
 					list.addAll(tempUsers);
 				}
 			}
-		}
-		
-		String usersName="";
-		for (ApnUser user : list) {
-			if (null!=user) {
-				usersName+=user.getName()+",";
+			String usersName="";
+			for (ApnUser user : list) {
+				if (null!=user) {
+					usersName+=user.getUsername()+",";
+				}
 			}
+			model.setCreateDate(new Date());
+			usersName=usersName.substring(0,usersName.length()-1);
+			
+			notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
 		}
-		model.setCreateDate(new Date());
-		usersName=usersName.substring(0,usersName.length()-1);
-		
-		notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
 	}
 	public Long getFactoryTypeId() {
 		return factoryTypeId;
