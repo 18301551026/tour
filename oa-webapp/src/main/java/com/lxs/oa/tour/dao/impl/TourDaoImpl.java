@@ -1,5 +1,6 @@
 package com.lxs.oa.tour.dao.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -801,7 +802,11 @@ public class TourDaoImpl implements ITourDao {
 					lastMoneyValues += tourCommon.getTotalIncome();
 				}
 			}
-
+			BigDecimal nowb=new BigDecimal(nowMoneyValues);
+			nowMoneyValues=nowb.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			
+			BigDecimal lastb=new BigDecimal(lastMoneyValues);
+			lastMoneyValues=lastb.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
 			nowModel.setMoneyValues(nowMoneyValues);
 			nowModel.setPersonNumValues(nowPersonNumValues);
 			lastModel.setMoneyValues(lastMoneyValues);
@@ -814,5 +819,14 @@ public class TourDaoImpl implements ITourDao {
 		
 		
 		return list;
+	}
+	public static void main(String[] args) {
+		Double d=0.0;
+		Double d1=35.0;
+		d+=d1;
+		d+=24.63;
+		BigDecimal b=new BigDecimal(d);
+		d=b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+		System.out.println(d);
 	}
 }
