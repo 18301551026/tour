@@ -93,7 +93,7 @@ font {
 </head>
 <body class="editBody">
 	<s:hidden name="reprotYearAndMonth" id="tempReprotYearAndMonth"></s:hidden>
-	<button class="btn btn-info btn-sm pull-left" id="backButton">
+	<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="btn-group pull-right btn-group-sm">

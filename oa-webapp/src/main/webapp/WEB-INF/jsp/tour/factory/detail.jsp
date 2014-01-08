@@ -11,7 +11,7 @@
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <body class="editBody">
-	<button class="btn btn-info btn-sm pull-left" id="backButton">
+	<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
