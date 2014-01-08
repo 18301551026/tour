@@ -55,23 +55,41 @@
 				<TD>原始密码： <input type="hidden" name="id" id="userId"><input
 					type="hidden" id="pwd" name="pwd">
 				</TD>
-				<Td><input type="password" placeholder="请输入原始密码" id="oldPwd"
+				<Td><input type="password" placeholder="请输入原始密码" id="oldPwd" class="modifyForm-control-mini"
 					name="oldPwd" /></Td>
 			</tr>
 			<tr>
 				<TD>新密码：</TD>
 				<Td><input type="password" name="password"
-					class="field easyui-validatebox" data-options="required:true"
+					class="field modifyForm-control-mini easyui-validatebox" data-options="required:true"
 					placeholder="请输入您的新密码" /></Td>
 			</tr>
 			<tr>
 				<TD>确认新密码：</TD>
 				<Td><input type="password" name="rePwd"
-					class="field easyui-validatebox"
+					class="field modifyForm-control-mini easyui-validatebox"
 					data-options="required:true,validType:'eqPwd[\'#modifyPasswordForm input[name=password]\']'"
 					placeholder="请输入确认密码" /></Td>
 			</tr>
 		</table>
 	</form>
 </div>
+<style type="text/css">
+.modifyForm-control-mini {
+	background-color: #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+	color: #555555;
+	display: block;
+	font-size: 12px;
+	height: 25px;
+	line-height: 1.42857;
+	padding: 2px;
+	transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s
+		ease-in-out 0s;
+	vertical-align: middle;
+	width: 200px;
+}
+</style>
 </html>

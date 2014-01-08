@@ -19,13 +19,14 @@
 			url : ctx + "/security/dept!getAllDept.action",
 			id : "id",
 			lines : true,
-			width : 350
+			width : 550
 		});
-		$(".panel .combo-p").css("width",'362px');
+		$(".panel .combo-p").css("width", '362px');
 	})
 </script>
 <body class="editBody">
-	<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
+	<button class="btn btn-info btn-sm pull-left" id="backButton"
+		onclick="javascript:history.back()">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="btn-group pull-right btn-group-sm">
@@ -41,14 +42,21 @@
 		id="editForm">
 		<table class="formTable table">
 			<tr>
-				<Td class="control-label"><label for="userName">登录名：</label></Td>
-				<Td class="query_input"><s:textfield name="userName"
-						placeholder="请输入登陆名" cssClass="form-control validate[required]"
-						id="userName"></s:textfield></Td>
+				<Td class="control-label" style="width: 3%"><label for="userName">登录名：</label></Td>
+				<Td class="query_input" colspan="3"><input type="text" name="userName"
+					placeholder="请输入登陆名" class="form-control validate[required]"
+					id="userName"></Td>
+				
+			</tr>
+			<tr>
 				<Td class="control-label"><label for="pwd">密码：</label></Td>
-				<Td class="query_input"><s:password name="password"
-						placeholder="请输入密码" cssClass="form-control validate[required]"
-						id="pwd"></s:password></Td>
+				<Td class="query_input"><input type="password" name="password"
+					placeholder="请输入密码" class="form-control validate[required]"
+					id="pwd"></Td>
+				<Td class="control-label"><label for="confirmPwd">确认密码：</label></Td>
+				<Td class="query_input"><input type="password" name="confirmPwd"
+					placeholder="请输入确认密码" class="form-control validate[required,equals[pwd]]"
+					id="confirmPwd"></Td>
 			</tr>
 			<tr>
 				<Td class="control-label"><label for="realName">真实姓名：</label></Td>
@@ -57,7 +65,7 @@
 						id="realName"></s:textfield></Td>
 				<Td class="control-label"><label for="deptId">所属部门：</label></Td>
 				<Td class="query_input"><select name="dept.id" id="deptId"
-					class="validate[required]">
+					style="width: 250px;" class="validate[required]">
 				</select></Td>
 			</tr>
 			<tr>
