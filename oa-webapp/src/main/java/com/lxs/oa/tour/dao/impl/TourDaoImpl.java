@@ -790,7 +790,7 @@ public class TourDaoImpl implements ITourDao {
 		Criteria criteria2 = lastCriteria.getExecutableCriteria(sessionFactory
 				.getCurrentSession());
 		criteria2.add(Restrictions.eq("quarter",quarters.get(0)));	//季度
-		criteria1.add(Restrictions.eq("reportYear", startDate-1));	//相对去年
+		criteria2.add(Restrictions.eq("reportYear", startDate-1));	//相对去年
 
 		List<TourCommon> lastList = criteria2.list();
 		
