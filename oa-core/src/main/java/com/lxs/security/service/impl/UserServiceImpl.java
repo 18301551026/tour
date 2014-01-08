@@ -91,12 +91,14 @@ public class UserServiceImpl implements IUserService, IUserServiceWs {
 		criteria.add(Restrictions.eq("username", xmppUserName));
 		ApnUser apnUser = baseDao.uniqueResult(criteria);
 		
-		criteria = DetachedCriteria.forClass(User.class);
-		criteria.add(Restrictions.eq("userName", userName));
-		User user = baseDao.uniqueResult(criteria);
-		
-		apnUser.setUser(user);
-		baseDao.save(apnUser);
+		if (apnUser != null) {
+			criteria = DetachedCriteria.forClass(User.class);
+			criteria.add(Restrictions.eq("userName", userName));
+			User user = baseDao.uniqueResult(criteria);
+			
+			apnUser.setUser(user);
+			baseDao.save(apnUser);
+		}
 	}
 
 
