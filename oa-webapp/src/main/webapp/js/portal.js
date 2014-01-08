@@ -38,10 +38,10 @@ $(function() {
 		} ]
 	}, {
 		id : 'p3',
-		title : '公告',
+		title : '资源下载',
 		height : 200,
 		collapsible : true,
-		content : '这是公告',
+		content : '本系统建议使用火狐浏览器，<a href="'+ctx+'/protal/protal!download.action?tempFileName=fireFox">点击下载火狐浏览器</a>',
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {

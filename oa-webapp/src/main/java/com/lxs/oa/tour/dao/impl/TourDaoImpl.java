@@ -80,8 +80,9 @@ public class TourDaoImpl implements ITourDao {
 			if (tourIds.trim().length() != 0) {
 				town.setTourIds(tourIds.substring(0, tourIds.length() - 1));
 			}
+			BigDecimal big=new BigDecimal(tempTotalIncome);
+			town.setTotalIncome(big.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 			town.setTotalPersonCount(tempTotalPersonNum);
-			town.setTotalIncome(tempTotalIncome);
 			town.setTotalFactoryCount(tempNum);
 			tempList.add(town);
 		}
@@ -401,10 +402,12 @@ public class TourDaoImpl implements ITourDao {
 						lastMoneyValues += tourCommon.getTotalIncome();
 					}
 				}
-
-				nowModel.setMoneyValues(nowMoneyValues);
+				
+				BigDecimal nowBig=new BigDecimal(nowMoneyValues);
+				nowModel.setMoneyValues(nowBig.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 				nowModel.setPersonNumValues(nowPersonNumValues);
-				lastModel.setMoneyValues(lastMoneyValues);
+				BigDecimal lastBig=new BigDecimal(lastMoneyValues);
+				lastModel.setMoneyValues(lastBig.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 				lastModel.setPersonNumValues(lastPersonNumValues);
 
 				list.add(nowModel);
@@ -491,9 +494,11 @@ public class TourDaoImpl implements ITourDao {
 						}
 					}
 
-					nowModel.setMoneyValues(nowMoneyValues);
+					BigDecimal nowBig=new BigDecimal(nowMoneyValues);
+					nowModel.setMoneyValues(nowBig.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 					nowModel.setPersonNumValues(nowPersonNumValues);
-					lastModel.setMoneyValues(lastMoneyValues);
+					BigDecimal lastBig=new BigDecimal(lastMoneyValues);
+					lastModel.setMoneyValues(lastBig.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 					lastModel.setPersonNumValues(lastPersonNumValues);
 
 					list.add(nowModel);
@@ -649,6 +654,13 @@ public class TourDaoImpl implements ITourDao {
 			model.setType(factoryType.getName());
 			model.setYear(year);
 			model.setMonth(mon);
+			
+			BigDecimal b=new BigDecimal(nowTotalIncome);
+			nowTotalIncome=b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			
+			BigDecimal b1=new BigDecimal(lastTotalIncome);
+			lastTotalIncome=b1.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			
 			model.setNowTotalIncome(nowTotalIncome);
 			model.setLastTotalIncome(lastTotalIncome);
 			model.setNowTotalPersonNum(nowTotalPersonNum);
@@ -710,6 +722,13 @@ public class TourDaoImpl implements ITourDao {
 			model.setType(factoryType.getName());
 			model.setYear(startYear);
 			model.setQuarter(quarter);
+			
+			BigDecimal b=new BigDecimal(nowTotalIncome);
+			nowTotalIncome=b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			
+			BigDecimal b1=new BigDecimal(lastTotalIncome);
+			lastTotalIncome=b1.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+			
 			model.setNowTotalIncome(nowTotalIncome);
 			model.setLastTotalIncome(lastTotalIncome);
 			model.setNowTotalPersonNum(nowTotalPersonNum);

@@ -123,7 +123,7 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 		
 		model.setUserNames(usersName);
 		
-		//notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
+		notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
 	}
 	public Long getFactoryTypeId() {
 		return factoryTypeId;

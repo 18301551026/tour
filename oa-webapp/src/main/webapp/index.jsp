@@ -17,7 +17,7 @@
 	<div data-options="region:'north',split:true" style="height:70px;">
 		<div class="panel-header panel-title"
 			data-option="border:false,fit:true" style="height:63px;border: 0px;padding: 0px;">
-			<img alt="logo" src="${ctx }/images/logo.gif" style="margin: 0px;">
+			<img alt="logo" src="${ctx }/images/douban_logo1.png" style="margin: 0px;">
 			<div style="position: absolute; right: 10px; bottom: 2px;">
 				<a href="javascript:void(0)" id="mb" class="easyui-menubutton"
 					data-options="menu:'#mm'">${currentUser.realName }</a>

@@ -1,6 +1,7 @@
 package com.lxs.oa.tour.action;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1447,16 +1448,18 @@ public class TourAction extends BaseAction<TourCommon> {
 				.substring(5, 7).trim()));
 		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));//
 		Double totalIncome = 0d;
-		for (Double d : inputMoneys) {
-			totalIncome += d;
+		if (null==model.getId()) {
+			for(Double d:inputMoneys){
+				totalIncome+=d;
+			}
 		}
-		model.setTotalIncome(totalIncome);
 		if (null == beans || beans.size() == 0) {
 			model.setUser(u);
 			model.setStatus(StatusEnum.notReport.getValue());
 		} else {
 			for (TourDetail d : beans) {
 				if (null != d && null != d.getId()) {
+					totalIncome+=d.getMoney();
 					TourDetail tempDetail = baseService.get(TourDetail.class,
 							d.getId());
 					tempDetail.setMoney(d.getMoney());
@@ -1464,6 +1467,8 @@ public class TourAction extends BaseAction<TourCommon> {
 				}
 			}
 		}
+		BigDecimal big=new BigDecimal(totalIncome);
+		model.setTotalIncome(big.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
 	}
 
 	/**
