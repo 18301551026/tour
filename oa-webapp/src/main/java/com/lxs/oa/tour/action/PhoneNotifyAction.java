@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.lxs.core.action.BaseAction;
+import com.lxs.notification.domain.ApnUser;
 import com.lxs.notification.service.INotificationServiceWs;
 import com.lxs.oa.tour.domain.PhoneNotify;
 import com.lxs.security.domain.Dept;
@@ -89,39 +90,45 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 	}
 	@Override
 	public void beforeSave(PhoneNotify model) {
-		Set<User> list=new HashSet<User>();
+		Set<ApnUser> list=new HashSet<ApnUser>();
 		
 		if (receiveIds.equals("0")) {
-			DetachedCriteria detachedCriteria=DetachedCriteria.forClass(Dept.class);
-			detachedCriteria.add(Restrictions.eq("deptLevel", "企业"));
-			List<Dept> deptList=baseService.find(detachedCriteria);
-			for (Dept dept : deptList) {
-				list.addAll(dept.getUsers());
-			}
+			DetachedCriteria detachedCriteria=DetachedCriteria.forClass(ApnUser.class);
+			detachedCriteria.createAlias("user", "u");
+			detachedCriteria.createAlias("u.dept", "d");
+			detachedCriteria.add(Restrictions.eq("d.deptLevel", "企业"));
+			List<ApnUser> tempUsers=baseService.find(detachedCriteria);
+			list.addAll(tempUsers);
 		}else{
 			String tempIds[]=receiveIds.split(",");
 			for (String s: tempIds) {
 				if (null!=s&&s.indexOf("t")!=-1) {//镇
-					Dept d=baseService.get(Dept.class,Long.parseLong( s.substring(1,s.length())));
-					for(Dept dept:d.getChildren()){
-						list.addAll(dept.getUsers());
-					}
+					DetachedCriteria detachedCriteria=DetachedCriteria.forClass(ApnUser.class);
+					detachedCriteria.createAlias("user", "u");
+					detachedCriteria.createAlias("u.dept", "d");
+					detachedCriteria.createAlias("d.parent", "pd");
+					detachedCriteria.add(Restrictions.eq("pd.id",Long.parseLong( s.substring(1,s.length()))));
+					List<ApnUser> tempUsers=baseService.find(detachedCriteria);
+					list.addAll(tempUsers);
 				}else if(null!=s){
-					list.addAll(baseService.get(Dept.class, Long.parseLong(s.trim())).getUsers());
+					DetachedCriteria detachedCriteria=DetachedCriteria.forClass(ApnUser.class);
+					detachedCriteria.createAlias("user", "u");
+					detachedCriteria.createAlias("u.dept", "d");
+					detachedCriteria.add(Restrictions.eq("d.id",Long.parseLong( s.substring(1,s.length()))));
+					List<ApnUser> tempUsers=baseService.find(detachedCriteria);
+					list.addAll(tempUsers);
 				}
 			}
 		}
 		
 		String usersName="";
-		for (User user : list) {
+		for (ApnUser user : list) {
 			if (null!=user) {
-				usersName+=user.getUserName()+",";
+				usersName+=user.getName()+",";
 			}
 		}
 		model.setCreateDate(new Date());
 		usersName=usersName.substring(0,usersName.length()-1);
-		
-		model.setUserNames(usersName);
 		
 		notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
 	}
