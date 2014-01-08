@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.lxs.core.action.BaseAction;
+import com.lxs.notification.domain.ApnUser;
 import com.lxs.notification.service.INotificationServiceWs;
 import com.lxs.oa.tour.domain.PhoneNotify;
 import com.lxs.security.domain.Dept;
@@ -90,7 +91,6 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 	@Override
 	public void beforeSave(PhoneNotify model) {
 		Set<User> list=new HashSet<User>();
-		
 		if (receiveIds.equals("0")) {
 			DetachedCriteria detachedCriteria=DetachedCriteria.forClass(Dept.class);
 			detachedCriteria.add(Restrictions.eq("deptLevel", "企业"));
