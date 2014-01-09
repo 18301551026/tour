@@ -35,9 +35,13 @@
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label
 							for="address">类型：</label></Td>
-						<Td class="query_input"><s:select cssClass="form-control"
+						<Td class="query_input">
+						<s:select list="allFactoryType" listKey="name"  listValue="name" cssClass="form-control"
+						name="deptType" headerKey="" headerValue="全部"
+						></s:select>
+						<%-- <s:select cssClass="form-control" 
 								list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
-								name="deptType" headerKey="" headerValue="全部"></s:select></Td>
+								name="deptType" headerKey="" headerValue="全部"></s:select> --%></Td>
 						<Td class="control-label"><label>选择日期：</label></Td>
 						<Td class="query_input"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
@@ -66,8 +70,8 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th>类型</th>
 					<th>时间</th>
+					<th>类型</th>
 					<th>部门</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
@@ -77,8 +81,8 @@
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td>${type}</td>
 						<td>${reportYear }年${reportMonth }月</td>
+						<td>${type}</td>
 						<Td>${user.dept.text }</Td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>

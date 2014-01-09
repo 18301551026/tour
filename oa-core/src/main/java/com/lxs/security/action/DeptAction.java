@@ -76,11 +76,11 @@ public class DeptAction extends BaseAction<Dept> {
 	public void updateDept() {
 		Dept d = baseService.get(Dept.class, model.getId());
 		BeanUtil.copy(model, d);
-		baseService.save(d);
 		if (null!=d.getFactoryType()&&null!=d.getFactoryType().getId()) {
 			FactoryType t=baseService.get(FactoryType.class, d.getFactoryType().getId());
 			d.setDeptType(t.getName());
-		}
+		}		
+		baseService.save(d);
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Menu.class);
 		filter.getExcludes().add("children");
 		getOut().print(JSON.toJSONString(d, filter));
@@ -96,6 +96,10 @@ public class DeptAction extends BaseAction<Dept> {
 		if (null != model.getPid()) {
 			model.setParent(baseService.get(Dept.class, model.getPid()));
 		}
+		if (null!=model.getFactoryType()&&null!=model.getFactoryType().getId()) {
+			FactoryType t=baseService.get(FactoryType.class, model.getFactoryType().getId());
+			model.setDeptType(t.getName());
+		}		
 		baseService.save(model);
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Menu.class);
 		filter.getExcludes().add("children");

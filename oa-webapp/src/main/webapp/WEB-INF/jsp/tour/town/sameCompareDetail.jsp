@@ -24,7 +24,7 @@
 </script>
 <body class="editBody">
 	<div class="btn-group btn-group-sm">
-		<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
+		<button class="btn btn-info btn-sm pull-left" onclick="javascript:history.back()">
 			<span class="glyphicon glyphicon-backward"></span> 返回列表
 		</button>
 		<button id="reportHtmlButton" class="btn btn-info">

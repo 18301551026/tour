@@ -32,6 +32,7 @@ import com.opensymphony.xwork2.ActionContext;
 		@Result(name = "add", location = "/WEB-INF/jsp/tour/notify/add.jsp"),
 		@Result(name = "update", location = "/WEB-INF/jsp/tour/factoryType/update.jsp"),
 		@Result(name = "list", location = "/WEB-INF/jsp/tour/notify/list.jsp"),
+		@Result(name="toDetail",location="/WEB-INF/jsp/tour/notify/detail.jsp"),
 		@Result(name="toSelectReceiveUsers",location="/WEB-INF/jsp/tour/notify/selectReceiveUsers.jsp"),
 		@Result(name = "listAction", type = "redirect", location = "/tour/notify!findPage.action")
 	})
@@ -90,7 +91,7 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 	}
 	@Override
 	public void beforeSave(PhoneNotify model) {
-		
+		model.setCreateDate(new Date());
 		if (receiveIds.equals("0")) {
 			notificationService.sendBroadcast(model.getTitle(), model.getContent(), "");
 		}else{
@@ -121,11 +122,15 @@ public class PhoneNotifyAction extends BaseAction<PhoneNotify> {
 					usersName+=user.getUsername()+",";
 				}
 			}
-			model.setCreateDate(new Date());
-			usersName=usersName.substring(0,usersName.length()-1);
-			
-			notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
+			if (usersName.trim().length() > 0) {
+				usersName=usersName.substring(0,usersName.length()-1);
+				notificationService.sendNotifcationToUsers(usersName, model.getTitle(), model.getContent(), "");
+			}
 		}
+	}
+	public String toDetail(){
+		ActionContext.getContext().getValueStack().push(baseService.get(PhoneNotify.class, model.getId()));
+		return "toDetail";
 	}
 	public Long getFactoryTypeId() {
 		return factoryTypeId;

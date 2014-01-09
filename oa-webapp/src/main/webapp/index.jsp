@@ -20,7 +20,7 @@
 			<img alt="logo" src="${ctx }/images/douban_logo1.png" style="margin: 0px;">
 			<div style="position: absolute; right: 10px; bottom: 2px;">
 				<a href="javascript:void(0)" id="mb" class="easyui-menubutton"
-					data-options="menu:'#mm'">${currentUser.realName }</a>
+					data-options="menu:'#mm'">${sessionScope.currentUserDeptName}:${currentUser.realName }</a>
 				<div id="mm" style="width: 150px;">
 					<div onclick="modifiedPasswordfn()">修改密码</div>
 					<div onclick="logout()">注销</div>

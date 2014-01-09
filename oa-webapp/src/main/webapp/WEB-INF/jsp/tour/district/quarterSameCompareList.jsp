@@ -17,8 +17,8 @@
 	$(function(){
 		$("#chartButton").click(function(){
 			parent.$.modalDialog({
-				title : '选择同比年份和季度',
-				width : 340,
+				title : '选择图表同比年份和季度',
+				width : 360,
 				height :240,
 				href : ctx + '/tour/districtQuarterSameCompare!toSelectChart.action',
 				buttons : [
@@ -49,6 +49,40 @@
 						} ]
 			});
 		});
+		$("#reportButton").click(function(){
+			parent.$.modalDialog({
+				title : '选择图表同比年份和季度',
+				width : 360,
+				height :240,
+				href : ctx + '/tour/districtQuarterSameCompare!toSelectChart.action',
+				buttons : [
+						{
+							text : 'html查看',
+							iconCls : "icon-edit",
+							handler : function() {
+								var f = parent.$.modalDialog.handler
+										.find('#chartForm');
+								f.attr("action",ctx+"/tour/sameCompareQuaterReport!districtQuarterHtmlReport.action")
+								f.submit();
+							}
+						}, {
+							text : 'word导出',
+							iconCls : "icon-edit",
+							handler : function() {
+								var f = parent.$.modalDialog.handler
+								.find('#chartForm');
+								f.attr("action",ctx+"/tour/sameCompareQuaterReport!districtQuarterWordReport.action")
+								f.submit();
+							}
+						}, {
+							text : '取消',
+							iconCls : "icon-cancel",
+							handler : function() {
+								parent.$.modalDialog.handler.dialog('close');
+							}
+						} ]
+			});
+		});		
 	})
 </script>
 <body>
@@ -61,6 +95,9 @@
 				</button>
 				<button id="chartButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-print"></span> 图表
+				</button>
+				<button id="reportButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-print"></span> 报表
 				</button>
 			</div>
 			<div class="pull-right" style="margin-top: 6px;">

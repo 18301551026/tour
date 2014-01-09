@@ -54,6 +54,7 @@
 					<th>标题</th>
 					<th>接收企业用户</th>
 					<th>发送时间</th>
+					<th>操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -64,6 +65,9 @@
 						<td>${title }</td>
 						<Td>${userNames }</Td>
 						<td>${createDate }</td>
+						<td>
+							<A href="${ctx }/tour/notify!toDetail.action?id=${id}">详情</A>
+						</td>
 					</tr>
 				</s:iterator>
 			</tbody>

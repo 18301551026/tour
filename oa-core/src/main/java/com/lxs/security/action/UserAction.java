@@ -163,6 +163,8 @@ public class UserAction extends BaseAction<User> {
 		if (null != user) {
 			ActionContext.getContext().getSession()
 					.put(SystemConstant.CURRENT_USER, user);
+			ActionContext.getContext().getSession()
+			.put("currentUserDeptName", user.getDept().getText());
 			return INDEX;
 		} else {
 			return LOGIN;

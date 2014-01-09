@@ -21,5 +21,6 @@ public interface ITourDao {
 	
 	public List<SameCompareChartModel> getQuarterCharts(List<Long> userIds,int startDate,int endDate,List<Integer> quarters);
 	
-	public List<SameCompareModel> getQuarterSameCompareModels(List<Long> userIds,int startDate,int endDate,List<Integer> quarters); 
+	public List<SameCompareModel> getQuarterSameCompareModels(List<Long> userIds,int startDate,int endDate,List<Integer> quarters);
+	
 }

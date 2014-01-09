@@ -80,7 +80,7 @@ font {
 					success : function(msg) {
 						if (msg == '已经申报') {
 							options.allrules.validate2fields.alertText="您"+ reprotYearAndMonth+ "已经申报了，不能再申报了"
-							$("#reprotYearAndMonth").val('');
+							//$("#reprotYearAndMonth").val('');
 							result= options.allrules.validate2fields.alertText;
 						}
 				}
@@ -93,7 +93,7 @@ font {
 </head>
 <body class="editBody">
 	<s:hidden name="reprotYearAndMonth" id="tempReprotYearAndMonth"></s:hidden>
-	<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
+	<button class="btn btn-info btn-sm pull-left"   onclick="javascript:location.href='${ctx}/tour/noReported!findPage.action?statisticType=1&status=2'">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="btn-group pull-right btn-group-sm">

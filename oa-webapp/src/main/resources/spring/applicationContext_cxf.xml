@@ -43,7 +43,7 @@
 	
 	
 	<!-- id:唯一标示 address：服务的地址 serviceClass：客户端生成的接口 -->
-	<jaxws:client id="notificationService" address="http://192.168.1.242:8080/androidpn/cxf/notificationService" serviceClass="com.lxs.notification.service.INotificationServiceWs">
+	<jaxws:client id="notificationService" address="http://localhost:8080/androidpn/cxf/notificationService" serviceClass="com.lxs.notification.service.INotificationServiceWs">
 	
 	</jaxws:client>	
 		

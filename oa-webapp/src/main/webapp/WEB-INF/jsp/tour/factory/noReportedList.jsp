@@ -73,10 +73,10 @@
 				<tr>
 					<th class="table_checkbox"><input type="checkbox"
 						id="checkAllCheckBox"></th>
+					<th>时间</th>
 					<th>类型</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
-					<th>时间</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -85,10 +85,10 @@
 					<tr>
 						<td class="table_checkbox"><input type="checkbox" name="ids"
 							value="${id }" /></td>
+						<td>${reportYear }年${reportMonth }月</td>
 						<td>${user.dept.deptType}</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td>${reportYear }年${reportMonth }月</td>
 						<td><a href="${ctx}/tour/noReported!toUpdate.action?id=${id}">修改</a>
 							&nbsp; <a href="${ctx}/tour/noReported!toReport.action?id=${id}">申报</a>
 

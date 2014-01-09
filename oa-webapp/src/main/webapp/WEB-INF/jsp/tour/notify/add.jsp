@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <%@ include file="/common/global.jsp"%>
-<title>用户添加</title>
+<title>推送添加</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
 <%@ include file="/common/include-jquery-easyui.jsp"%>
@@ -58,7 +58,7 @@ $(function() {
 					})
 })	
 </script>
-	<button class="btn btn-info btn-sm pull-left" id="backButton" onclick="javascript:history.back()">
+	<button class="btn btn-info btn-sm pull-left"  onclick="javascript:location.href='${ctx}/tour/notify!findPage.action'">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="btn-group pull-right btn-group-sm">
@@ -92,7 +92,7 @@ $(function() {
 			</tr>
 			<tr>
 				<Td class="control-label"><label for="desc">描述：</label></Td>
-				<Td class="query_input" colspan="3"><s:textarea cssClass="readyonlyTextarea" name="content"></s:textarea>
+				<Td class="query_input" colspan="3"><s:textarea cssClass="readyonlyTextarea validate[required]" name="content"></s:textarea>
 				</Td>
 			</tr>
 		</table>

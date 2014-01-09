@@ -46,6 +46,11 @@
       <value>旅行社</value>
       <value>旅行社</value>
     </row>
+    <row>
+      <value>7</value>
+      <value/>
+      <value>aaaa</value>
+    </row>
   </table>
   <table name="factory_option_">
     <column>id_</column>
@@ -180,6 +185,21 @@
       <value>26</value>
       <value>营业收入</value>
       <value>6</value>
+    </row>
+    <row>
+      <value>27</value>
+      <value>a1</value>
+      <value>7</value>
+    </row>
+    <row>
+      <value>28</value>
+      <value>a3</value>
+      <value>7</value>
+    </row>
+    <row>
+      <value>29</value>
+      <value>a2</value>
+      <value>7</value>
     </row>
   </table>
   <table name="menu_">
@@ -911,6 +931,22 @@
       <value>boss</value>
       <null/>
     </row>
+    <row>
+      <value>12</value>
+      <value>区级用户</value>
+      <value>1</value>
+      <value>区长</value>
+      <value>quzhang</value>
+      <value>22</value>
+    </row>
+    <row>
+      <value>13</value>
+      <value>aaa</value>
+      <value>1</value>
+      <value>测试用户</value>
+      <value>test</value>
+      <value>425</value>
+    </row>
   </table>
   <table name="tour_common_">
     <column>id_</column>
@@ -926,116 +962,32 @@
     <column>type_</column>
     <column>user_id_</column>
     <row>
+      <value>8</value>
+      <value>23</value>
+      <value>4</value>
+      <value>2014-01-09</value>
+      <value>12</value>
+      <value>2013</value>
+      <value>1</value>
+      <value>1385870400000</value>
+      <value>69.0</value>
+      <value>23</value>
+      <value>旅游景区</value>
+      <value>2</value>
+    </row>
+    <row>
       <value>9</value>
-      <value>222</value>
+      <value>333</value>
       <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2013</value>
-      <value>1</value>
-      <value>1385870400000</value>
-      <value>5.0</value>
-      <value>100</value>
-      <value>旅游景区</value>
-      <value>2</value>
-    </row>
-    <row>
-      <value>10</value>
-      <value/>
-      <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2013</value>
-      <value>1</value>
-      <value>1385870400000</value>
-      <value>6.5</value>
-      <value>200</value>
-      <value>民俗旅游</value>
-      <value>4</value>
-    </row>
-    <row>
-      <value>11</value>
-      <value>2</value>
-      <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2011</value>
-      <value>1</value>
-      <value>1322712000000</value>
-      <value>30.0</value>
-      <value>50</value>
-      <value>旅游景区</value>
-      <value>2</value>
-    </row>
-    <row>
-      <value>12</value>
-      <value/>
-      <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2011</value>
-      <value>1</value>
-      <value>1322712000000</value>
-      <value>15.0</value>
-      <value>20</value>
-      <value>民俗旅游</value>
-      <value>4</value>
-    </row>
-    <row>
-      <value>13</value>
-      <value>5</value>
-      <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2012</value>
-      <value>1</value>
-      <value>1354334400000</value>
-      <value>15.0</value>
-      <value>20</value>
-      <value>民俗旅游</value>
-      <value>4</value>
-    </row>
-    <row>
-      <value>14</value>
-      <value>5</value>
-      <value>4</value>
-      <value>2014-01-08</value>
-      <value>12</value>
-      <value>2012</value>
-      <value>1</value>
-      <value>1354334400000</value>
-      <value>15.0</value>
-      <value>50</value>
-      <value>旅游景区</value>
-      <value>2</value>
-    </row>
-    <row>
-      <value>15</value>
-      <null/>
-      <value>4</value>
-      <null/>
-      <value>11</value>
-      <value>2013</value>
-      <value>1</value>
-      <value>1383278400000</value>
-      <value>3.0</value>
-      <value>1</value>
-      <value>旅游景区</value>
-      <value>2</value>
-    </row>
-    <row>
-      <value>16</value>
-      <null/>
-      <value>4</value>
-      <null/>
+      <value>2014-01-09</value>
       <value>11</value>
       <value>2013</value>
       <value>2</value>
       <value>1383278400000</value>
-      <value>35.0</value>
-      <value>11</value>
-      <value>民俗旅游</value>
-      <value>4</value>
+      <value>399.0</value>
+      <value>23</value>
+      <value>旅游景区</value>
+      <value>2</value>
     </row>
   </table>
   <table name="tour_detail_">
@@ -1044,148 +996,40 @@
     <column>name_</column>
     <column>common_id_</column>
     <row>
-      <value>33</value>
-      <value>1.0</value>
-      <value>门票收入</value>
-      <value>9</value>
-    </row>
-    <row>
-      <value>34</value>
-      <value>1.5</value>
-      <value>出售其他商品收入</value>
-      <value>9</value>
-    </row>
-    <row>
-      <value>35</value>
-      <value>2.5</value>
-      <value>餐饮收入</value>
-      <value>9</value>
-    </row>
-    <row>
       <value>36</value>
-      <value>2.0</value>
-      <value>出售和加工农产品收入</value>
-      <value>10</value>
+      <value>23.0</value>
+      <value>门票收入</value>
+      <value>8</value>
     </row>
     <row>
       <value>37</value>
-      <value>2.0</value>
-      <value>餐饮收入</value>
-      <value>10</value>
+      <value>23.0</value>
+      <value>出售其他商品收入</value>
+      <value>8</value>
     </row>
     <row>
       <value>38</value>
-      <value>2.5</value>
-      <value>住宿收入</value>
-      <value>10</value>
+      <value>23.0</value>
+      <value>餐饮收入</value>
+      <value>8</value>
     </row>
     <row>
       <value>39</value>
-      <value>10.0</value>
+      <value>333.0</value>
       <value>门票收入</value>
-      <value>11</value>
+      <value>9</value>
     </row>
     <row>
       <value>40</value>
-      <value>10.0</value>
+      <value>33.0</value>
       <value>出售其他商品收入</value>
-      <value>11</value>
+      <value>9</value>
     </row>
     <row>
       <value>41</value>
-      <value>10.0</value>
+      <value>33.0</value>
       <value>餐饮收入</value>
-      <value>11</value>
-    </row>
-    <row>
-      <value>42</value>
-      <value>5.0</value>
-      <value>出售和加工农产品收入</value>
-      <value>12</value>
-    </row>
-    <row>
-      <value>43</value>
-      <value>5.0</value>
-      <value>餐饮收入</value>
-      <value>12</value>
-    </row>
-    <row>
-      <value>44</value>
-      <value>5.0</value>
-      <value>住宿收入</value>
-      <value>12</value>
-    </row>
-    <row>
-      <value>45</value>
-      <value>5.0</value>
-      <value>出售和加工农产品收入</value>
-      <value>13</value>
-    </row>
-    <row>
-      <value>46</value>
-      <value>5.0</value>
-      <value>餐饮收入</value>
-      <value>13</value>
-    </row>
-    <row>
-      <value>47</value>
-      <value>5.0</value>
-      <value>住宿收入</value>
-      <value>13</value>
-    </row>
-    <row>
-      <value>48</value>
-      <value>5.0</value>
-      <value>门票收入</value>
-      <value>14</value>
-    </row>
-    <row>
-      <value>49</value>
-      <value>5.0</value>
-      <value>出售其他商品收入</value>
-      <value>14</value>
-    </row>
-    <row>
-      <value>50</value>
-      <value>5.0</value>
-      <value>餐饮收入</value>
-      <value>14</value>
-    </row>
-    <row>
-      <value>51</value>
-      <value>1.0</value>
-      <value>门票收入</value>
-      <value>15</value>
-    </row>
-    <row>
-      <value>52</value>
-      <value>1.0</value>
-      <value>出售其他商品收入</value>
-      <value>15</value>
-    </row>
-    <row>
-      <value>53</value>
-      <value>1.0</value>
-      <value>餐饮收入</value>
-      <value>15</value>
-    </row>
-    <row>
-      <value>54</value>
-      <value>11.0</value>
-      <value>出售和加工农产品收入</value>
-      <value>16</value>
-    </row>
-    <row>
-      <value>55</value>
-      <value>12.0</value>
-      <value>餐饮收入</value>
-      <value>16</value>
-    </row>
-    <row>
-      <value>56</value>
-      <value>12.0</value>
-      <value>住宿收入</value>
-      <value>16</value>
+      <value>9</value>
     </row>
   </table>
   <table name="job_">
@@ -5614,6 +5458,17 @@
       <value>4</value>
       <value>186</value>
     </row>
+    <row>
+      <value>425</value>
+      <value>aaa</value>
+      <value>企业</value>
+      <value>aaaa</value>
+      <null/>
+      <null/>
+      <value>测试企业</value>
+      <value>7</value>
+      <value>23</value>
+    </row>
   </table>
   <table name="user_job_">
     <column>user_id_</column>
@@ -5867,6 +5722,10 @@
       <value>68</value>
     </row>
     <row>
+      <value>2</value>
+      <value>68</value>
+    </row>
+    <row>
       <value>1</value>
       <value>69</value>
     </row>
@@ -5949,6 +5808,14 @@
     <row>
       <value>1</value>
       <value>11</value>
+    </row>
+    <row>
+      <value>2</value>
+      <value>12</value>
+    </row>
+    <row>
+      <value>3</value>
+      <value>13</value>
     </row>
   </table>
   <table name="dictionary_">

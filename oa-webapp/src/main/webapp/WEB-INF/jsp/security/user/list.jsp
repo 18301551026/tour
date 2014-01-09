@@ -54,6 +54,7 @@
 					<th>登陆名</th>
 					<th>真实姓名</th>
 					<th>部门</th>
+					<td>部门级别</td>
 					<th>职位</th>
 					<th>操作</th>
 				</tr>
@@ -66,6 +67,7 @@
 						<td>${userName }</td>
 						<td>${realName }</td>
 						<td>${dept.text }</td>
+						<Td>${dept.deptLevel }</Td>
 						<td><c:forEach items="${jobs }" var="j">
           	${j.jobName}&nbsp;
           </c:forEach></td>

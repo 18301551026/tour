@@ -14,10 +14,10 @@ $(function() {
 
 	panels = [ {
 		id : 'p1',
-		title : '新闻',
+		title : '上月同比情况',
 		height : 200,
 		collapsible : true,
-		content : '这是新闻',
+		href : ctx + "/tour/noReported!lastMonthSameCompareList.action",
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {
@@ -50,10 +50,10 @@ $(function() {
 		} ]
 	}, {
 		id : 'p4',
-		title : '事务',
+		title : '上季度同比情况',
 		height : 200,
 		collapsible : true,
-		content : '这是事务',
+		href : ctx + "/tour/noReported!lastQuarterSameCompareList.action",
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {
