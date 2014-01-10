@@ -24,7 +24,7 @@
 </script>
 <body class="editBody">
 	<div class="btn-group btn-group-sm">
-		<button class="btn btn-info btn-sm pull-left" onclick="javascript:location.href='${ctx}/tour/districtSameCompare!districtSameCompare.action'">
+		<button class="btn btn-info btn-sm pull-left" onclick="javascript:location.href='${ctx}/tour/townQuarterSameCompare!townQuarterSameCompare.action'">
 			<span class="glyphicon glyphicon-backward"></span> 返回列表
 		</button>
 		<button id="reportHtmlButton" class="btn btn-info">
@@ -40,7 +40,7 @@
 		<s:hidden name="tempReportDate"></s:hidden>
 	</s:form>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
-	<form method="post" id="deleteForm">
+	<form method="post" id="deleteForm" >
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>

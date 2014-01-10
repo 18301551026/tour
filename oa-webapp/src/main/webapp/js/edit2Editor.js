@@ -108,5 +108,10 @@ $(function() {
 		$(this).remove();
 	})
 	jQuery("#editForm").validationEngine();
-
+	jQuery('#editForm input').attr('data-prompt-position','topLeft');
+	jQuery('#editForm input').data('promptPosition','topLeft');
+	jQuery('#editForm textarea').attr('data-prompt-position','topLeft');
+	jQuery('#editForm textarea').data('promptPosition','topLeft');
+	jQuery('#editForm select').attr('data-prompt-position','topLeft');
+	jQuery('#editForm select').data('promptPosition','topLeft');
 });

@@ -189,7 +189,7 @@
 							</c:if>
 						</td>
 						<td><a 
-							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}&tempReportDate=${year}年${quarter}">详情</a></td>
+							href="${ctx }/tour/townQuarterSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}&tempReportDate=${year}年${quarter}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

@@ -179,7 +179,7 @@
 						</td>
 						<td>
 						<a
-							href="${ctx }/tour/townSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}&tempReportDate=${year }年${month}月">详情</a>
+							href="${ctx }/tour/districtSameCompare!sameCompareToDetail.action?nowIds=${nowIds}&lastIds=${lastIds}&tempReportDate=${year }年${month}月">详情</a>
 						</td>
 					</tr>
 				</s:iterator>
