@@ -1582,7 +1582,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 		}
 		PageResult page=new PageResult();
-		page.setRowCount(modelList.size()/types.size());
+		if(null!=modelList&&modelList.size()!=0){
+			page.setRowCount(modelList.size()/types.size());
+		}
 		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		
@@ -1631,7 +1633,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 		}
 		PageResult page=new PageResult();
-		page.setRowCount(modelList.size()/types.size());
+		if(null!=modelList&&modelList.size()!=0){
+			page.setRowCount(modelList.size()/types.size());
+		}
 		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
@@ -1917,15 +1921,19 @@ public class TourAction extends BaseAction<TourCommon> {
 				.getQuarterSameCompareModels(userIds, tempStartYear, tempEndYear, qu);// 全部数据
 		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
 
-		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
-				.size())); i++) {
-			if (i>(modelList.size()-1)) {
-				break;
+		if (null!=modelList&&modelList.size()!=0) {
+			for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+					.size())); i++) {
+				if (i>(modelList.size()-1)) {
+					break;
+				}
+				resultList.add(modelList.get(i));
 			}
-			resultList.add(modelList.get(i));
 		}
 		PageResult page = new PageResult();
-		page.setRowCount(modelList.size() / types.size());
+		if (null!=modelList&&modelList.size()!=0) {
+			page.setRowCount(modelList.size() / types.size());
+		}
 		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		return "lastQuarterSameCompareList";
@@ -2091,7 +2099,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 		}
 		PageResult page = new PageResult();
-		page.setRowCount(modelList.size() / types.size());
+		if(null!=modelList&&modelList.size()!=0){
+			page.setRowCount(modelList.size()/types.size());
+		}
 		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;
@@ -2147,7 +2157,9 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 		}
 		PageResult page = new PageResult();
-		page.setRowCount(modelList.size() / types.size());
+		if(null!=modelList&&modelList.size()!=0){
+			page.setRowCount(modelList.size()/types.size());
+		}
 		page.setResult(resultList);
 		ActionContext.getContext().put(PAGE, page);
 		return LIST;

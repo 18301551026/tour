@@ -115,14 +115,22 @@ public class TourDaoImpl implements ITourDao {
 				SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
 						sql);
 				List objList = query.list();
-				if (null!=objList&&objList.size()!=0) {
+				if (null!=objList&&objList.size()!=0&&null!=objList.get(0)) {
 					startYear=Integer.parseInt(objList.get(0).toString());
+				}
+				
+				if (startYear==0) {
+					Calendar calendar=Calendar.getInstance();
+					startYear=calendar.get(calendar.YEAR)-1;
 				}
 				sql="select min(report_month_) from tour_common_ as com where report_year_="+startYear;
 				query=sessionFactory.getCurrentSession().createSQLQuery(sql);
 				objList=query.list();
-				if (null!=objList&&objList.size()!=0) {
+				if (null!=objList&&objList.size()!=0&&null!=objList.get(0)) {
 					startMonth=Integer.parseInt(objList.get(0).toString());
+				}
+				if (startMonth==0) {
+					startMonth=1;
 				}
 				
 		}
@@ -531,12 +539,16 @@ public class TourDaoImpl implements ITourDao {
 			SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
 					sql);
 			List objList = query.list();
-			if (null != objList && objList.size() != 0) {
+			if (null != objList && objList.size() != 0&&null!=objList.get(0)) {
 				startDate = Integer.parseInt(objList.get(0).toString());
 			}
+			
 		}
 		nowYear = calendar.get(calendar.YEAR);
 		nowMonth = calendar.get(calendar.MONTH) + 1;
+		if (startDate==0) {
+			startDate=nowYear-1;
+		}
 		for (int i = endDate; i >= startDate; i--) {// 年
 			for (int j = 4; j >= 1; j--) { // 季度
 				if (quarters.contains(j)) {// 如果是要查询的季度
