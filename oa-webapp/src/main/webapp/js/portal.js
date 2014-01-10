@@ -41,7 +41,8 @@ $(function() {
 		title : '资源下载',
 		height : 200,
 		collapsible : true,
-		content : '本系统建议使用火狐浏览器，<a href="'+ctx+'/protal/protal!download.action?tempFileName=fireFox">点击下载火狐浏览器</a>',
+		content : '<br>本系统建议使用谷歌浏览器，<a href="'+ctx+'/tools/chrome.exe">下载谷歌浏览器</a><br><br>'
+			+ '手机客户端下载，<a href="'+ctx+'/tools/tour-android.apk">下载手机客户端</a>',
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {

@@ -55,7 +55,7 @@
 					<th>真实姓名</th>
 					<th>部门</th>
 					<td>部门级别</td>
-					<th>职位</th>
+					<th>角色</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -68,8 +68,8 @@
 						<td>${realName }</td>
 						<td>${dept.text }</td>
 						<Td>${dept.deptLevel }</Td>
-						<td><c:forEach items="${jobs }" var="j">
-          	${j.jobName}&nbsp;
+						<td><c:forEach items="${roles }" var="j">
+          	${j.roleName}&nbsp;
           </c:forEach></td>
 						<td><a href="${ctx}/security/user!toUpdate.action?id=${id}">修改</a>
 						</td>
