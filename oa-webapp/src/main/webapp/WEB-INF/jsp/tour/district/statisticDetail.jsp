@@ -13,7 +13,7 @@
 <%@ include file="/common/include-styles.jsp"%>
 </head>
 <body class="editBody">
-	<button class="btn btn-info btn-sm pull-left" onclick="javascript:location.href='${ctx}/tour/townStatistic!townStatisticList.action?statisticType=2&status=4'">
+	<button class="btn btn-info btn-sm pull-left"  onclick="javascript:location.href='${ctx}/tour/districtStatistic!districtStatisticList.action?statisticType=3'">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>

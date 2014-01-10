@@ -58,23 +58,36 @@ import com.opensymphony.xwork2.ActionContext;
 @Actions({
 		@Action(value = "noReported", className = "tourAction", results = {
 				@Result(name="lastQuarterSameCompareList",location="/WEB-INF/jsp/protal/lastQuarterSameCompareList.jsp"),
+				@Result(name="noData",location="/WEB-INF/jsp/protal/noData.jsp"),
+				@Result(name="lastMonthStatisticList",location="/WEB-INF/jsp/protal/lastStatisticList.jsp"),
+				@Result(name="last5ReportedList",location="/WEB-INF/jsp/protal/last5Reportedlist.jsp"),
 				@Result(name="lastMonthSameCompareList",location="/WEB-INF/jsp/protal/lastMonthSameCompareList.jsp"),
 				@Result(name = "add", location = "/WEB-INF/jsp/tour/factory/add.jsp"),
 				@Result(name = "update", location = "/WEB-INF/jsp/tour/factory/update.jsp"),
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/noReportedList.jsp"),
 				@Result(name = "listAction", type = "redirect", location = "/tour/noReported!findPage.action?statisticType=${@com.lxs.oa.tour.common.StatisticTypeEnum@factory.value}&status=${@com.lxs.oa.tour.common.StatusEnum@notReport.value}") }),
-		@Action(value = "districtList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/list.jsp") }),
-		@Action(value = "districtStatistic", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/statisticList.jsp") }),
+		@Action(value = "districtList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/list.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/district/detail.jsp"),		
+		}),
+		@Action(value = "districtStatistic", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/statisticList.jsp"),
+				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/district/statisticDetail.jsp")
+		}),
 		@Action(value = "reported", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
-		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
+		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp"),
+				@Result(name = "update", location = "/WEB-INF/jsp/tour/town/update.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/detail.jsp"),
+				@Result(name = "listAction", type = "redirect", location = "/tour/townList!findPage.action?statisticType=2&status=3")
+		}),
 		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
 		@Action(value = "townQuarterSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/quarterSameCompareList.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/quarterSameCompareDetail.jsp"),
 				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/town/quarterSelectChart.jsp") }),
 		@Action(value = "districtQuarterSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/district/quarterSameCompareList.jsp"),
+				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/district/quarterSameCompareDetail.jsp"),
 				@Result(name = "toSelectChart", location = "/WEB-INF/jsp/tour/district/quarterSelectChart.jsp") }),
 		@Action(value = "townSameCompare", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/sameCompareList.jsp"),
@@ -88,7 +101,7 @@ import com.opensymphony.xwork2.ActionContext;
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/town/statisticList.jsp"),
 				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/town/statisticDetail.jsp") }) })
 public class TourAction extends BaseAction<TourCommon> {
-
+	private String redirectAddress;
 	@Resource
 	private ITourService tourService;
 	private String deptType;
@@ -366,8 +379,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				userIds.add(tempU.getId());
 			}
 		}
-		startDate=reprotYearAndMonth;
-		endDate=reprotYearAndMonth;
+		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
@@ -416,8 +428,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				userIds.add(tempU.getId());
 			}
 		}
-		startDate=reprotYearAndMonth;
-		endDate=reprotYearAndMonth;
+		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		ActionContext.getContext().put("myList", modelList);
 
@@ -992,8 +1003,7 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 
 		}
-		startDate=reprotYearAndMonth;
-		endDate=reprotYearAndMonth;
+		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
@@ -1046,8 +1056,7 @@ public class TourAction extends BaseAction<TourCommon> {
 			}
 
 		}
-		startDate=reprotYearAndMonth;
-		endDate=reprotYearAndMonth;
+		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		ActionContext.getContext().put("myList", modelList);
 
@@ -1563,12 +1572,14 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		List<SameCompareModel> resultList=new ArrayList<SameCompareModel>();
 		
-		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
-				.size())); i++) {
-			if (i>(modelList.size()-1)) {
-				break;
+		if (null!=modelList&&modelList.size()!=0) {
+			for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+					.size())); i++) {
+				if (i>(modelList.size()-1)) {
+					break;
+				}
+				resultList.add(modelList.get(i));
 			}
-			resultList.add(modelList.get(i));
 		}
 		PageResult page=new PageResult();
 		page.setRowCount(modelList.size()/types.size());
@@ -1610,12 +1621,14 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		List<SameCompareModel> resultList=new ArrayList<SameCompareModel>();
 		
-		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
-				.size())); i++) {
-			if (i>(modelList.size()-1)) {
-				break;
+		if (null!=modelList&&modelList.size()!=0) {
+			for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+					.size())); i++) {
+				if (i>(modelList.size()-1)) {
+					break;
+				}
+				resultList.add(modelList.get(i));
 			}
-			resultList.add(modelList.get(i));
 		}
 		PageResult page=new PageResult();
 		page.setRowCount(modelList.size()/types.size());
@@ -1792,7 +1805,9 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
-		model.setType(u.getDept().getFactoryType().getName());
+		if (null!=u.getDept()&&null!=u.getDept().getFactoryType()) {
+			model.setType(u.getDept().getFactoryType().getName());
+		}
 		model.setReportDate(new Date());
 		model.setReportYear(Integer.parseInt(reprotYearAndMonth.substring(0, 4)
 				.trim()));
@@ -1879,6 +1894,8 @@ public class TourAction extends BaseAction<TourCommon> {
 					}
 				}
 			}
+		}else{
+			return "noData";
 		}
 
 		
@@ -1935,6 +1952,8 @@ public class TourAction extends BaseAction<TourCommon> {
 					}
 				}
 			}
+		}else{
+			return "noData";
 		}
 
 		Calendar calendar=Calendar.getInstance();
@@ -1947,6 +1966,79 @@ public class TourAction extends BaseAction<TourCommon> {
 		page.setResult(modelList);
 		ActionContext.getContext().put(PAGE, page);
 		return "lastMonthSameCompareList";
+	}
+	public String last5ReportedList(){
+		pageSize=5;
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		u=baseService.get(User.class, u.getId());
+		List<Long> userIds = new ArrayList<Long>();
+		Dept d=u.getDept();
+		if (d.getDeptLevel().equals("镇级")) {
+			List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+			for (Dept dept : list) {
+				for (User tempU : dept.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
+		}else if(d.getDeptLevel().equals("区级")){
+			List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+			}
+		}else{
+			return "noData";
+		}
+		DetachedCriteria detachedCriteria=DetachedCriteria.forClass(TourCommon.class);
+		detachedCriteria.createAlias("user", "u");
+		detachedCriteria.add(Restrictions.in("u.id", userIds));
+		detachedCriteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
+		detachedCriteria.addOrder(Order.desc("time"));
+		List<TourCommon> list=baseService.find(detachedCriteria);
+		PageResult page=new PageResult();
+		if (null!=list&&list.size()>5) {
+			List<TourCommon> tempList=new ArrayList<TourCommon>();
+			for(int i=0;i<5;i++){
+				tempList.add(list.get(i));
+			}
+			page.setResult(tempList);
+		}else{
+			page.setResult(list);
+		}
+		
+		
+		ActionContext.getContext().put(PAGE, page);
+		return "last5ReportedList";
+	}
+	public String lastMonthStatisticList(){
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		u=baseService.get(User.class, u.getId());
+		List<Dept> factoryList=new ArrayList<Dept>();
+		Dept d=u.getDept();
+		if (d.getDeptLevel().equals("镇级")) {
+			List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
+			factoryList=list;
+		}else if(d.getDeptLevel().equals("区级")){
+			List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				factoryList.addAll(factoryList);
+			}
+		}else{
+			return "noData";
+		}
+		
+		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
+		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
+		criteria.add(Restrictions.eq("time", TimeUtil.getTimeInMillis("上个月")));
+		Long l=TimeUtil.getTimeInMillis("上个月");
+		PageResult page = tourService.findStatistic(criteria, u.getId(), factoryList);
+		ActionContext.getContext().put(PAGE, page);
+		return "lastMonthStatisticList";
 	}
 	public String quarterChart() {
 
@@ -1989,12 +2081,14 @@ public class TourAction extends BaseAction<TourCommon> {
 				.getQuarterSameCompareModels(userIds, tempStartYear, tempEndYear, qu);// 全部数据
 		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
 
-		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
-				.size())); i++) {
-			if (i>(modelList.size()-1)) {
-				break;
+		if (null!=modelList&&modelList.size()!=0) {
+			for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+					.size())); i++) {
+				if (i>(modelList.size()-1)) {
+					break;
+				}
+				resultList.add(modelList.get(i));
 			}
-			resultList.add(modelList.get(i));
 		}
 		PageResult page = new PageResult();
 		page.setRowCount(modelList.size() / types.size());
@@ -2043,12 +2137,14 @@ public class TourAction extends BaseAction<TourCommon> {
 				.getQuarterSameCompareModels(userIds, tempStartYear, tempEndYear, qu);// 全部数据
 		List<SameCompareModel> resultList = new ArrayList<SameCompareModel>(); // 一页数据
 
-		for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
-				.size())); i++) {
-			if (i>(modelList.size()-1)) {
-				break;
+		if (null!=modelList&&modelList.size()!=0) {
+			for (int i = (start * types.size()); i < (start * types.size() + (pageSize * types
+					.size())); i++) {
+				if (i>(modelList.size()-1)) {
+					break;
+				}
+				resultList.add(modelList.get(i));
 			}
-			resultList.add(modelList.get(i));
 		}
 		PageResult page = new PageResult();
 		page.setRowCount(modelList.size() / types.size());
@@ -2256,5 +2352,11 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 	public void setTempReportDate(String tempReportDate) {
 		this.tempReportDate = tempReportDate;
+	}
+	public String getRedirectAddress() {
+		return redirectAddress;
+	}
+	public void setRedirectAddress(String redirectAddress) {
+		this.redirectAddress = redirectAddress;
 	}
 }

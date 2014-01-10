@@ -26,10 +26,10 @@ $(function() {
 		} ]
 	}, {
 		id : 'p2',
-		title : '邮件',
+		title : '最新上报数据',
 		height : 200,
 		collapsible : true,
-		href : ctx + "/person/receiveBox!getTopNoReadMail.action",
+		href : ctx + "/tour/noReported!last5ReportedList.action",
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {
@@ -62,10 +62,10 @@ $(function() {
 		} ]
 	}, {
 		id : 'p5',
-		title : '今日日程',
+		title : '上月统计',
 		height : 200,
 		collapsible : true,
-		href : ctx + '/person/schedule!getTodayTop5Schedule.action',
+		href : ctx + '/tour/noReported!lastMonthStatisticList.action',
 		tools : [ {
 			iconCls : 'icon-reload',
 			handler : function() {

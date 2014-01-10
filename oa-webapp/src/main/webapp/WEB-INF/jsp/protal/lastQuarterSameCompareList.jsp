@@ -93,6 +93,7 @@
 						</td>
 					</tr>
 				</s:iterator>
+				</tr>
 			</tbody>
 		</table>
 </body>

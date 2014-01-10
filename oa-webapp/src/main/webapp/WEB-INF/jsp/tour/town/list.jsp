@@ -16,6 +16,11 @@
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
+				<v:auth path="/tour/townList!delete.action">
+					<button id="deleteButton" class="btn btn-info">
+					<span class="glyphicon glyphicon-minus"></span> 删除
+				</button>
+				</v:auth>
 				<button id="queryButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
@@ -64,11 +69,13 @@
 			</form>
 		</div>
 	</div>
-	<form method="post" action="${ctx }/tour/reported!delete.action"
+	<form method="post" action="${ctx }/tour/townList!delete.action"
 		id="deleteForm">
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
+					<th class="table_checkbox"><input type="checkbox"
+						id="checkAllCheckBox"></th>
 					<th>时间</th>
 					<th>类型</th>
 					<th>部门</th>
@@ -80,12 +87,19 @@
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
+						<td class="table_checkbox"><input type="checkbox" name="ids"
+							value="${id }" /></td>
 						<td>${reportYear }年${reportMonth }月</td>
 						<td>${type}</td>
 						<td>${user.dept.text }</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
+						<td><a href="${ctx }/tour/townList!toDetail.action?id=${id}">详情</a>
+						&nbsp;
+						<v:auth path="/tour/townList!toUpdate.action">
+						<a href="${ctx}/tour/townList!toUpdate.action?id=${id}">修改</a>
+						</v:auth>
+						</td>
 					</tr>
 				</s:iterator>
 			</tbody>

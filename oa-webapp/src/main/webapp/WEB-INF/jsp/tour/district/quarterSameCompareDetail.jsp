@@ -24,7 +24,7 @@
 </script>
 <body class="editBody">
 	<div class="btn-group btn-group-sm">
-		<button class="btn btn-info btn-sm pull-left" onclick="javascript:location.href='${ctx}/tour/districtSameCompare!districtSameCompare.action'">
+		<button class="btn btn-info btn-sm pull-left" onclick="javascript:location.href='${ctx}/tour/districtQuarterSameCompare!districtQuarterSameCompare.action'">
 			<span class="glyphicon glyphicon-backward"></span> 返回列表
 		</button>
 		<button id="reportHtmlButton" class="btn btn-info">

@@ -86,7 +86,7 @@
 						<Td>${user.dept.text }</Td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
-						<td><a href="${ctx }/tour/reported!toDetail.action?id=${id}">详情</a></td>
+						<td><a href="${ctx }/tour/districtList!toDetail.action?id=${id}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

@@ -47,10 +47,10 @@
 						<Td class="query_input"><input id="d4311"
 							class="form-control" style="width: 45%; display: inline;"
 							type="text" name="startDate" value="${startDate }"
-							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-{%M-1}\'}'})" />&nbsp;至&nbsp;
 							<input id="d4312" type="text" class="form-control" value="${endDate }"
 							style="width: 45%; display: inline;" name="endDate"
-							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
+							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-{%M-1}'})" />
 						</Td>
 					</Tr>
 				</table>

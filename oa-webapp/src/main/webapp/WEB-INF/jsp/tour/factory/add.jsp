@@ -95,7 +95,7 @@ font {
 					for="reprotYearAndMonth">时间：</label>
 				<Td class="query_input" colspan="3"><s:textfield
 						name="reprotYearAndMonth" readonly="true" cssStyle="width:100%"
-						onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'%y-%M'})"
+						onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'%y-{%M-1}'})"
 						placeholder="请选择时间" cssClass="form-control validate[required,funcCall[checkDate]]"
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>

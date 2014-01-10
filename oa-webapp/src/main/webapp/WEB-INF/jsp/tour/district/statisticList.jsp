@@ -101,7 +101,7 @@
 						<Td>${totalPersonCount }</Td>
 						<Td>${totalIncome }</Td>
 						<td><a
-							href="${ctx }/tour/townStatistic!townStatisticListToDetail.action?tourIds=${tourIds}">详情</a></td>
+							href="${ctx }/tour/districtStatistic!townStatisticListToDetail.action?tourIds=${tourIds}">详情</a></td>
 					</tr>
 				</s:iterator>
 			</tbody>

@@ -93,7 +93,7 @@ font {
 </head>
 <body class="editBody">
 	<s:hidden name="reprotYearAndMonth" id="tempReprotYearAndMonth"></s:hidden>
-	<button class="btn btn-info btn-sm pull-left"   onclick="javascript:location.href='${ctx}/tour/noReported!findPage.action?statisticType=1&status=2'">
+	<button class="btn btn-info btn-sm pull-left"    onclick="javascript:location.href='${ctx}/tour/townList!findPage.action?statisticType=2&status=3'">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
 	<div class="btn-group pull-right btn-group-sm">
@@ -101,14 +101,15 @@ font {
 			<span class="glyphicon glyphicon-ok"></span> 保存
 		</button>
 		<button type="button" class="btn btn-info" id="resetButton"
-			actionUrl="${ctx}/tour/noReported!toUpdate.action?id=${id}">
+			actionUrl="${ctx}/tour/reported!toUpdate.action?id=${id}">
 			<span class="glyphicon glyphicon-repeat"></span> 重置
 		</button>
 	</div>
 	<div class="clearfix" style="margin-bottom: 20px;"></div>
-	<form action="${ctx}/tour/noReported!save.action" method="post"
+	<form action="${ctx}/tour/townList!save.action" method="post"
 		id="editForm">
 		<s:hidden name="id"></s:hidden>
+		<s:hidden name="type"></s:hidden>
 		<table class="formTable table">
 			<tr>
 				<Td class="control-label"><label for="reprotYearAndMonth">时间：</label>
