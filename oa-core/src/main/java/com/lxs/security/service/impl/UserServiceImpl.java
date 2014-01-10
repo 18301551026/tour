@@ -77,7 +77,7 @@ public class UserServiceImpl implements IUserService, IUserServiceWs {
 		updateXmppUser(xmppUserName, userName);
 		
 		User user = userDao.login(userName, password);
-		SimplePropertyPreFilter filter = new SimplePropertyPreFilter("id", "dept", "deptType", "realName");
+		SimplePropertyPreFilter filter = new SimplePropertyPreFilter("id", "dept", "deptType", "deptLevel", "realName");
 		return JSON.toJSONString(user, filter);
 	}
 	
