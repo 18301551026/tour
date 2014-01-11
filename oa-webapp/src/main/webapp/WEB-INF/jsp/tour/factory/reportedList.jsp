@@ -26,20 +26,13 @@
 					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
 			</div>
 		</div>
-		<div class="panel-body hide" id="queryPanel">
+		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/reported!findPage.action" method="post">
 				<s:hidden name="status"></s:hidden>
 				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
 					<Tr>
-						<Td class="control-label" style="width: 4%"><label
-							for="address">类型：</label></Td>
-						<Td class="query_input">
-						<s:select list="allFactoryType"  cssClass="form-control"
-						listKey="name" listValue="name"
-						name="deptType" headerKey="" headerValue="全部"
-						></s:select>
 						<%-- <s:select cssClass="form-control"
 								list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
 								name="deptType" headerKey="" headerValue="全部"></s:select> --%></Td>

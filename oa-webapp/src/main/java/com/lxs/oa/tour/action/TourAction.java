@@ -38,6 +38,7 @@ import com.lxs.core.action.BaseAction;
 import com.lxs.core.common.SystemConstant;
 import com.lxs.core.common.TimeUtil;
 import com.lxs.core.common.page.PageResult;
+import com.lxs.oa.tour.common.DeptLevelEnum;
 import com.lxs.oa.tour.common.StatisticTypeEnum;
 import com.lxs.oa.tour.common.StatusEnum;
 import com.lxs.oa.tour.domain.TourCommon;
@@ -47,6 +48,7 @@ import com.lxs.oa.tour.pageModel.SameCompareDetailModel;
 import com.lxs.oa.tour.pageModel.SameCompareModel;
 import com.lxs.oa.tour.pageModel.StatisticReportModel;
 import com.lxs.oa.tour.service.ITourService;
+import com.lxs.security.common.SecurityHolder;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.User;
 import com.lxs.tour.domain.FactoryType;
@@ -104,6 +106,9 @@ public class TourAction extends BaseAction<TourCommon> {
 	private String redirectAddress;
 	@Resource
 	private ITourService tourService;
+	
+	private Long companyId;
+	private Long townId;
 	private String deptType;
 	private String[] labelTexts;
 	private Double[] inputMoneys;
@@ -470,14 +475,29 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 
 		String reportDate = startYear + "";
@@ -494,7 +514,11 @@ public class TourAction extends BaseAction<TourCommon> {
 				reportDate += "四季度";
 			}
 		}
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		parameters.put("reportDate", reportDate);
 		List<Integer> qu = new ArrayList<Integer>();
 		if (null != quarters && quarters.length != 0) {
@@ -547,18 +571,37 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u=baseService.get(User.class, u.getId());
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 		List<Integer> qu = new ArrayList<Integer>();
 		if (null != quarters && quarters.length != 0) {
@@ -585,18 +628,37 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u=baseService.get(User.class, u.getId());
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 		List<Integer> qu = new ArrayList<Integer>();
 		if (null != quarters && quarters.length != 0) {
@@ -659,14 +721,29 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 
 		String reportDate = startYear + "";
@@ -683,7 +760,11 @@ public class TourAction extends BaseAction<TourCommon> {
 				reportDate += "四季度";
 			}
 		}
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName", baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		parameters.put("reportDate", reportDate);
 
 		List<Integer> qu = new ArrayList<Integer>();
@@ -990,18 +1071,36 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u=baseService.get(User.class, u.getId());
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
@@ -1043,18 +1142,36 @@ public class TourAction extends BaseAction<TourCommon> {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
 		u=baseService.get(User.class, u.getId());
-		parameters.put("deptName", u.getDept().getText());
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
 				}
-			}
 
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+
+			}
 		}
 		endDate=startDate;
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
@@ -1153,9 +1270,13 @@ public class TourAction extends BaseAction<TourCommon> {
 				&& (null != endDate && endDate.trim().length() != 0)) {
 			reportDate = endDate;
 		}
-
+		if (null!=townId) {
+			parameters.put("deptName",baseService.get(Dept.class, townId).getText());
+		}else{
+			parameters.put("deptName", u.getDept().getText());
+		}
 		parameters.put("reportDate", reportDate);
-		parameters.put("deptName", u.getDept().getText());
+		
 	}
 
 	/**
@@ -1215,9 +1336,19 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
 		List<Dept> deptList = new ArrayList<Dept>();
-		for (Dept tempDept : u.getDept().getChildren()) {
-			deptList.addAll(tempDept.getChildren());
+		if (null!=townId) {
+			for (Dept tempDept : u.getDept().getChildren()) {
+				deptList.addAll(tempDept.getChildren());
+			}
+		}else{
+			for (Dept tempDept : u.getDept().getChildren()) {
+				if (tempDept.getId().equals(townId)) {
+					deptList.addAll(tempDept.getChildren());
+					break;
+				}
+			}
 		}
+		
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, deptList);
 		// 报表参数
@@ -1264,9 +1395,19 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
 		List<Dept> deptList = new ArrayList<Dept>();
-		for (Dept tempDept : u.getDept().getChildren()) {
-			deptList.addAll(tempDept.getChildren());
+		if (null!=townId) {
+			for (Dept tempDept : u.getDept().getChildren()) {
+				if (tempDept.getId().equals(townId)) {
+					deptList.addAll(tempDept.getChildren());
+					break;
+				}
+			}
+		}else{
+			for (Dept tempDept : u.getDept().getChildren()) {
+				deptList.addAll(tempDept.getChildren());
+			}
 		}
+		
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, deptList);
 		ActionContext.getContext().put("myList", modelList);
@@ -1295,54 +1436,47 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		return downFileName;
 	}
+	
+	/**
+	 * 查询指定企业条件
+	 * @param criteria
+	 */
+	private void findByCompany(DetachedCriteria criteria, Long companyId) {
+		criteria.createAlias("u.dept", "d");
+		criteria.add(Restrictions.eq("d.id", companyId));				
+	}
 
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
 		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
+		u = baseService.get(User.class, u.getId());
+		
+		criteria.createAlias("user", "u");
+		//镇查询企业
+		if (null != companyId) {
+			findByCompany(criteria, companyId);
+		}
 		if (model.getStatisticType().equals( // 企业
 				StatisticTypeEnum.factory.getValue())) {
-			criteria.createAlias("user", "u");
-			criteria.add(Restrictions.eq("u.id", u.getId()));
+			findByCompany(criteria, u.getDept().getId());
 			criteria.add(Restrictions.eq("status", model.getStatus()));
 
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.town.getValue())) { // 镇政府
-			List<Long> userIds = new ArrayList<Long>();
-			u = baseService.get(User.class, u.getId());
 			List<Dept> list = u.getDept().getChildren();// 获得政府下的所有企业
-			for (Dept dept : list) {
-				for (User tempU : dept.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
-				}
-			}
-			if (userIds.size() != 0) {
-				criteria.createAlias("user", "u");
-				criteria.add(Restrictions.in("u.id", userIds));
-			} else {
-				criteria.add(Restrictions.isNull("user"));
-			}
+			findByTown(criteria, list);
+			
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.district.getValue())) {
-			List<Long> userIds = new ArrayList<Long>();
-			u = baseService.get(User.class, u.getId());
-			List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-			for (Dept dept : list) {
-				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-				for (Dept factory : factyList) {
-					for (User tempU : factory.getUsers()) {// 企业中所有用户
-						userIds.add(tempU.getId());
-					}
-				}
-
-			}
-			if (userIds.size() != 0) {
-				criteria.createAlias("user", "u");
-				criteria.add(Restrictions.in("u.id", userIds));
+			//区查询镇
+			if (null != townId) {
+				Dept dept = baseService.get(Dept.class, townId);
+				findByTown(criteria, dept.getChildren());
 			} else {
-				criteria.add(Restrictions.isNull("user"));
+				findByDistrict(criteria, u);
 			}
 
 			criteria.add(Restrictions.eq("status",
@@ -1353,11 +1487,44 @@ public class TourAction extends BaseAction<TourCommon> {
 		}
 		criteria.addOrder(Order.desc("time"));
 		addDataCondition(criteria);
-		Calendar calendar = Calendar.getInstance();
-		// startDate = calendar.get(calendar.YEAR) + "年"
-		// + (calendar.get(calendar.MONTH)) + "月";
-		// endDate = calendar.get(calendar.YEAR) + "年"
-		// + (calendar.get(calendar.MONTH)) + "月";
+	}
+	
+	/**
+	 * 查询区里所有营业数据
+	 * @param criteria
+	 * @param u
+	 */
+	private void findByDistrict(DetachedCriteria criteria, User u) {
+		List<Long> userIds = new ArrayList<Long>();
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		for (Dept dept : list) {
+			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+			for (Dept factory : factyList) {
+				for (User tempU : factory.getUsers()) {// 企业中所有用户
+					userIds.add(tempU.getId());
+				}
+			}
+		}
+		if (userIds.size() != 0) {
+			criteria.add(Restrictions.in("u.id", userIds));
+		}
+	}
+	
+	/**
+	 * 查询指定镇的数据
+	 * @param criteria
+	 * @param list：镇中所有企业
+	 */
+	private void findByTown(DetachedCriteria criteria, List<Dept> list) {
+		List<Long> userIds = new ArrayList<Long>();
+		for (Dept dept : list) {
+			for (User tempU : dept.getUsers()) {// 企业中所有用户
+				userIds.add(tempU.getId());
+			}
+		}
+		if (userIds.size() != 0) {
+			criteria.add(Restrictions.in("u.id", userIds));
+		}
 	}
 
 	/**
@@ -1468,14 +1635,29 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
+	
 			}
-
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+	
+			}
 		}
 		if (userIds.size() != 0) {
 			criteria.createAlias("user", "u");
@@ -1483,7 +1665,6 @@ public class TourAction extends BaseAction<TourCommon> {
 		} else {
 			criteria.add(Restrictions.isNull("user"));
 		}
-
 	}
 
 	/**
@@ -1611,14 +1792,28 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
 			}
-
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
+	
+			}
 		}
 		List<SameCompareModel> modelList=tourService.findSameCompare(userIds, startDate, endDate);
 		List<SameCompareModel> resultList=new ArrayList<SameCompareModel>();
@@ -2034,7 +2229,7 @@ public class TourAction extends BaseAction<TourCommon> {
 			List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
 			for (Dept dept : list) {
 				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-				factoryList.addAll(factoryList);
+				factoryList.addAll(factyList);
 			}
 		}else{
 			return "noData";
@@ -2120,15 +2315,30 @@ public class TourAction extends BaseAction<TourCommon> {
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
-		for (Dept dept : list) {
-			List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
-			for (Dept factory : factyList) {
-				for (User tempU : factory.getUsers()) {// 企业中所有用户
-					userIds.add(tempU.getId());
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					for (Dept factory : factyList) {
+						for (User tempU : factory.getUsers()) {// 企业中所有用户
+							userIds.add(tempU.getId());
+						}
+					}
+					break;
 				}
 			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				for (Dept factory : factyList) {
+					for (User tempU : factory.getUsers()) {// 企业中所有用户
+						userIds.add(tempU.getId());
+					}
+				}
 
+			}
 		}
+		
 		List<Integer> qu = new ArrayList<Integer>();
 		if (null != quarters && quarters.length != 0) {
 			for (int i : quarters) {
@@ -2371,4 +2581,51 @@ public class TourAction extends BaseAction<TourCommon> {
 	public void setRedirectAddress(String redirectAddress) {
 		this.redirectAddress = redirectAddress;
 	}
+	
+	/**
+	 * 查询镇的企业：用于下拉框
+	 * @return
+	 */
+	public List<Dept> getTownCompany() {
+		User currentUser = SecurityHolder.getCurrentUser();
+		User u = baseService.get(User.class, currentUser.getId());
+		return u.getDept().getChildren();
+	}
+	
+	/**
+	 * TODO 如果系统处理多个区，这里代码有错误
+	 * 查询区得企业：用于下拉框
+	 * @return
+	 */
+	public List<Dept> getDistrictCompany() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Dept.class);
+		criteria.add(Restrictions.eq("deptLevel", DeptLevelEnum.company.getValue()));
+		return baseService.find(criteria);
+	}	
+	
+	/**
+	 * TODO 如果系统处理多个区，这里代码有错误
+	 * 查询区的镇
+	 * @return
+	 */
+	public List<Dept> getDistrictTown() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Dept.class);
+		criteria.add(Restrictions.eq("deptLevel", DeptLevelEnum.town.getValue()));
+		return baseService.find(criteria);
+	}		
+	
+	
+	public Long getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+	public Long getTownId() {
+		return townId;
+	}
+	public void setTownId(Long townId) {
+		this.townId = townId;
+	}
+	
 }

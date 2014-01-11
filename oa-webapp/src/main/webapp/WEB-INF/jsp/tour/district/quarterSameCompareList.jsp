@@ -19,7 +19,7 @@
 			parent.$.modalDialog({
 				title : '选择图表同比年份和季度',
 				width : 360,
-				height :240,
+				height :280,
 				href : ctx + '/tour/districtQuarterSameCompare!toSelectChart.action',
 				buttons : [
 						{
@@ -53,7 +53,7 @@
 			parent.$.modalDialog({
 				title : '选择图表同比年份和季度',
 				width : 360,
-				height :240,
+				height :280,
 				href : ctx + '/tour/districtQuarterSameCompare!toSelectChart.action',
 				buttons : [
 						{
@@ -106,7 +106,7 @@
 					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
 			</div>
 		</div>
-		<div class="panel-body hide" id="queryPanel">
+		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/districtQuarterSameCompare!districtQuarterSameCompare.action"
 				method="post">
@@ -123,6 +123,17 @@
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y'})" />
 						</Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 4%"><label
+							for="address">镇：</label></Td>
+						<Td class="query_input" colspan="3">
+						<s:select list="districtTown"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="townId" headerKey="" headerValue="全部"
+						cssStyle="width: 97%;"
+						></s:select>
+						</Td>					
+					</tr>
 					<tr>
 						<Td class="control-label" style="width: 4%"><label>选择季度：</label></Td>
 						<td class="query_input" colspan="3">

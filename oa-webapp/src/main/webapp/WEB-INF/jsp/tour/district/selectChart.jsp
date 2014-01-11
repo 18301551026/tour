@@ -37,11 +37,16 @@
 	})
 </script>
 	<form action="" target="_blank" id="chartForm" method="post" style="padding: 10px;margin-top: 10px;margin-left: 10px;">
-		<s:textfield name="startDate" 
+		时间：<s:textfield name="startDate" 
 			cssStyle="width:230px;"
 			onclick="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'%y-{%M-1}'})"
 			placeholder="请选择时间" cssClass="form-control validate[required]"
-			id="reprotYearAndMonth"></s:textfield>
+			id="reprotYearAndMonth"></s:textfield><Br/>
+		镇：<s:select list="districtTown"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="townId" headerKey="" headerValue="全部"
+		cssStyle="width:240px;">
+		</s:select>
 	</form>
 </body>
 </html>

@@ -15,7 +15,6 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 
 import com.lxs.core.common.TimeUtil;
@@ -71,7 +70,7 @@ public class TourDaoImpl implements ITourDao {
 				}
 			}
 			for (Dept d : deptList) {
-				if (d.getDeptType().equals(str)) {
+				if (null!=d.getDeptType()&&d.getDeptType().equals(str)) {
 					tempNum += 1;
 				}
 			}

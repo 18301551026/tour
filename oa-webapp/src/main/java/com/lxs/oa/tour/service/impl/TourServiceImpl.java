@@ -159,6 +159,7 @@ public class TourServiceImpl implements ITourService, ITourServiceWs {
 
 	private boolean existSameTimeTour(int year, int month, Long userId) {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
+		//FIXME 这里有个bug，应关联部门查询部门编号
 		criteria.createAlias("user", "u");
 		criteria.add(Restrictions.eq("u.id", userId));
 		criteria.add(Restrictions.eq("reportMonth", month));

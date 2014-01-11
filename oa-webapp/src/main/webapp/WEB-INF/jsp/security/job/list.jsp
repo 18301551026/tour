@@ -32,7 +32,7 @@
 					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
 			</div>
 		</div>
-		<div class="panel-body hide" id="queryPanel">
+		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/security/job!findPage.action" method="post">
 				<table class="formTable">

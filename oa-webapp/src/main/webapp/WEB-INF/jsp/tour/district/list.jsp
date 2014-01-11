@@ -26,7 +26,7 @@
 					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
 			</div>
 		</div>
-		<div class="panel-body hide" id="queryPanel">
+		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/districtList!findPage.action" method="post">
 				<s:hidden name="status"></s:hidden>
@@ -53,6 +53,28 @@
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 4%"><label
+							for="address">企业：</label></Td>
+						<Td class="query_input" colspan="3">
+						<s:select list="districtCompany"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="companyId" headerKey="" headerValue="全部"
+						cssStyle="width: 97%;"
+						></s:select>
+						</Td>					
+					</tr>
+					<tr>
+						<Td class="control-label" style="width: 4%"><label
+							for="address">镇：</label></Td>
+						<Td class="query_input" colspan="3">
+						<s:select list="districtTown"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="townId" headerKey="" headerValue="全部"
+						cssStyle="width: 97%;"
+						></s:select>
+						</Td>					
+					</tr>										
 					<%-- <tr>
 						<Td class="control-label" style="width: 3%"><label
 							for="totalPersonNum">企业：</label>

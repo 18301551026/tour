@@ -18,9 +18,9 @@
 				$("#chartButton").click(function(){
 					parent.$.modalDialog({
 						title : '选择图表同比时间',
-						width : 340,
-						height : 160,
-						href : ctx + '/tour/townSameCompare!toSelectChart.action?deptType=区',
+						width : 360,
+						height : 240,
+						href : ctx + '/tour/districtSameCompare!toSelectChart.action?deptType=区',
 						buttons : [
 								{
 									text : 'html查看',
@@ -53,8 +53,8 @@
 					parent.$.modalDialog({
 						title : '选择报表同比时间',
 						width : 360,
-						height : 160,
-						href : ctx + '/tour/townSameCompare!toSelectChart.action?deptType=镇',
+						height : 240,
+						href : ctx + '/tour/districtSameCompare!toSelectChart.action?deptType=镇',
 						buttons : [
 								{
 									text : 'html查看',
@@ -105,7 +105,7 @@
 					class="glyphicon glyphicon-chevron-down pull-right"></span> 查询条件</a>
 			</div>
 		</div>
-		<div class="panel-body hide" id="queryPanel">
+		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
 				action="${ctx}/tour/districtSameCompare!districtSameCompare.action"
 				method="post">
@@ -113,15 +113,26 @@
 					<Tr>
 						<Td class="control-label" style="width: 3%"><label>选择日期：</label></Td>
 						<Td class="query_input" colspan="3"><input id="d4311"
-							class="form-control" style="width: 45%; display: inline;"
+							class="form-control" style="width: 48%; display: inline;"
 							type="text" name="startDate" value="${startDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',maxDate:'#F{$dp.$D(\'d4312\')||\'%y-%M\'}'})" />&nbsp;至&nbsp;
 							<input id="d4312" type="text" class="form-control"
-							style="width: 45%; display: inline;" name="endDate"
+							style="width: 47%; display: inline;" name="endDate"
 							value="${endDate }"
 							onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月',minDate:'#F{$dp.$D(\'d4311\')}',maxDate:'%y-%M'})" />
 						</Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 4%"><label
+							for="address">镇：</label></Td>
+						<Td class="query_input" colspan="3">
+							<s:select list="districtTown"  cssClass="form-control"
+							listKey="id" listValue="text"
+							name="townId" headerKey="" headerValue="全部"
+							cssStyle="width: 97%;"
+							></s:select>
+						</Td>					
+					</tr>
 				</table>
 			</form>
 		</div>

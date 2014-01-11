@@ -46,6 +46,12 @@
 		季度：<s:select list="#{1:'一季度',2:'二季度',3:'三季度',4:'四季度' }" name="quarters" cssStyle="width:240px;" 
 		placeholder="请选择季度" cssClass="form-control validate[required]"
 		>
+		</s:select><br/>
+		镇：<s:select list="districtTown"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="townId" headerKey="" headerValue="全部"
+						cssStyle="width:240px;"
+		>
 		</s:select>
 	</form>
 </body>
