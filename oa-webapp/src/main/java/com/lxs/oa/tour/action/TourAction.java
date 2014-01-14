@@ -119,6 +119,7 @@ public class TourAction extends BaseAction<TourCommon> {
 	private String endDate;
 	private String tourIds;
 	private String tempTourIds[];
+	private Date tempDate;
 
 	// 同比查看详情是用
 	private String nowIds;
@@ -1985,6 +1986,7 @@ public class TourAction extends BaseAction<TourCommon> {
 
 	@Override
 	public void beforeSave(TourCommon model) {
+		System.out.println("dddddddd");
 		Long tempYear = Long.parseLong(reprotYearAndMonth.substring(0, 4)
 				.trim());
 		Integer tempMonth = Integer.parseInt(reprotYearAndMonth.substring(5, 7)
@@ -2626,6 +2628,12 @@ public class TourAction extends BaseAction<TourCommon> {
 	}
 	public void setTownId(Long townId) {
 		this.townId = townId;
+	}
+	public Date getTempDate() {
+		return tempDate;
+	}
+	public void setTempDate(Date tempDate) {
+		this.tempDate = tempDate;
 	}
 	
 }

@@ -53,9 +53,12 @@ public class FactoryTypeAction extends BaseAction<FactoryType> {
 		if (null!=m&&null!=m.getId()) {//修改时修改选项
 			if (null!=beans&&beans.size()!=0) {
 				for(FactoryOption o:beans){
-					FactoryOption tempO=baseService.get(FactoryOption.class, o.getId());
-					tempO.setName(o.getName());
-					baseService.update(tempO);
+					if(null!=o&&null!=o.getName()){
+						FactoryOption tempO=baseService.get(FactoryOption.class, o.getId());
+						tempO.setName(o.getName());
+						baseService.update(tempO);	
+					}
+					
 				}
 			}
 		}
