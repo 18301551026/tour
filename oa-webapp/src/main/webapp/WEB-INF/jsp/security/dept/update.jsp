@@ -10,6 +10,11 @@
 
 </head>
 <body>
+<style type="text/css">
+.hidd {
+	display: none;
+}
+</style>
 	<script type="text/javascript" src="${ctx }/js/dept-update.js"></script>
 	<form id="updateDeptForm" method="post" style="margin: 10px;"
 		role="form">
@@ -17,16 +22,23 @@
 		<label>名称：</label>
 		<s:textfield name="text" cssClass="easyui-validatebox form-control"
 			data-options="required:true" placeholder="请输入名称"></s:textfield>
-		<%--<br />  <label>级别：</label>
-		<s:select list="#{'区级':'区级','镇级':'镇级','企业':'企业' }" name="deptLevel"
-			id="deptLevel" cssClass="form-control"></s:select> --%>
 		<c:if test="${deptLevel=='企业' }">
 			<br class="t" />
 			<label class="t">类型：</label>
-			<%-- <s:select cssClass="form-control t"
-				list="#{'观光园':'观光园','民俗旅游':'民俗旅游','工业旅游':'工业旅游','旅游住宿':'旅游住宿','风景旅游':'风景旅游' }"
-				name="deptType"></s:select> --%>
-			<s:select list="allFactoryType" name="factoryType.id" cssClass="form-control" listKey="id" listValue="name"></s:select>
+			<s:select list="allFactoryType" onchange="isOperate()"  id='allFactoryType' name="factoryType.id" cssClass="form-control" listKey="id" listValue="name"></s:select>
+			<Br class='op hidd' />
+			<label class='op hidd'>是否经营：</label>
+			<input class='op hidd' type="radio"
+				<c:if test="${operate }">
+				 checked="checked"
+				</c:if>
+			 name="operate" value="true"><font  class='op hidd'>是&nbsp;</font>
+			<input class='op hidd' type="radio"
+				<c:if test="${!operate }">
+					 checked="checked"
+				</c:if>
+			 name="operate" value="false"><font class='op hidd'>否</font>
+			 <Br class='op hidd' />
 		</c:if>
 		<br /> <label>描述：</label>
 		<s:textarea name="deptDesc" cssClass="form-control"

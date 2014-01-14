@@ -43,6 +43,7 @@ public class TourCommon implements Serializable {
 	private User user;
 	private String type;
 	private Integer quarter;//季度
+	private Integer dxNum;//招徕大兴消费人次 
 
 	@Column(name = "type_")
 	public String getType() {
@@ -177,6 +178,14 @@ public class TourCommon implements Serializable {
 
 	public void setQuarter(Integer quarter) {
 		this.quarter = quarter;
+	}
+
+	public Integer getDxNum() {
+		return dxNum;
+	}
+
+	public void setDxNum(Integer dxNum) {
+		this.dxNum = dxNum;
 	}
 
 }

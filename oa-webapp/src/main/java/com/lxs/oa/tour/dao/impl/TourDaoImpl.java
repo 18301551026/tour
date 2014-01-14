@@ -240,6 +240,9 @@ public class TourDaoImpl implements ITourDao {
 				userIds += (u.getId() + ",");
 			}
 		}
+		if (userIds.trim().length()==0) {
+			return list;
+		}
 		Calendar calendar = Calendar.getInstance();
 
 		Integer startYear = calendar.get(calendar.YEAR);
@@ -258,8 +261,9 @@ public class TourDaoImpl implements ITourDao {
 
 		StringBuffer sql = new StringBuffer(
 				"SELECT c.type_,d.name_,SUM(d.money_) FROM tour_detail_ d INNER JOIN tour_common_ c ON c.id_ = d.common_id_");
-		sql.append(" where c.user_id_ in (  "
-				+ userIds.substring(0, userIds.length() - 1));
+		sql.append(" where ");
+		sql.append(" c.user_id_ in (  "
+					+ userIds.substring(0, userIds.length() - 1));
 		sql.append(" ) and  ");
 		sql.append(" c.long_time_ >= "
 				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
@@ -288,9 +292,10 @@ public class TourDaoImpl implements ITourDao {
 			list.add(m);
 		}
 		StringBuffer incomeSql = new StringBuffer(
-				"SELECT type_,SUM(total_income_), SUM(total_person_num_) FROM tour_common_ as c ");
-		incomeSql.append(" where c.user_id_ in (  "
-				+ userIds.substring(0, userIds.length() - 1));
+				"SELECT type_,SUM(total_income_), SUM(total_person_num_), SUM(dxNum) FROM tour_common_ as c ");
+		incomeSql.append(" where ");
+		incomeSql.append(" c.user_id_ in (  "
+					+ userIds.substring(0, userIds.length() - 1));
 		incomeSql.append(" ) and  ");
 		incomeSql.append(" c.long_time_ >= "
 				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
@@ -303,16 +308,28 @@ public class TourDaoImpl implements ITourDao {
 		List<Object[]> totalList = query1.list();
 		for (StatisticReportModel m : list) {// 添加单位个数
 			Long factoryNum = 0l;
+			Long operateNum=0l;
 			for (Dept d : deptList) {
 				if (m.getType_().equals(d.getDeptType())) {
 					factoryNum += 1;
 				}
 			}
+			if (m.getType_().equals("民俗旅游")) {//添加经营户
+				for (Dept d : deptList) {
+					if (d.isOperate()&&d.getDeptType().equals("民俗旅游")) {
+						operateNum+=1;
+					}
+				}
+			}
+			m.setOperate_num(operateNum);
 			m.setDept_num_(factoryNum);
 			for (Object[] obj : totalList) {
 				if (m.getType_().equals(obj[0].toString())) {
 					m.setSum_money_(Double.parseDouble(obj[1].toString()));
 					m.setPerson_num_(Long.parseLong(obj[2].toString()));
+					if (null!=obj[3]) {
+						m.setDx_num_(Long.parseLong(obj[3].toString()));
+					}
 				}
 			}
 		}

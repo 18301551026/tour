@@ -22,7 +22,30 @@
 			width : 550
 		});
 		$(".panel .combo-p").css("width", '362px');
-	})
+		
+		
+	});
+	function checkUser(field, rules, i, options){
+			var userName = field.val();
+			var result;
+			if (userName) {
+				$.ajax({
+						type : "POST",
+						async: false,
+						url : ctx
+								+ "/security/user!checkUserIsRepeat.action",
+						data : "userName="
+								+ userName,
+						success : function(msg) {
+							if (msg == '存在') {
+								options.allrules.validate2fields.alertText="用户名"+ userName+ "已经存在了，请更换用户名"
+								result= options.allrules.validate2fields.alertText;
+							}
+					}
+						});
+			}
+			return result;
+		}
 </script>
 <body class="editBody">
 	<button class="btn btn-info btn-sm pull-left"    onclick="javascript:location.href='${ctx}/security/user!findPage.action'">
@@ -43,7 +66,7 @@
 			<tr>
 				<Td class="control-label" style="width: 3%"><label for="userName">登录名：</label></Td>
 				<Td class="query_input" colspan="3"><input type="text" name="userName"
-					placeholder="请输入登陆名" class="form-control validate[required]"
+					placeholder="请输入登陆名" class="form-control validate[required,funcCall[checkUser]]"
 					id="userName"></Td>
 				
 			</tr>

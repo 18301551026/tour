@@ -42,6 +42,7 @@ public class Dept implements Serializable {
 	private String deptType;
 	private String deptLevel;
 	private FactoryType factoryType;
+	private boolean operate;//是否经营
 	@Column(name="dept_type_")
 	public String getDeptType() {
 		return deptType;
@@ -165,5 +166,13 @@ public class Dept implements Serializable {
 
 	public void setFactoryType(FactoryType factoryType) {
 		this.factoryType = factoryType;
+	}
+
+	public boolean isOperate() {
+		return operate;
+	}
+
+	public void setOperate(boolean operate) {
+		this.operate = operate;
 	}
 }

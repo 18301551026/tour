@@ -110,7 +110,19 @@ public class TimeUtil {
 		System.out.println(d);
 		String strDate=new SimpleDateFormat("yyyy年MM月dd日").format(d);
 		System.out.println(strToDate(strDate, "yyyy年MM月dd日"));
+		Calendar calendar=Calendar.getInstance();
+		int year=2012;
+		int month=4;
+		int day=3;
+		calendar.set(2012,4,1,0,0,0);
+		System.out.println(calendar.get(calendar.MILLISECOND));
+		System.out.println(calendar.getTime());
+		Long l=getTimeInMillis("2013年12月");
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(l));		
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(1385870400000l));
+		
 	}
+
 	/**
 	 * 
 	 * @param year
@@ -177,7 +189,7 @@ public class TimeUtil {
 		// 1=星期日 7=星期六，其他类推
 		return new SimpleDateFormat("EEEE").format(c.getTime());
 	}
-
+	
 	/**
 	 * 将短时间格式字符串转换为时间 yyyy-MM-dd
 	 * 

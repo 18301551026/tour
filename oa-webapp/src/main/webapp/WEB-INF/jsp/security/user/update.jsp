@@ -21,8 +21,35 @@
 			width : 550
 		});
 	})
+	function checkUser(field, rules, i, options){
+			var userName = field.val();
+			var tempUserName=$("#tempUserName").val();
+			var result;
+			if(userName!=tempUserName){
+				if (userName) {
+					$.ajax({
+							type : "POST",
+							async: false,
+							url : ctx
+									+ "/security/user!checkUserIsRepeat.action",
+							data : "userName="
+									+ userName,
+							success : function(msg) {
+								if (msg == '存在') {
+									options.allrules.validate2fields.alertText="用户名"+ userName+ "已经存在了，请更换用户名"
+									result= options.allrules.validate2fields.alertText;
+								}
+						}
+							});
+				}
+			}else{
+				return true;
+			}
+			return result;
+		}
 </script>
 <body class="editBody">
+	<s:hidden name="userName" id="tempUserName"></s:hidden>
 	<button class="btn btn-info btn-sm pull-left"    onclick="javascript:location.href='${ctx}/security/user!findPage.action'">
 		<span class="glyphicon glyphicon-backward"></span> 返回列表
 	</button>
@@ -44,10 +71,10 @@
 			<tr>
 				<Td class="control-label"><label for="userName">登录名：</label></Td>
 				<Td class="query_input"><s:textfield name="userName"
-						placeholder="请输入登陆名" cssClass="form-control validate[required]"
+						placeholder="请输入登陆名" cssClass="form-control validate[required,funcCall[checkUser]]"
 						id="userName"></s:textfield></Td>
 				<Td class="control-label"><label for="pwd">密码：</label></Td>
-				<Td class="query_input"><s:password name="password" value="%{password}"
+				<Td class="query_input"><s:password name="password"
 						placeholder="请输入密码" cssClass="form-control validate[required]"
 						id="pwd"></s:password></Td>
 			</tr>
