@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.junit.Test;
+
 /**
  * @since 获得关于日期【常用】
  * */
@@ -85,26 +87,21 @@ public class TimeUtil {
 		time=calendar.getTimeInMillis();
 		return time;
 	}
+	@Test
 	public void test(){
-//		int year=2013;
-//		int month=12;
-//		Calendar calendar=Calendar.getInstance();
-//		calendar.set(calendar.YEAR, year);
-//		calendar.set(calendar.MONTH, month-1);
-//		calendar.set(calendar.DATE, 1);
-//		calendar.set(calendar.HOUR, 0);
-//		calendar.set(calendar.MINUTE, 0);
-//		calendar.set(calendar.SECOND, 0);
-//		calendar.set(calendar.MILLISECOND, 0);
-//		
-//		String strDate=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(calendar.getTime());
-//		System.out.println(strDate);
-//		Long longDate=calendar.getTimeInMillis();
-//		System.out.println(longDate);
+		Calendar calendar=Calendar.getInstance();
+		int year=2012;
+		int month=4;
+		int day=3;
+		calendar.set(2012,4,1,0,0,0);
+		System.out.println(calendar.get(calendar.MILLISECOND));
+		System.out.println(calendar.getTime());
+		Long l=getTimeInMillis("2013年12月");
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(l));		
+		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(1385870400000l));
 		
-		Long longTime=TimeUtil.getTimeInMillis("2014年01月");
-		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(longTime));
 	}
+
 	/**
 	 * 
 	 * @param year
@@ -171,7 +168,7 @@ public class TimeUtil {
 		// 1=星期日 7=星期六，其他类推
 		return new SimpleDateFormat("EEEE").format(c.getTime());
 	}
-
+	
 	/**
 	 * 将短时间格式字符串转换为时间 yyyy-MM-dd
 	 * 

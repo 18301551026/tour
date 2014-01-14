@@ -95,6 +95,7 @@
 					<th>时间</th>
 					<th>类型</th>
 					<th>部门</th>
+					<th>所属镇</th>
 					<th>接待人次&nbsp;<font color="green">(人次)</font></th>
 					<th>总收入&nbsp;<font color="green">(万元)</font></th>
 					<th>操作</th>
@@ -106,6 +107,7 @@
 						<td>${reportYear }年${reportMonth }月</td>
 						<td>${type}</td>
 						<Td>${user.dept.text }</Td>
+						<Td>${user.dept.parent.text }</Td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
 						<td><a href="${ctx }/tour/districtList!toDetail.action?id=${id}">详情</a></td>

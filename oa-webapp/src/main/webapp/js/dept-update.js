@@ -30,4 +30,14 @@ $(function() {
 			parent.$.modalDialog.handler.dialog('close');
 		}
 	});
+	 isOperate();
 })
+function isOperate(){
+	var sel=document.getElementById('allFactoryType');   
+	var text=sel.options[sel.selectedIndex].text;
+	if(text=='民俗旅游'){
+		$(".op").removeClass('hidd');
+	}else{
+		$(".op").addClass('hidd');
+	}
+}

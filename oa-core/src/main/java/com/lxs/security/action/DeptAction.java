@@ -10,6 +10,7 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -45,6 +46,8 @@ public class DeptAction extends BaseAction<Dept> {
 		return list;
 		
 	}
+		
+	
 	@Override
 	public void beforeSave(Dept model) {
 		if (null!=model.getFactoryType()&&null!=model.getFactoryType().getId()) {
@@ -79,7 +82,10 @@ public class DeptAction extends BaseAction<Dept> {
 		if (null!=d.getFactoryType()&&null!=d.getFactoryType().getId()) {
 			FactoryType t=baseService.get(FactoryType.class, d.getFactoryType().getId());
 			d.setDeptType(t.getName());
-		}		
+		}
+		if (!d.getDeptType().equals("民俗旅游")) {
+			d.setOperate(false);
+		}
 		baseService.save(d);
 		SimplePropertyPreFilter filter = new SimplePropertyPreFilter(Menu.class);
 		filter.getExcludes().add("children");

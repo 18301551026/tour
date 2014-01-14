@@ -119,11 +119,25 @@ font {
 						id="reprotYearAndMonth"></s:textfield></Td>
 			</tr>
 			<tr>
-				<Td class="control-label" style="width: 3%;"><label for="totalPersonNum">接待人次：</label>
-				<Td class="query_input" colspan="3"><s:textfield name="totalPersonNum"
-						placeholder="请输入接待人次" cssStyle="width:94%" cssClass="form-control  validate[required,custom[integer],min[0]]"
-						id="totalPersonNum"></s:textfield> <font>(人次)</font></Td>
-				
+				<Td class="control-label" style="width: 3%"><label
+					for="totalPersonNum">接待人次：</label>
+				<Td class="query_input"
+					<c:if test="${type!='旅行社'}">
+					 colspan="3"
+					</c:if>>
+					<s:textfield
+						name="totalPersonNum" placeholder="请输入接待人次"
+						cssClass="form-control validate[required,custom[integer],min[0]]" id="totalPersonNum"  
+					cssStyle="width:91%">
+					</s:textfield> <font>(人次)</font></Td>
+				<c:if test="${type=='旅行社'}">
+					<Td class="control-label" style="width: 8%"><label
+						for="dxNum">招徕大兴人次：</label>
+					<Td class="query_input"><s:textfield
+							name="dxNum" placeholder="请输入接待人次" id='dxNum'
+							cssClass="form-control validate[required,custom[integer],min[0]]" 
+							></s:textfield> <font>(人次)</font></Td>
+			</c:if>
 			</tr>
 			<c:forEach begin="0" end="${detailNum-1 }" step="1" var="i">
 				<c:if test="${i%2==0 }">

@@ -37,9 +37,24 @@
 				<table class="formTable">
 					<Tr>
 						<Td class="control-label"><label for="userName">用户名称：</label></Td>
-						<Td class="query_input"><s:textfield name="userName"
+						<Td class="query_input" colspan="3"><s:textfield name="userName"
 								cssClass="form-control" id="userName"></s:textfield></Td>
 					</Tr>
+					<tr>
+						<Td class="control-label" style="width: 5%"><label
+							for="address">镇：</label></Td>
+						<Td class="query_input">
+						<s:select list="districtTown"  cssClass="form-control"
+						listKey="id" listValue="text"
+						name="townId" headerKey="" headerValue="全部"
+						></s:select>
+						</Td>
+						<Td class="control-label" style="width: 5%"><label
+							for="address">企业名称：</label></Td>
+						<Td class="query_input">
+						<s:textfield name="factoryName" cssClass="form-control" ></s:textfield>
+						</Td>					
+					</tr>
 				</table>
 			</form>
 		</div>
@@ -53,6 +68,7 @@
 						id="checkAllCheckBox"></th>
 					<th>登陆名</th>
 					<th>真实姓名</th>
+					<th>所属镇</th>
 					<th>部门</th>
 					<td>部门级别</td>
 					<th>角色</th>
@@ -66,11 +82,19 @@
 							value="${id }" /></td>
 						<td>${userName }</td>
 						<td>${realName }</td>
+						<Td>
+						<c:if test="${dept.deptLevel=='企业' }">
+							${dept.parent.text }
+						</c:if>
+						<c:if test="${dept.deptLevel!='企业' }">
+							----
+						</c:if>
+						</Td>
 						<td>${dept.text }</td>
 						<Td>${dept.deptLevel }</Td>
 						<td><c:forEach items="${roles }" var="j">
-          	${j.roleName}&nbsp;
-          </c:forEach></td>
+				          	${j.roleName}&nbsp;
+				          </c:forEach></td>
 						<td><a href="${ctx}/security/user!toUpdate.action?id=${id}">修改</a>
 						</td>
 					</tr>

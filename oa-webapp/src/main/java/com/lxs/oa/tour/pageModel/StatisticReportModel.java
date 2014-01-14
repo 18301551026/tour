@@ -10,6 +10,8 @@ public class StatisticReportModel {
 	private Long dept_num_;
 	private Long person_num_;
 	private Double sum_money_;
+	private Long operate_num;
+	private Long dx_num_;
 	private Double money_;
 	private String unit_;
 	public String getType_() {
@@ -54,4 +56,17 @@ public class StatisticReportModel {
 	public void setUnit_(String unit_) {
 		this.unit_ = unit_;
 	}
+	public Long getOperate_num() {
+		return operate_num;
+	}
+	public void setOperate_num(Long operate_num) {
+		this.operate_num = operate_num;
+	}
+	public Long getDx_num_() {
+		return dx_num_;
+	}
+	public void setDx_num_(Long dx_num_) {
+		this.dx_num_ = dx_num_;
+	}
+	
 }

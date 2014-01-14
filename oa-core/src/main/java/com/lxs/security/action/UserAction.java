@@ -48,7 +48,8 @@ import com.opensymphony.xwork2.ActionContext;
 
 })
 public class UserAction extends BaseAction<User> {
-
+	private Long townId;
+	private String factoryName="";
 	@Resource
 	private IUserService userService;
 
@@ -59,15 +60,38 @@ public class UserAction extends BaseAction<User> {
 	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
-
+	/**
+	 * TODO 如果系统处理多个区，这里代码有错误
+	 * 查询区的镇
+	 * @return
+	 */
+	public List<Dept> getDistrictTown() {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Dept.class);
+		criteria.add(Restrictions.eq("deptLevel","镇级"));
+		return baseService.find(criteria);
+	}	
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
+		criteria.createAlias("dept", "d");
+		criteria.add(Restrictions.like("d.text", factoryName.trim(),MatchMode.ANYWHERE));
+		if (null!=townId) {//添加镇查询条件
+			criteria.createAlias("d.parent", "pd");
+			criteria.add(Restrictions.eq("pd.id", townId));
+		}
+		
 		if (null != model.getUserName() && !"".equals(model.getUserName())) {
 			criteria.add(Restrictions.like("userName", model.getUserName(),
 					MatchMode.ANYWHERE));
 		}
 	}
-
+	public void checkUserIsRepeat(){
+		DetachedCriteria criteria=DetachedCriteria.forClass(User.class);
+		criteria.add(Restrictions.eq("userName", model.getUserName()));
+		List<User> list=baseService.find(criteria);
+		if (null!=list&&list.size()!=0) {
+			getOut().print("存在");
+		}
+	}
 	public void getCurrentUserToModifyPassword()
 			throws JsonGenerationException, JsonMappingException, IOException {
 		User u = (User) ServletActionContext.getContext().getSession()
@@ -189,5 +213,18 @@ public class UserAction extends BaseAction<User> {
 	public void setJobId(Long jobId) {
 		this.jobId = jobId;
 	}
+	public Long getTownId() {
+		return townId;
+	}
+	public void setTownId(Long townId) {
+		this.townId = townId;
+	}
+	public String getFactoryName() {
+		return factoryName;
+	}
+	public void setFactoryName(String factoryName) {
+		this.factoryName = factoryName;
+	}
+	
 
 }

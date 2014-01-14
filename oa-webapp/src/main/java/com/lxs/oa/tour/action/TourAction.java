@@ -1243,10 +1243,26 @@ public class TourAction extends BaseAction<TourCommon> {
 		u = baseService.get(User.class, u.getId());
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, u.getDept().getChildren());
-		ActionContext.getContext().put("myList", modelList);
-
+		List<StatisticReportModel> mainList=new ArrayList<StatisticReportModel>();
+		List<StatisticReportModel> subList=new ArrayList<StatisticReportModel>();
+		for(int i=0;i<modelList.size();i++){
+			StatisticReportModel reportModel=modelList.get(i);
+			if (reportModel.getType_().equals("旅行社")) {
+				subList.add(reportModel);
+			}else if(reportModel.getType_().equals("民俗旅游")){
+				subList.add(reportModel);
+			}else{
+				mainList.add(reportModel);
+			}
+		}
+		ActionContext.getContext().put("myList", mainList);
 		addParameters();
-
+		//报表参数
+        String path = ServletActionContext.getServletContext().getRealPath("/") + "reports/";
+		parameters.put("SUBREPORT_DIR", path);
+		Map<Object, Object> subMap=new HashMap<Object, Object>();
+		subMap.put("subList", subList);
+		parameters.put("subMap", subMap);
 		return reprotType;
 	}
 
@@ -1293,12 +1309,31 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
-		// 报表参数
+		
+		List<StatisticReportModel> mainList=new ArrayList<StatisticReportModel>();
+		List<StatisticReportModel> subList=new ArrayList<StatisticReportModel>();
+		for(int i=0;i<modelList.size();i++){
+			StatisticReportModel reportModel=modelList.get(i);
+			if (reportModel.getType_().equals("旅行社")) {
+				subList.add(reportModel);
+			}else if(reportModel.getType_().equals("民俗旅游")){
+				subList.add(reportModel);
+			}else{
+				mainList.add(reportModel);
+			}
+		}
+		
 		addParameters();
-
+		//报表参数
+		parameters.put("SUBREPORT_DIR", path);
+		Map<Object, Object> subMap=new HashMap<Object, Object>();
+		subMap.put("subList", subList);
+		parameters.put("subMap", subMap);
+		
+		
 		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
 		JRBeanCollectionDataSource dataSource = null;
-		dataSource = new JRBeanCollectionDataSource(modelList);
+		dataSource = new JRBeanCollectionDataSource(mainList);
 		JRDocxExporter exporter = new JRDocxExporter(
 				DefaultJasperReportsContext.getInstance());
 		JasperPrint jasperPrint = JasperFillManager.fillReport(path
@@ -1336,30 +1371,44 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		u = baseService.get(User.class, u.getId());
 		List<Dept> deptList = new ArrayList<Dept>();
-		if (null!=townId) {
+		//FIXME 确认修改：导出word报错
+		if (null == townId) {
 			for (Dept tempDept : u.getDept().getChildren()) {
 				deptList.addAll(tempDept.getChildren());
 			}
 		}else{
-			for (Dept tempDept : u.getDept().getChildren()) {
-				if (tempDept.getId().equals(townId)) {
-					deptList.addAll(tempDept.getChildren());
-					break;
-				}
-			}
+			Dept townDept = baseService.get(Dept.class, townId);
+			deptList.addAll(townDept.getChildren());
 		}
 		
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, deptList);
-		// 报表参数
 		String path = ServletActionContext.getServletContext().getRealPath("/")
 				+ "reports/";
-
+		
+		List<StatisticReportModel> mainList=new ArrayList<StatisticReportModel>();
+		List<StatisticReportModel> subList=new ArrayList<StatisticReportModel>();
+		for(int i=0;i<modelList.size();i++){
+			StatisticReportModel reportModel=modelList.get(i);
+			if (reportModel.getType_().equals("旅行社")) {
+				subList.add(reportModel);
+			}else if(reportModel.getType_().equals("民俗旅游")){
+				subList.add(reportModel);
+			}else{
+				mainList.add(reportModel);
+			}
+		}
+		
 		addParameters();
+		//报表参数
+		parameters.put("SUBREPORT_DIR", path);
+		Map<Object, Object> subMap=new HashMap<Object, Object>();
+		subMap.put("subList", subList);
+		parameters.put("subMap", subMap);
 		String fileName = new String("镇域旅游发展.docx".getBytes("GBK"), "ISO8859_1");
 		FileBufferedOutputStream fbos = new FileBufferedOutputStream();
 		JRBeanCollectionDataSource dataSource = null;
-		dataSource = new JRBeanCollectionDataSource(modelList);
+		dataSource = new JRBeanCollectionDataSource(mainList);
 		JRDocxExporter exporter = new JRDocxExporter(
 				DefaultJasperReportsContext.getInstance());
 		JasperPrint jasperPrint = JasperFillManager.fillReport(path
@@ -1410,10 +1459,31 @@ public class TourAction extends BaseAction<TourCommon> {
 		
 		List<StatisticReportModel> modelList = tourService.getReportList(
 				startDate, endDate, deptList);
-		ActionContext.getContext().put("myList", modelList);
-
+		
+		
+		String path = ServletActionContext.getServletContext().getRealPath("/")
+				+ "reports/";
+		
+		List<StatisticReportModel> mainList=new ArrayList<StatisticReportModel>();
+		List<StatisticReportModel> subList=new ArrayList<StatisticReportModel>();
+		for(int i=0;i<modelList.size();i++){
+			StatisticReportModel reportModel=modelList.get(i);
+			if (reportModel.getType_().equals("旅行社")) {
+				subList.add(reportModel);
+			}else if(reportModel.getType_().equals("民俗旅游")){
+				subList.add(reportModel);
+			}else{
+				mainList.add(reportModel);
+			}
+		}
+		
 		addParameters();
-
+		//报表参数
+		parameters.put("SUBREPORT_DIR", path);
+		Map<Object, Object> subMap=new HashMap<Object, Object>();
+		subMap.put("subList", subList);
+		parameters.put("subMap", subMap);
+		ActionContext.getContext().put("myList", mainList);
 		return reprotType;
 	}
 
@@ -1673,9 +1743,9 @@ public class TourAction extends BaseAction<TourCommon> {
 	 * @return
 	 */
 	public String districtStatisticList() {
-		User user = (User) ActionContext.getContext().getSession()
+		User u = (User) ActionContext.getContext().getSession()
 				.get(SystemConstant.CURRENT_USER);
-		user = baseService.get(User.class, user.getId());
+		u = baseService.get(User.class, u.getId());
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		districtAddCondition(criteria);
@@ -1691,10 +1761,26 @@ public class TourAction extends BaseAction<TourCommon> {
 
 		}
 		List<Dept> deptList = new ArrayList<Dept>();
-		for (Dept d1 : user.getDept().getChildren()) {
-			deptList.addAll(d1.getChildren());
+//		for (Dept d1 : user.getDept().getChildren()) {
+//			deptList.addAll(d1.getChildren());
+//		}
+		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
+		if (null!=townId) {
+			for (Dept dept : list) {
+				if (dept.getId().equals(townId)) {
+					List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+					deptList=factyList;
+					break;
+				}
+	
+			}
+		}else{
+			for (Dept dept : list) {
+				List<Dept> factyList = dept.getChildren();// 获得镇下面的所有公司
+				deptList.addAll(factyList);
+			}
 		}
-		PageResult page = tourService.findStatistic(criteria, user.getId(),
+		PageResult page = tourService.findStatistic(criteria, u.getId(),
 				deptList);
 		ActionContext.getContext().put(PAGE, page);
 
@@ -1723,6 +1809,8 @@ public class TourAction extends BaseAction<TourCommon> {
 				&& null != u.getDept().getFactoryType().getOptions()) {
 			ActionContext.getContext().put("factoryOptions",
 					u.getDept().getFactoryType().getOptions());
+			ActionContext.getContext().put("factoryType",
+					u.getDept().getFactoryType().getName());
 		}
 	}
 

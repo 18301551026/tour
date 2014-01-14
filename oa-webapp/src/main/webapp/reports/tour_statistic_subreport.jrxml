@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tour_statistic_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="20" uuid="ec8557fc-4151-4892-92db-ed291f2f034d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="type_" class="java.lang.String"/>
+	<field name="name_" class="java.lang.String"/>
+	<field name="dept_num_" class="java.lang.Long"/>
+	<field name="person_num_" class="java.lang.Long"/>
+	<field name="sum_money_" class="java.lang.Double"/>
+	<field name="operate_num" class="java.lang.Long"/>
+	<field name="money_" class="java.lang.Double"/>
+	<field name="unit_" class="java.lang.String"/>
+	<field name="dx_num_" class="java.lang.Long"/>
+	<group name="type">
+		<groupExpression><![CDATA[$F{type_}]]></groupExpression>
+		<groupHeader>
+			<band height="120">
+				<textField>
+					<reportElement uuid="c3c03542-e6b6-451e-9226-4356dffc8f9e" x="1" y="0" width="240" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{type_}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="c2321978-28b0-494c-af38-e8f132aa9baf" x="27" y="20" width="214" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement markup="none"/>
+					<text><![CDATA[数量]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="09b84d13-bc46-4416-bd50-e44063dce24b" x="27" y="60" width="214" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[接待人数]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="ab823129-a38e-47e7-bd71-48d9eb373f46" x="27" y="100" width="214" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[总收入]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3807b831-31df-4b50-8452-86f3bc0d1c2b" x="241" y="0" width="125" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="0a80414c-b1eb-437f-9880-e40c64cdfab4" x="49" y="80" width="192" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression><![CDATA[($F{dx_num_}==null||$F{dx_num_}==0l)?"/":"其中招徕大兴消费人次"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="767d37b4-a51e-49cd-842d-f9b9b7c5c47e" x="241" y="20" width="125" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{dept_num_}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="2ae84544-76da-4c14-8719-bf17923114ef" x="241" y="80" width="125" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{dx_num_}==null||$F{dx_num_}==0l)?"/":$F{dx_num_}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="547ada74-414f-4c25-aba9-a4e5491ad961" x="241" y="60" width="125" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{person_num_}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="7d9d42bb-75d1-45d5-b2b9-bbc4904ada96" x="241" y="100" width="125" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{sum_money_}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="cc0860de-aa40-497f-bb85-d5602ca5d74c" x="366" y="0" width="115" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="85cb362c-61b8-410e-92fe-3d1cc93a9adb" x="366" y="20" width="115" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[个]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="e454e3ec-89dd-4cb3-9c4a-d01977bdfbbd" x="366" y="60" width="115" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[人次]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="3a68fed1-9d49-42f2-8620-36d2bc63ec48" x="366" y="80" width="115" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none"/>
+					<textFieldExpression><![CDATA[($F{dx_num_}==null||$F{dx_num_}==0l)?"":"人次"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="abb7c8dc-2b4a-4814-82b6-58bab2d49fb4" x="366" y="100" width="115" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<text><![CDATA[万元]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="3da0ecb9-9842-4a91-9222-1acc93068685" x="1" y="20" width="26" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9ee49990-74d9-4536-83d2-6c8e56390dad" x="1" y="60" width="26" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="9b9ac36c-b5f7-44e4-a1a9-f242a9bdab0c" x="1" y="80" width="48" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b76039df-46cf-402d-b5e9-8bb56b3c2b69" x="1" y="100" width="26" height="20"/>
+					<box>
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="099cc03b-df2d-42de-a23d-1dd3ceaacd77" x="49" y="40" width="192" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+						<rightPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{operate_num}==null||$F{operate_num}==0l)?"/":"其中：经营户"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="10ea251d-bcc3-46dc-ba0c-78649476bde7" x="0" y="40" width="49" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement/>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="cc129ba9-830b-4e93-8186-e84e6ba63161" x="241" y="40" width="125" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{operate_num}==null||$F{operate_num}==0l)?"/":$F{operate_num}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="1bf1dd3b-b7d0-4854-b2b9-f4f9ea91cac8" x="366" y="40" width="115" height="20"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
+					<textElement verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[($F{operate_num}==null||$F{operate_num}==0l)?"":"户"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement uuid="64108a28-ad3a-4209-b2f9-b380f66da340" x="75" y="1" width="166" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{name_}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="aa4f8ad3-049a-4bfc-a9f0-be7d7e3129d1" x="241" y="1" width="125" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{money_}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d0d23e23-c3c5-4f69-a358-aaaa4a8d5822" x="366" y="1" width="115" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[万元]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e304f05-a366-4564-9cb5-707c5f4ceefb" x="1" y="1" width="74" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>
