@@ -64,7 +64,7 @@ public class TimeUtil {
 	 * @param date
 	 * @return
 	 */
-	public static Long getTimeInMillis(String date){
+	public static Date getTimeInMillis(String date){
 		Long time=0l;
 		int year=0;
 		int month=0;
@@ -85,44 +85,9 @@ public class TimeUtil {
 		calendar.set(calendar.SECOND, 0);
 		calendar.set(calendar.MILLISECOND, 0);
 		time=calendar.getTimeInMillis();
-		return time;
+		Date d=new Date(time);
+		return d;
 	}
-	public static Date str2Date(String strDate){
-		Date date=null;
-		int year=0;
-		int month=0;
-		try {
-			year=Integer.parseInt(strDate.substring(0,4));
-			month=Integer.parseInt(strDate.substring(5, 7))-1;
-		} catch (Exception e) {
-			Calendar calendar=Calendar.getInstance();
-			year=calendar.get(calendar.YEAR);
-			month=calendar.get(calendar.MONTH)-1;//上个月的
-		}
-		Calendar calendar=Calendar.getInstance();
-		calendar.set(year, month,0,0,0);
-		date=calendar.getTime();
-		return date;
-	}
-	@Test
-	public void test(){
-		Date d=strToDate("2013年04月","yyyy年MM月");
-		System.out.println(d);
-		String strDate=new SimpleDateFormat("yyyy年MM月dd日").format(d);
-		System.out.println(strToDate(strDate, "yyyy年MM月dd日"));
-		Calendar calendar=Calendar.getInstance();
-		int year=2012;
-		int month=4;
-		int day=3;
-		calendar.set(2012,4,1,0,0,0);
-		System.out.println(calendar.get(calendar.MILLISECOND));
-		System.out.println(calendar.getTime());
-		Long l=getTimeInMillis("2013年12月");
-		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(l));		
-		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss.sss:SS").format(1385870400000l));
-		
-	}
-
 	/**
 	 * 
 	 * @param year

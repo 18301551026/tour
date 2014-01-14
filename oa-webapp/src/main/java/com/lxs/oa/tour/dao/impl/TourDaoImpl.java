@@ -265,15 +265,15 @@ public class TourDaoImpl implements ITourDao {
 		sql.append(" c.user_id_ in (  "
 					+ userIds.substring(0, userIds.length() - 1));
 		sql.append(" ) and  ");
-		sql.append(" c.long_time_ >= "
-				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
+		sql.append(" c.time_ >=?");
 		sql.append(" and ");
-		sql.append(" c.long_time_<= "
-				+ TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
+		sql.append(" c.time_<= ? ");
 		sql.append(" GROUP BY type_, name_  ");
 		System.out.println(sql.toString());
 		SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(
 				sql.toString());
+		query.setParameter(0,TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
+		query.setParameter(1,  TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
 		List<Object[]> objList = query.list();
 		for (Object[] object : objList) {
 			StatisticReportModel m = new StatisticReportModel();
@@ -297,14 +297,15 @@ public class TourDaoImpl implements ITourDao {
 		incomeSql.append(" c.user_id_ in (  "
 					+ userIds.substring(0, userIds.length() - 1));
 		incomeSql.append(" ) and  ");
-		incomeSql.append(" c.long_time_ >= "
-				+ TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
+		incomeSql.append(" c.time_ >=? "
+				);
 		incomeSql.append(" and ");
-		incomeSql.append(" c.long_time_<= "
-				+ TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
+		incomeSql.append(" c.time_<=? ");
 		incomeSql.append("	GROUP BY type_ ");
 		SQLQuery query1 = sessionFactory.getCurrentSession().createSQLQuery(
 				incomeSql.toString());
+		query1.setParameter(0,TimeUtil.getTimeInMillis(startYear + "年" + startMonth + "月"));
+		query1.setParameter(1,  TimeUtil.getTimeInMillis(endYear + "年" + endMonth + "月"));
 		List<Object[]> totalList = query1.list();
 		for (StatisticReportModel m : list) {// 添加单位个数
 			Long factoryNum = 0l;

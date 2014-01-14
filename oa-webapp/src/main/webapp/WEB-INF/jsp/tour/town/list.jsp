@@ -12,15 +12,35 @@
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
+<script type="text/javascript">
+	$(function(){
+		$("#auditingButton").click(function(){
+			var url=$(this).attr("actionUrl");
+			if ($("input[name='ids']:checked")
+					&& $("input[name='ids']:checked").length > 0) {
+				if (window.confirm('确认要上报?')) {
+					$("#deleteForm").attr("action",url);
+					$("#deleteForm").submit();
+				}
+			} else {
+				alert('请选择要上报的记录');
+			}
+		});
+		
+	});
+</script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
 				<v:auth path="/tour/townList!delete.action">
-					<button id="deleteButton" class="btn btn-info">
+					<button id="deleteButton" class="btn btn-info" actionUrl="${ctx }/tour/townList!delete.action">
 					<span class="glyphicon glyphicon-minus"></span> 删除
 				</button>
-				</v:auth>
+				</v:auth> 
+				<button id="auditingButton" actionUrl="" class="btn btn-info">
+					<span class="glyphicon glyphicon-arrow-up"></span> 上报
+				</button>
 				<button id="queryButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>

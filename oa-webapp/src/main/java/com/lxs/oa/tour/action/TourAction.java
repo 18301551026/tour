@@ -1607,7 +1607,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.createAlias("user", "u");
 		criteria.add(Restrictions.eq("u.id", u.getId()));
-		 Long time=TimeUtil.getTimeInMillis(reprotYearAndMonth);
+		 Date time=TimeUtil.getTimeInMillis(reprotYearAndMonth);
 		criteria.add(Restrictions.eq("time",
 				time));
 		List<TourCommon> list = baseService.find(criteria);
@@ -2105,8 +2105,10 @@ public class TourAction extends BaseAction<TourCommon> {
 		model.setTime(TimeUtil.getTimeInMillis(reprotYearAndMonth));//
 		Double totalIncome = 0d;
 		if (null==model.getId()) {
-			for(Double d:inputMoneys){
-				totalIncome+=d;
+			for(int i=0;i<labelTexts.length;i++){
+				if (labelTexts[i].indexOf("其中")==-1) {
+					totalIncome+=inputMoneys[i];
+				}
 			}
 		}
 		if (null == beans || beans.size() == 0) {
@@ -2115,11 +2117,16 @@ public class TourAction extends BaseAction<TourCommon> {
 		} else {
 			for (TourDetail d : beans) {
 				if (null != d && null != d.getId()) {
-					totalIncome+=d.getMoney();
 					TourDetail tempDetail = baseService.get(TourDetail.class,
 							d.getId());
 					tempDetail.setMoney(d.getMoney());
 					baseService.update(tempDetail);
+					
+					TourDetail de=baseService.get(TourDetail.class, d.getId());
+					if(de.getName().indexOf("其中")!=-1){
+						continue;
+					}
+					totalIncome+=d.getMoney();
 				}
 			}
 		}
@@ -2328,7 +2335,7 @@ public class TourAction extends BaseAction<TourCommon> {
 		DetachedCriteria criteria = DetachedCriteria.forClass(TourCommon.class);
 		criteria.add(Restrictions.eq("status", StatusEnum.reported.getValue()));
 		criteria.add(Restrictions.eq("time", TimeUtil.getTimeInMillis("上个月")));
-		Long l=TimeUtil.getTimeInMillis("上个月");
+		Date l=TimeUtil.getTimeInMillis("上个月");
 		PageResult page = tourService.findStatistic(criteria, u.getId(), factoryList);
 		ActionContext.getContext().put(PAGE, page);
 		return "lastMonthStatisticList";
@@ -2473,7 +2480,12 @@ public class TourAction extends BaseAction<TourCommon> {
 		return list;
 
 	}
-
+	public String townReport(){
+		for (Long id : ids) {
+			
+		}
+		return LIST_ACTION;
+	}
 	public String[] getLabelTexts() {
 		return labelTexts;
 	}
@@ -2504,9 +2516,9 @@ public class TourAction extends BaseAction<TourCommon> {
 //		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(new Long("1383235200000")));
 //		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(new Long("1383278400000")));
 //		
-		Long longTime=TimeUtil.getTimeInMillis("asdfasdf");
-		System.out.println(longTime);
-		System.out.println(new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss:SS").format(longTime));
+		String str="ddd";
+		System.out.println(str.indexOf("其中"));
+		
 		
 	}
 

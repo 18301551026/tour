@@ -38,7 +38,7 @@ public class TourCommon implements Serializable {
 	private Integer status;// 申报状态
 	private Integer reportMonth;// 申报月份
 	private Integer reportYear; // 申报年份
-	private Long time;
+	private Date time;
 	private String desc; // 描述
 	private User user;
 	private String type;
@@ -162,15 +162,7 @@ public class TourCommon implements Serializable {
 	public void setStatisticType(Integer statisticType) {
 		this.statisticType = statisticType;
 	}
-
-	@Column(name = "long_time_")
-	public Long getTime() {
-		return time;
-	}
-
-	public void setTime(Long time) {
-		this.time = time;
-	}
+	
 	@Column(name="quarter_")
 	public Integer getQuarter() {
 		return quarter;
@@ -186,6 +178,15 @@ public class TourCommon implements Serializable {
 
 	public void setDxNum(Integer dxNum) {
 		this.dxNum = dxNum;
+	}
+	@Temporal(TemporalType.DATE)
+	@Column(name="time_")
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 
 }

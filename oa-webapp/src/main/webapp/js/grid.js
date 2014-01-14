@@ -7,6 +7,10 @@ $(function() {
 				if ($("input[name='ids']:checked")
 						&& $("input[name='ids']:checked").length > 0) {
 					if (window.confirm('确认删除')) {
+						var url=$(this).attr("actionUrl");
+						if(url){
+							$("#deleteForm").attr("action",url);
+						}
 						$("#deleteForm").submit();
 					}
 				} else {
