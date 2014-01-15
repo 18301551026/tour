@@ -163,6 +163,15 @@ public class Dept implements Serializable {
 	public FactoryType getFactoryType() {
 		return factoryType;
 	}
+	@Transient
+	public String getFactoryTypeName(){
+		if (null != factoryType) {
+			return factoryType.getName();
+		} else {
+			return "";
+		}
+		
+	}
 
 	public void setFactoryType(FactoryType factoryType) {
 		this.factoryType = factoryType;

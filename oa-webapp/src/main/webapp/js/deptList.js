@@ -15,7 +15,7 @@ $(function() {
 			title : '部门名称',
 			width : 280
 		}, {
-			field : 'deptType',
+			field : 'factoryTypeName',
 			title : '部门类型',
 			width : 280
 		}, {

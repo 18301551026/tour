@@ -72,8 +72,15 @@ public class UserAction extends BaseAction<User> {
 	}	
 	@Override
 	public void beforFind(DetachedCriteria criteria) {
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		u=baseService.get(User.class, u.getId());
 		criteria.createAlias("dept", "d");
 		criteria.add(Restrictions.like("d.text", factoryName.trim(),MatchMode.ANYWHERE));
+		if (u.getDept().getDeptLevel().equals("镇级")) {
+			ActionContext.getContext().put("deptLevel", u.getDept().getDeptLevel());
+			criteria.createAlias("d.parent", "pd");
+			criteria.add(Restrictions.eq("pd.id",u.getDept().getId()));
+		}
 		if (null!=townId) {//添加镇查询条件
 			criteria.createAlias("d.parent", "pd");
 			criteria.add(Restrictions.eq("pd.id", townId));
@@ -114,25 +121,31 @@ public class UserAction extends BaseAction<User> {
 
 	@Override
 	public void afterToUpdate(User user) {
-		List<Role> roles = baseService.find(DetachedCriteria
-				.forClass(Role.class));
+		
+		User currentUser=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		currentUser=baseService.get(User.class, currentUser.getId());
+		DetachedCriteria criteria=DetachedCriteria.forClass(Role.class);
+		if (currentUser.getDept().getDeptLevel().equals("镇级")) {
+			criteria.add(Restrictions.or(Restrictions.eq("roleName", "企业"),Restrictions.eq("roleName", "镇政府")));
+		}
+		List<Role> roles = baseService.find(criteria);
 		Set<Role> userRoles = user.getRoles();
 		for (Role role : userRoles) {
 			roles.remove(role);
 		}
 		ActionContext.getContext().put("roleList", roles);
 
-		List<Dept> depts = baseService.find(DetachedCriteria
-				.forClass(Dept.class));
-		depts.remove(user.getDept());
-		ActionContext.getContext().put("deptList", depts);
+//		List<Dept> depts = baseService.find(DetachedCriteria
+//				.forClass(Dept.class));
+//		depts.remove(user.getDept());
+//		ActionContext.getContext().put("deptList", depts);
 
-		List<Job> jobs = baseService.find(DetachedCriteria.forClass(Job.class));
-		Set<Job> userJobs = user.getJobs();
-		for (Job job : userJobs) {
-			jobs.remove(job);
-		}
-		ActionContext.getContext().put("jobList", jobs);
+//		List<Job> jobs = baseService.find(DetachedCriteria.forClass(Job.class));
+//		Set<Job> userJobs = user.getJobs();
+//		for (Job job : userJobs) {
+//			jobs.remove(job);
+//		}
+//		ActionContext.getContext().put("jobList", jobs);
 	}
 
 	
@@ -189,6 +202,10 @@ public class UserAction extends BaseAction<User> {
 					.put(SystemConstant.CURRENT_USER, user);
 			ActionContext.getContext().getSession()
 			.put("currentUserDeptName", user.getDept().getText());
+			ActionContext.getContext().getSession()
+			.put(SystemConstant.CURRENT_USER, user);
+			ActionContext.getContext().getSession()
+			.put("currentUserDeptLevel", user.getDept().getDeptLevel());
 			return INDEX;
 		} else {
 			return LOGIN;

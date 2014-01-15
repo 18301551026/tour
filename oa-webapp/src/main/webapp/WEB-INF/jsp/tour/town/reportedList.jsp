@@ -6,77 +6,16 @@
 <title>镇政府</title>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/include-jquery.jsp"%>
-<%@ include file="/common/include-jquery-easyui.jsp"%>
 <script type="text/javascript"
 	src="${ctx }/js/My97DatePicker/WdatePicker.js"></script>
 <%@ include file="/common/include-bootstap.jsp"%>
 <script src="${ctx }/js/grid.js"></script>
 <%@ include file="/common/include-styles.jsp"%>
 </head>
-<script type="text/javascript">
-	$(function(){
-		$("#auditingButton").click(function(){
-			if ($("input[name='ids']:checked")
-					&& $("input[name='ids']:checked").length > 0) {
-				if (window.confirm('确认要上报?')) {
-					var ids="";
-					$("input[name='ids']:checked").each(function(i){
-						var id=$(this).val();
-						ids+=id+",";
-					});
-					ids=ids.substr(0,ids.length-1);
-					parent.$.modalDialog({
-						title : '填写负责人',
-						width : 360,
-						height : 160,
-						href : ctx + '/tour/townList!toWriteChargePerson.action',
-						buttons : [
-								{
-									text : '上报',
-									iconCls : "icon-edit",
-									handler : function() {
-										var f = parent.$.modalDialog.handler
-												.find('#form');
-										var townChargePerson=f.find("#townChargePerson").val();
-										$.ajax({
-											  url:ctx+"/tour/townList!townReport.action",
-											  async: false,
-											  type: "POST",
-											  data: "tourIds="+ids+"&townChargePerson="+townChargePerson,
-											  success: function(msg){
-												  parent.$.modalDialog.handler.dialog('close');
-												  $("#queryForm").submit();	     
-											   }
-										})
-									}
-								}, {
-									text : '取消',
-									iconCls : "icon-cancel",
-									handler : function() {
-										parent.$.modalDialog.handler.dialog('close');
-									}
-								} ]
-					});					
-				}
-			} else {
-				alert('请选择要上报的记录');
-			}
-		});
-		
-	});
-</script>
 <body>
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<div class="btn-group btn-group-sm">
-				<v:auth path="/tour/townList!delete.action">
-					<button id="deleteButton" class="btn btn-info" >
-					<span class="glyphicon glyphicon-minus"></span> 删除
-				</button>
-				</v:auth> 
-				<button id="auditingButton" actionUrl="" class="btn btn-info">
-					<span class="glyphicon glyphicon-arrow-up"></span> 上报
-				</button>
 				<button id="queryButton" class="btn btn-info">
 					<span class="glyphicon glyphicon-search"></span> 查询
 				</button>
@@ -89,7 +28,7 @@
 		</div>
 		<div class="panel-body" id="queryPanel">
 			<form role="form" id="queryForm" class="form-horizontal"
-				action="${ctx}/tour/townList!findPage.action" method="post">
+				action="${ctx}/tour/townReported!findPage.action" method="post">
 				<s:hidden name="status"></s:hidden>
 				<s:hidden name="statisticType"></s:hidden>
 				<table class="formTable">
@@ -124,14 +63,6 @@
 						></s:select>
 						</Td>					
 					</tr>					
-					<%-- <tr>
-						<Td class="control-label" style="width: 3%"><label
-							for="totalPersonNum">企业：</label>
-						<Td class="query_input" colspan="3"><s:select
-								list="townFactorys" id="factoryType"
-								cssClass="form-control validate[required]" headerKey=""
-								headerValue="全部" listKey="id" listValue="text" name="factoryId"></s:select></Td>
-					</tr> --%>
 				</table>
 			</form>
 		</div>
@@ -141,8 +72,6 @@
 		<table class="table table-bordered table-striped table-hover">
 			<thead>
 				<tr>
-					<th class="table_checkbox"><input type="checkbox"
-						id="checkAllCheckBox"></th>
 					<th>时间</th>
 					<th>类型</th>
 					<th>部门</th>
@@ -154,18 +83,12 @@
 			<tbody>
 				<s:iterator value="#page.result">
 					<tr>
-						<td class="table_checkbox"><input type="checkbox" name="ids"
-							value="${id }" /></td>
 						<td>${reportYear }年${reportMonth }月</td>
 						<td>${type}</td>
 						<td>${user.dept.text }</td>
 						<Td>${totalPersonNum }</Td>
 						<Td>${totalIncome }</Td>
 						<td><a href="${ctx }/tour/townList!toDetail.action?id=${id}">详情</a>
-						&nbsp;
-						<v:auth path="/tour/townList!toUpdate.action">
-						<a href="${ctx}/tour/townList!toUpdate.action?id=${id}">修改</a>
-						</v:auth>
 						</td>
 					</tr>
 				</s:iterator>

@@ -19,7 +19,7 @@ $(function() {
 				data : [ {
 					id : jsonObj.id,
 					text : jsonObj.text,
-					deptType:jsonObj.deptType,
+					factoryTypeName : jsonObj.deptType,
 					deptLevel:jsonObj.deptLevel,
 					deptDesc : jsonObj.deptDesc
 				} ]

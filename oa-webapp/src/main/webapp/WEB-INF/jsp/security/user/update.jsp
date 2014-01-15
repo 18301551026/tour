@@ -90,7 +90,7 @@
 			</tr>
 		</table>
 	</form>
-	<table style="width: 49.5%; margin-left: 1px; float: left;"
+	<table style="width:100%; margin-left: 1px; float: left;"
 		class="table table-bordered table-striped table-hover">
 		<thead>
 			<tr>
@@ -121,7 +121,7 @@
 			</s:if>
 		</tbody>
 	</table>
-	<table style="width: 50%; margin-left: 1px; float: right;"
+	<%-- <table style="width: 50%; margin-left: 1px; float: right;"
 		class="table table-bordered table-striped table-hover">
 		<thead>
 			<tr>
@@ -151,7 +151,7 @@
 				</form>
 			</s:if>
 		</tbody>
-	</table>
+	</table> --%>
 	<style>
 .combo {
 	background-color: #FFFFFF;

@@ -128,11 +128,11 @@ font {
 					<s:textfield
 						name="totalPersonNum" placeholder="请输入接待人次"
 						cssClass="form-control validate[required,custom[integer],min[0]]" id="totalPersonNum"  
-					cssStyle="width:91%">
+					cssStyle="width:90%">
 					</s:textfield> <font>(人次)</font></Td>
 				<c:if test="${type=='旅行社'}">
-					<Td class="control-label" style="width: 8%"><label
-						for="dxNum">招徕大兴人次：</label>
+					<Td class="control-label" style="width: 13%"><label
+						for="dxNum">其中：来大兴人次：</label>
 					<Td class="query_input"><s:textfield
 							name="dxNum" placeholder="请输入接待人次" id='dxNum'
 							cssClass="form-control validate[required,custom[integer],min[0]]" 

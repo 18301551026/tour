@@ -74,12 +74,15 @@ import com.opensymphony.xwork2.ActionContext;
 		@Action(value = "districtStatistic", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/district/statisticList.jsp"),
 				@Result(name = "townStatisticListToDetail", location = "/WEB-INF/jsp/tour/district/statisticDetail.jsp")
 		}),
+		@Action(value = "townReported", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/reportedList.jsp")
+		}),
 		@Action(value = "reported", className = "tourAction", results = {
 				@Result(name = "list", location = "/WEB-INF/jsp/tour/factory/reportedList.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/factory/detail.jsp") }),
 		@Action(value = "townList", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp"),
 				@Result(name = "update", location = "/WEB-INF/jsp/tour/town/update.jsp"),
 				@Result(name = "toDetail", location = "/WEB-INF/jsp/tour/town/detail.jsp"),
+				@Result(name="toWriteChargePerson",location="/WEB-INF/jsp/tour/town/writeTownChargePerson.jsp"),
 				@Result(name = "listAction", type = "redirect", location = "/tour/townList!findPage.action?statisticType=2&status=3")
 		}),
 		@Action(value = "districtChart", className = "tourAction", results = { @Result(name = "list", location = "/WEB-INF/jsp/tour/town/list.jsp") }),
@@ -106,7 +109,6 @@ public class TourAction extends BaseAction<TourCommon> {
 	private String redirectAddress;
 	@Resource
 	private ITourService tourService;
-	
 	private Long companyId;
 	private Long townId;
 	private String deptType;
@@ -1540,6 +1542,13 @@ public class TourAction extends BaseAction<TourCommon> {
 			
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
+			if (model.getStatus().equals(StatusEnum.townReported.getValue())) {//已上报
+				criteria.add(Restrictions.isNotNull("townChargePerson"));
+			}else{
+				criteria.add(Restrictions.isNull("townChargePerson"));//未上报
+			}
+			
+			
 		} else if (model.getStatisticType().equals(
 				StatisticTypeEnum.district.getValue())) {
 			//区查询镇
@@ -1552,6 +1561,8 @@ public class TourAction extends BaseAction<TourCommon> {
 
 			criteria.add(Restrictions.eq("status",
 					StatusEnum.reported.getValue()));
+			criteria.add(Restrictions.isNotNull("townChargePerson"));//镇里面已上报的
+			
 		}
 		if (null != deptType && deptType.trim().length() != 0) {
 			criteria.add(Restrictions.eq("type", deptType));
@@ -1656,6 +1667,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				userIds.add(tempU.getId());
 			}
 		}
+		criteria.add(Restrictions.isNotNull("townChargePerson"));
 		if (userIds.size() != 0) {
 			criteria.createAlias("user", "u");
 			criteria.add(Restrictions.in("u.id", userIds));
@@ -1705,6 +1717,7 @@ public class TourAction extends BaseAction<TourCommon> {
 				.get(SystemConstant.CURRENT_USER);
 		List<Long> userIds = new ArrayList<Long>();
 		u = baseService.get(User.class, u.getId());
+		criteria.add(Restrictions.isNotNull("townChargePerson"));
 		List<Dept> list = u.getDept().getChildren();// 获得区下面的所有镇
 		if (null!=townId) {
 			for (Dept dept : list) {
@@ -2480,11 +2493,18 @@ public class TourAction extends BaseAction<TourCommon> {
 		return list;
 
 	}
-	public String townReport(){
-		for (Long id : ids) {
-			
+	public void townReport(){
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		String[] strIds=tourIds.split(",");
+		for(String id:strIds){
+			if(null!=id){
+				TourCommon comm=baseService.get(TourCommon.class, Long.parseLong(id));
+				comm.setTownChargePerson(model.getTownChargePerson());
+				comm.setTownAuditPerson(u);
+				baseService.update(comm);
+			}
 		}
-		return LIST_ACTION;
+		
 	}
 	public String[] getLabelTexts() {
 		return labelTexts;
@@ -2715,6 +2735,10 @@ public class TourAction extends BaseAction<TourCommon> {
 		criteria.add(Restrictions.eq("deptLevel", DeptLevelEnum.town.getValue()));
 		return baseService.find(criteria);
 	}		
+	public String toWriteChargePerson(){
+		
+		return "toWriteChargePerson";
+	}
 	
 	
 	public Long getCompanyId() {

@@ -18,8 +18,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SimplePropertyPreFilter;
 import com.lxs.core.action.BaseAction;
 import com.lxs.core.common.BeanUtil;
+import com.lxs.core.common.SystemConstant;
 import com.lxs.security.domain.Dept;
 import com.lxs.security.domain.Menu;
+import com.lxs.security.domain.User;
 import com.lxs.security.service.IDeptService;
 import com.lxs.tour.domain.FactoryType;
 import com.opensymphony.xwork2.ActionContext;
@@ -56,7 +58,14 @@ public class DeptAction extends BaseAction<Dept> {
 		}
 	}
 	public void getAllDept() {
-		List<Dept> list = deptService.findAllDept();
+		Long pid=0l;
+		
+		User u=(User)ActionContext.getContext().getSession().get(SystemConstant.CURRENT_USER);
+		if (u.getDept().getDeptLevel().equals("镇级")) {
+			pid=u.getDept().getId();
+		}
+		u=baseService.get(User.class, u.getId());
+		List<Dept> list = deptService.findAllDept(pid);
 		for (Dept dept : list) {
 			if (null != dept.getChildren() && dept.getChildren().size() != 0) {
 				dept.setState("closed");

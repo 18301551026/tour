@@ -70,7 +70,7 @@ public class TourDaoImpl implements ITourDao {
 				}
 			}
 			for (Dept d : deptList) {
-				if (null!=d.getDeptType()&&d.getDeptType().equals(str)) {
+				if (null!=d.getFactoryType()&&d.getFactoryType().getName().equals(str)) {
 					tempNum += 1;
 				}
 			}

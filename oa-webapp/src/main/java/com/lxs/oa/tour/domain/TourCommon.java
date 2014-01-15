@@ -36,6 +36,8 @@ public class TourCommon implements Serializable {
 	private Double totalIncome; // 总收入
 	private Date reportDate;// 申报时间
 	private Integer status;// 申报状态
+	private String townChargePerson;//责任人
+	private User townAuditPerson;//审计人
 	private Integer reportMonth;// 申报月份
 	private Integer reportYear; // 申报年份
 	private Date time;
@@ -187,6 +189,23 @@ public class TourCommon implements Serializable {
 
 	public void setTime(Date time) {
 		this.time = time;
+	}
+	@Column(name="town_charge_person_")
+	public String getTownChargePerson() {
+		return townChargePerson;
+	}
+
+	public void setTownChargePerson(String townChargePerson) {
+		this.townChargePerson = townChargePerson;
+	}
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="town_audit_user_id_")
+	public User getTownAuditPerson() {
+		return townAuditPerson;
+	}
+
+	public void setTownAuditPerson(User townAuditPerson) {
+		this.townAuditPerson = townAuditPerson;
 	}
 
 }

@@ -15,7 +15,7 @@ public class DeptServiceImpl implements IDeptService {
 	@Resource
 	private IDeptDao deptDao;
 
-	public List<Dept> findAllDept() {
-		return deptDao.findAllDept();
+	public List<Dept> findAllDept(Long pid) {
+		return deptDao.findAllDept(pid);
 	}
 }

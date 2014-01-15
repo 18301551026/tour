@@ -37,23 +37,28 @@
 				<table class="formTable">
 					<Tr>
 						<Td class="control-label"><label for="userName">用户名称：</label></Td>
-						<Td class="query_input" colspan="3"><s:textfield name="userName"
+						<Td class="query_input"><s:textfield name="userName"
 								cssClass="form-control" id="userName"></s:textfield></Td>
-					</Tr>
-					<tr>
 						<Td class="control-label" style="width: 5%"><label
+							for="address">企业名称：</label></Td>
+						<Td class="query_input"
+						
+						>
+						<s:textfield name="factoryName" cssClass="form-control" ></s:textfield>
+						</Td>
+					</Tr>
+					
+					<tr>
+						<c:if test="${empty deptLevel||deptLevel!='镇级'}">
+					<Td class="control-label" style="width: 5%"><label
 							for="address">镇：</label></Td>
-						<Td class="query_input">
+						<Td class="query_input" colspan="3">
 						<s:select list="districtTown"  cssClass="form-control"
 						listKey="id" listValue="text"
 						name="townId" headerKey="" headerValue="全部"
 						></s:select>
 						</Td>
-						<Td class="control-label" style="width: 5%"><label
-							for="address">企业名称：</label></Td>
-						<Td class="query_input">
-						<s:textfield name="factoryName" cssClass="form-control" ></s:textfield>
-						</Td>					
+					</c:if>	
 					</tr>
 				</table>
 			</form>

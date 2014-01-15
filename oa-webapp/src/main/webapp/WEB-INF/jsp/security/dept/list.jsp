@@ -21,10 +21,12 @@
 			onclick="undo();" data-options="iconCls:'icon-save',plain:true">折叠</a>
 		<div class="datagrid-btn-separator"
 			style="float: none; display: inline;"></div>
-		<a href="javascript:void(0)" class="easyui-linkbutton"
+		<c:if test="${currentUserDeptLevel!='镇级' }">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
 			onclick="addFun(true)" data-options="iconCls:'icon-add',plain:true">添加根节点</a>
 		<div class="datagrid-btn-separator"
 			style="float: none; display: inline;"></div>
+		</c:if>
 		<a href="javascript:void(0)" class="easyui-linkbutton"
 			onclick="treeGrid.treegrid('reload');"
 			data-options="iconCls:'icon-reload',plain:true">刷新</a>
